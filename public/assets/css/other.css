@@ -1,0 +1,57 @@
+html {
+	/** background: url('../img/background/bg_04.jpg') no-repeat scroll; **/
+	background: url('../img/background/bg_01.jpg') no-repeat fixed center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	background-position: center;
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+/**
+div {
+	border: 1px solid red;
+}
+**/
+
+img, embed, object, video {
+	max-width: 100%;
+	height: auto;
+}
+
+.centered {
+	max-width: 100%;
+	margin: auto;
+}
+
+.color-header {
+	color: #ff0000;
+	/**background-color: #1e3c52;**/
+}
+
+.color-nav {
+	color: #ffff00;
+	/**background-color: #1e3c52;**/
+}
+
+.color-main {
+	color: #00ff00;
+	/**background-color: #1e3c52;**/
+}
+
+.color-footer {
+	color: #ff00ff;
+	/**background-color: #1e3c52;**/
+}
+
+.color-dashboard-services {
+	background: rgb(104,103,84,0.4);
+}

@@ -1,0 +1,11 @@
+config/app.php
+config/ts3.php
+public/assets/img/bsod-logo.png
+public/assets/img/background/*
+public/assets/img/favicon/*
+public/assets/css/stuff
+templates/test
+/vendor/
+/logs/*
+!/logs/README.md
+composer.lock

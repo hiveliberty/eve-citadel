@@ -1,0 +1,39 @@
+{
+    "name": "EVE Citadel Auth System",
+    "description": "",
+    "keywords": ["eve online", "eve-online", "discord", "ts3"],
+    "homepage": "http://github.com/hiveliberty/eve-citadel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eino Taivallinen",
+            "email": "",
+            "homepage": ""
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "slim/slim": "^3.1",
+        "slim/php-view": "^2.0",
+        "monolog/monolog": "^1.17",
+        "dflydev/fig-cookies": "^1.0",
+        "restcord/restcord": "^0.1.5",
+        "moutard3/oauth2-discord": "^1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=4.8 < 6.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "process-timeout" : 0
+    },
+    "scripts": {
+        "start": "php -S localhost:8080 -t public public/index.php",
+        "test": "phpunit"
+    }
+
+}
