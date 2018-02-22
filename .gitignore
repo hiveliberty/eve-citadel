@@ -1,11 +1,15 @@
 config/app.php
 config/ts3.php
+config/db.php
 public/assets/img/bsod-logo.png
 public/assets/img/background/*
 public/assets/img/favicon/*
 public/assets/css/stuff
 templates/test
+lib/esi_class.php
 /vendor/
 /logs/*
 !/logs/README.md
 composer.lock
+test.php
+evecitadel

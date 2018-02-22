@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS `citadel_users` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`character_id` varchar(128) NOT NULL,
-	`is_admin` varchar(10) NOT NULL DEFAULT 'no',
+	`is_admin` tinyint(1) NOT NULL DEFAULT 0,
 	`added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `character_id_unique` (`character_id`)
@@ -91,17 +91,19 @@ CREATE TABLE IF NOT EXISTS `phpbb3_users` (
 
 CREATE TABLE IF NOT EXISTS `citadel_cache_alliances` (
 	`id` int(11) NOT NULL,
-	`name` varchar(50) NULL,
-	`ticker` varchar(50) NULL,
-	`is_blue` varchar(50) NULL,
+	`name` varchar(50) NOT NULL,
+	`ticker` varchar(10) NOT NULL,
+	`member` varchar(10) NOT NULL DEFAULT 'no',
+	`blue` varchar(10) NOT NULL DEFAULT 'no',
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `citadel_cache_corporations` (
 	`id` int(11) NOT NULL,
-	`name` varchar(50) NULL,
-	`ticker` varchar(50) NULL,
-	`is_blue` varchar(50) NULL,
+	`name` varchar(50) NOT NULL,
+	`ticker` varchar(10) NOT NULL,
+	`member` varchar(10) NOT NULL DEFAULT 'no',
+	`blue` varchar(10) NOT NULL DEFAULT 'no',
 	`alliance_id` int(11) NULL,
 	PRIMARY KEY (`id`),
 	INDEX `fk_alliances_cache_corporations_cache_idx` (`alliance_id` ASC),
@@ -114,8 +116,9 @@ CREATE TABLE IF NOT EXISTS `citadel_cache_corporations` (
 
 CREATE TABLE IF NOT EXISTS `citadel_cache_characters` (
 	`user_id` int(11) NOT NULL,
-	`name` varchar(128) NULL,
-	`is_blue` varchar(50) NULL,
+	`name` varchar(128) NOT NULL,
+	`member` varchar(10) NOT NULL DEFAULT 'no',
+	`blue` varchar(10) NOT NULL DEFAULT 'no',
 	`corporation_id` int(11) NULL,
 	PRIMARY KEY (`user_id`),
 	INDEX `fk_characters_cache_citadel_users_idx` (`user_id` ASC),
@@ -128,14 +131,15 @@ CREATE TABLE IF NOT EXISTS `citadel_cache_characters` (
 	CONSTRAINT `fk_corporations_cache_characters_cache_idx`
 		FOREIGN KEY (`corporation_id`)
 		REFERENCES `citadel_cache_corporations` (`id`)
-		ON DELETE CASCADE
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `citadel_tokens_storage` (
+CREATE TABLE IF NOT EXISTS `citadel_esi_tokens` (
 	`user_id` int(11) NOT NULL,
-	`token_access` varchar(255) DEFAULT NULL,
-	`token_refresh` varchar(255) DEFAULT NULL,
+	`token_access` varchar(255) NULL,
+	`token_refresh` varchar(255) NULL,
+	`scope` varchar(255) NULL,
 	`updated` timestamp NULL DEFAULT NULL,
 	`added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 		ON UPDATE CURRENT_TIMESTAMP,
@@ -148,10 +152,17 @@ CREATE TABLE IF NOT EXISTS `citadel_tokens_storage` (
 		ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `citadel_custom_storage` (
+CREATE TABLE IF NOT EXISTS `citadel_custom` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `custom_key` varchar(191) NOT NULL,
   `custom_value` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `custom_key_unique` (`custom_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `broadsword_queue_message` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `channel_id` varchar(64) NOT NULL,
+  `message` varchar(2048) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

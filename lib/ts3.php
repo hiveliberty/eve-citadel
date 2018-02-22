@@ -110,6 +110,8 @@ function TSDelUser($char_id, $token)
 	try {
 		$ts3_config = require __DIR__ . '/../config/ts3.php';
 		$ts3_client = new ts3admin($ts3_config['url'], $ts3_config['query_port']);
+		$ts3_client->privilegekeyDelete($token);
+
 		if($ts3_client->getElement('success', $ts3_client->connect())) {
 			$ts3_client->login($ts3_config['user'], $ts3_config['pass']);
 			$ts3_client->selectServer($ts3_config['port']);
@@ -125,6 +127,7 @@ function TSDelUser($char_id, $token)
 					$kickstatus = $ts3_client->clientKick($client['clid'], $kickMode = "server", $kickmsg = "Auth service deleted");
 				}
 			}
+
 			$ts3_client->clientDbDelete($cldbid);
 			$ts3_client->quit();
 

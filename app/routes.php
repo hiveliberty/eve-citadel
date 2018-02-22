@@ -12,6 +12,7 @@ use RestCord\DiscordClient;
 //$mc = new Memcached();
 //$mc->addServer("localhost", 11211);
 
+require_once(__DIR__ . '/../lib/cURL.php');
 require_once(__DIR__ . '/../lib/other.php');
 require_once(__DIR__ . '/../lib/db.php');
 require_once(__DIR__ . '/../lib/esi.php');
@@ -46,13 +47,32 @@ $app->get('/login', function (Request $request, Response $response) use ($config
     return $response;
 });
 
+$app->get('/login/contacts', function (Request $request, Response $response) use ($config) {
+
+	if (citadeldb_users_check_admin($_SESSION['user_id'])) {
+		$_SESSION['state'] = uniqid();
+		
+		$ssoURL = "https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=" . $config['sso']['callbackURL'] . "&client_id=" . $config['sso']['clientID'] . "&scope=esi-alliances.read_contacts.v1" . "&state=" . $_SESSION['state'] . 'contacts';
+		
+		$response = $this->renderer->render($response, 'header.phtml');
+		$response = $this->renderer->render($response, 'login.phtml', [
+			'ssoURL' => $ssoURL,
+		]);
+		$response = $this->renderer->render($response, 'footer.phtml');
+
+		return $response;
+	} else {
+		return $response->withRedirect('/dashboard');
+	}
+});
+
 $app->get('/logout', function (Request $request, Response $response, $args) use ($config) {
 
 	$cookie = FigRequestCookies::get($request, 'session_key');
 	$session_key = $cookie->getValue();
 
 	$response = FigResponseCookies::expire($response, 'session_key');
-	citadelSessionDelete($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $session_key);
+	citadeldb_session_delete($session_key);
 	session_unset();
 
     return $response->withRedirect('/');
@@ -64,19 +84,19 @@ $app->get('/dashboard', function (Request $request, Response $response, $args) u
 	$session_key = $cookie->getValue();
 
 	if (isset($session_key)) {
-		if (citadelSessionCheckKey($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $session_key)) {
+		if (citadeldb_session_check_key($session_key)) {
 
 			if (!isset($_SESSION['user_id'])) {
-				$_SESSION['user_id'] = citadelSessionGetId($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $session_key);
+				$_SESSION['user_id'] = citadeldb_session_get_id($session_key);
 			}
 			if (!isset($_SESSION['character_id'])) {
-				$_SESSION['character_id'] = citadelUsersSelectById($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $_SESSION['user_id']);
+				$_SESSION['character_id'] = citadeldb_users_select_id($_SESSION['user_id']);
 			}
 			if (!isset($_SESSION['discord_id'])) {
-				$_SESSION['discord_id'] = discordUsersSelect($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $_SESSION['user_id']);
+				$_SESSION['discord_id'] = discord_users_select($_SESSION['user_id']);
 			}
 			if (!isset($_SESSION['teamspeak_data'])) {
-				$_SESSION['teamspeak_data'] = teamspeakUsersSelect($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $_SESSION['user_id']);
+				$_SESSION['teamspeak_data'] = teamspeak_users_select($_SESSION['user_id']);
 			}
 
 			$discord_auth_state = "no";
@@ -89,18 +109,21 @@ $app->get('/dashboard', function (Request $request, Response $response, $args) u
 			}
 			
 			if (!isset($_SESSION['char_data'])) {
-				$_SESSION['char_data'] = characterGetDetails($_SESSION['character_id']);
+				$_SESSION['char_data'] = esi_character_get_details($_SESSION['character_id']);
 			}
 			if (!isset($_SESSION['corp_data'])) {
-				$_SESSION['corp_data'] = corporationGetDetails($_SESSION['char_data']['corporation_id']);
+				$_SESSION['corp_data'] = esi_corporation_get_details($_SESSION['char_data']['corporation_id']);
 			}
 			if (!isset($_SESSION['alliance_name'])) {
 				if (!isset($_SESSION['char_data']['alliance_id'])) {
 					$_SESSION['alliance_name'] = "Your are not in alliance";
 				} else {
-					$_SESSION['alliance_data'] = allianceGetDetails($_SESSION['corp_data']['alliance_id']);
+					$_SESSION['alliance_data'] = esi_alliance_get_details($_SESSION['corp_data']['alliance_id']);
 					$_SESSION['alliance_name'] = $_SESSION['alliance_data']['name'];
 				}
+			}
+			if (!isset($_SESSION['is_admin'])) {
+				$_SESSION['is_admin'] = citadeldb_users_check_admin($_SESSION['user_id']);
 			}
 			
 			if ($config['auth']['nameEnforce']) {
@@ -115,18 +138,19 @@ $app->get('/dashboard', function (Request $request, Response $response, $args) u
 				'character_id' => $_SESSION['character_id'],
 				'discord_auth_state' => $discord_auth_state,
 				'discord_url' => $discord_url,
-				'teamspeak_url' => "hiveliberty.space",
+				'teamspeak_url' => $config['ts3_url'],
 				'teamspeak_nick' => $teamspeak_nick,
 				'teamspeak_token' => $_SESSION['teamspeak_data']['teamspeak_token'],
 				'char_name' => $_SESSION['char_data']['name'],
 				'corp_name' => $_SESSION['corp_data']['name'],
 				'alliance_name' => $_SESSION['alliance_name'],
+				'is_admin' => $_SESSION['is_admin'],
 			]);
 			$response = $this->renderer->render($response, 'footer.phtml');
 
 			return $response;
 		} else {
-			citadelSessionDelete($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $session_key);
+			citadeldb_session_delete($session_key);
 			return $response->withRedirect('/login');
 		}
 	} else {
@@ -141,41 +165,47 @@ $app->get('/dashboard/refresh', function (Request $request, Response $response) 
     return $response->withRedirect('/dashboard');
 });
 
+//$app->get('/eveonline/callback', function (Request $request, Response $response, $args) use ($config) {
 $app->get('/callback-sso', function (Request $request, Response $response, $args) use ($config) {
 
-	$code = $request->getParam("code");
 	$state = $request->getParam("state");
-	
+	$code = $request->getParam("code");
+
+	$base64 = base64_encode($config["sso"]["clientID"] . ":" . $config["sso"]["secretKey"]);
+	$tokenURL = "https://login.eveonline.com/oauth/token";
+	$verifyURL = "https://login.eveonline.com/oauth/verify";
+	$data = json_decode(sendData($tokenURL, array(
+		"grant_type" => "authorization_code",
+		"code" => $code
+	), array("Authorization: Basic {$base64}")));
+
+	$accessToken = $data->access_token;
+	$refreshToken = $data->refresh_token;
+
+	$data = json_decode(sendData($verifyURL, array(), array("Authorization: Bearer {$accessToken}")));
+	$character_id = $data->CharacterID;
+
 	if ($state == $_SESSION['state']) {
-		$base64 = base64_encode($config["sso"]["clientID"] . ":" . $config["sso"]["secretKey"]);
-
-		$tokenURL = "https://login.eveonline.com/oauth/token";
-		$verifyURL = "https://login.eveonline.com/oauth/verify";
-
-		$data = json_decode(sendData($tokenURL, array(
-			"grant_type" => "authorization_code",
-			"code" => $code
-		), array("Authorization: Basic {$base64}")));
-
-		$accessToken = $data->access_token;
-
-		$data = json_decode(sendData($verifyURL, array(), array("Authorization: Bearer {$accessToken}")));
-		$character_id = $data->CharacterID;
-
 		if (isset($character_id)) {
-			$user = citadelUsersSelect($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $character_id);
+			$user = citadeldb_users_select($character_id);
 
 			if (!isset($user['character_id'])) {
 				$user = array();
 				$user['character_id'] = $data->CharacterID;
-				citadelUsersInsert($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $character_id);
-				$user = citadelUsersSelect($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $character_id);
+				foreach ($config['auth']['default_admins'] as $admin_id) {
+					if ($user['character_id'] == $admin_id) {
+						citadeldb_users_add_admin($character_id);
+					} else {
+						citadeldb_users_add($character_id);
+					}
+				}
+				$user = citadeldb_users_select($character_id);
 			}
 
-			$citadel_session = citadelSessionGet($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $user['id']);
-			if (isset($citadel_session)) {
+			$citadel_session = citadeldb_session_get($user['id']);
+			if (isset($citadel_session['session_key'])) {
 				if (strtotime($citadel_session['expire']) <= time()) {
-					citadelSessionDelete($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $citadel_session['session_key']);
+					citadeldb_session_delete($citadel_session['session_key']);
 				}
 			}
 
@@ -189,7 +219,7 @@ $app->get('/callback-sso', function (Request $request, Response $response, $args
 				//->rememberForever()
 			);
 
-			citadelSessionSet($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $user['id'], $session_key, $expire_timestamp);
+			citadeldb_session_add($user['id'], $session_key, $expire_timestamp);
 
 			unset($_SESSION['state']);
 			
@@ -201,7 +231,21 @@ $app->get('/callback-sso', function (Request $request, Response $response, $args
 		} else {
 			return $response->withRedirect('/login');
 		}
-
+	} elseif ($state == ($_SESSION['state'].'contacts')) {
+		$scope = 'esi-alliances.read_contacts.v1';
+		$expire_date =  time()+19*60;
+		$expire_date = date("Y-m-d H:i:s", $expire_date);
+		$contacts_token = citadeldb_custom_get('contacts_token');
+		if (!isset($contacts_token)) {
+			$token_data = citadeldb_token_get($_SESSION['user_id'], $scope);
+			if ($token_data == null) {
+				citadeldb_token_add($_SESSION['user_id'], $accessToken, $refreshToken, $scope, $expire_date);
+				citadeldb_custom_add('contacts_token', $_SESSION['user_id']);
+			} else {
+				citadeldb_token_updatefull($_SESSION['user_id'], $accessToken, $refreshToken, $scope, $expire_date);
+			}
+		}
+		return $response->withRedirect('/dashboard');
 	} else {
 		return $response->withRedirect('/login');
 	}
@@ -218,7 +262,7 @@ $app->get('/discord/deactivate', function (Request $request, Response $response)
 		'guild.id' => (int)$config['discord']['guildID'],
 		'user.id' => (int)$_SESSION['discord_id']
 	]);
-	discordUsersDelete($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $_SESSION['user_id']);
+	discord_users_delete($_SESSION['user_id']);
 	
 	unset($_SESSION['discord_id']);
 
@@ -257,7 +301,7 @@ $app->get('/discord/callback', function (Request $request, Response $response) u
 		foreach ($config['auth']['groups'] as $group) {
 			if ($_SESSION['char_data']['alliance_id'] == $group['id']) {
 				$invite = $user->acceptInvite($config["discord"]["inviteLink"]);
-				discordUsersInsert($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $_SESSION['user_id'], $discordID);
+				discord_users_add($_SESSION['user_id'], $discordID);
 				if ($group['setCorpRole']) {
 					$corp_role_name = "".$_SESSION['corp_data']['ticker']." Corporation";
 					$corp_role = null;
@@ -314,8 +358,8 @@ $app->get('/teamspeak/activate', function (Request $request, Response $response)
 	if (!isset($_SESSION['character_id'])) {
 		return $response->withRedirect('/dashboard');
 	}
-	$char_info = characterGetDetails($_SESSION['character_id']);
-	$corp_info = corporationGetDetails($char_info['corporation_id']);
+	$char_info = esi_character_get_details($_SESSION['character_id']);
+	$corp_info = esi_corporation_get_details($char_info['corporation_id']);
 	foreach ($config['auth']['groups'] as $group) {
 		if ($corp_info['alliance_id'] == $group['id']) {
 			$role = $group['role'];
@@ -327,7 +371,7 @@ $app->get('/teamspeak/activate', function (Request $request, Response $response)
 		$group_id = TSGroupAdd($role);
 	}
 	$ts_user = TSAddUser($_SESSION['character_id'], $char_info['name'], $group_id);
-	teamspeakUsersInsert($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $_SESSION['user_id'], $ts_user['token']);
+	teamspeak_users_add($_SESSION['user_id'], $ts_user['token']);
 
     return $response->withRedirect('/dashboard');
 });
@@ -338,9 +382,9 @@ $app->get('/teamspeak/deactivate', function (Request $request, Response $respons
 		return $response->withRedirect('/dashboard');
 	}
 
-	$ts_user = teamspeakUsersSelect($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $_SESSION['user_id']);
+	$ts_user = teamspeak_users_select($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $_SESSION['user_id']);
     TSDelUser($_SESSION['character_id'], $ts_user['teamspeak_token']);
-	teamspeakUsersDelete($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $_SESSION['user_id']);
+	teamspeak_users_delete($_SESSION['user_id']);
 	unset($_SESSION['teamspeak_data']);
 
     return $response->withRedirect('/dashboard');
