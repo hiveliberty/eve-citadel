@@ -20,7 +20,43 @@ function citadeldb_users_add($character_id) {
 
 function citadeldb_users_set_admin($character_id) {
     $conn = db_conn();
-	$sql = "UPDATE `citadel_users` SET is_admin = '1' WHERE character_id = '$character_id';";
+	$sql = "UPDATE `citadel_users` SET is_admin = 1 WHERE character_id = '$character_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_users_unset_admin($character_id) {
+    $conn = db_conn();
+	$sql = "UPDATE `citadel_users` SET is_admin = 0 WHERE character_id = '$character_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_users_set_active($character_id) {
+    $conn = db_conn();
+	$sql = "UPDATE `citadel_users` SET is_active = 1 WHERE character_id = '$character_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_users_unset_active($character_id) {
+    $conn = db_conn();
+	$sql = "UPDATE `citadel_users` SET is_active = 0 WHERE character_id = '$character_id';";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -36,6 +72,30 @@ function citadeldb_users_select($character_id) {
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
 	if (isset($result['id'])) {
+		return $result;
+	} else {
+		return null;
+	}
+}
+
+function citadeldb_users_getall() {
+    $conn = db_conn();
+    $sql = "SELECT * FROM `citadel_users`;";
+    $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+	$conn->close();
+	if (isset($result)) {
+		return $result;
+	} else {
+		return null;
+	}
+}
+
+function citadeldb_users_getall_active() {
+    $conn = db_conn();
+    $sql = "SELECT * FROM `citadel_users` WHERE is_active = 1;";
+    $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+	$conn->close();
+	if (isset($result)) {
 		return $result;
 	} else {
 		return null;
@@ -128,6 +188,18 @@ function citadeldb_session_get($id) {
 	}
 }
 
+function citadeldb_session_getall() {
+    $conn = db_conn();
+    $sql = "SELECT * FROM `citadel_session_keys`;";
+    $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+	$conn->close();
+	if (isset($result)) {
+		return $result;
+	} else {
+		return null;
+	}
+}
+
 function citadeldb_session_get_id($key) {
     $conn = db_conn();
     $sql = "SELECT user_id FROM `citadel_session_keys` WHERE session_key = '$key' LIMIT 1;";
@@ -167,6 +239,8 @@ function citadeldb_session_keycheck($key) {
 // Functions for work with `eve_alliance_info`
 function citadeldb_alliance_info_add($alliance_id, $name, $ticker) {
     $conn = db_conn();
+	$name = $conn->real_escape_string($name);
+	$ticker = $conn->real_escape_string($ticker);
     $sql = "INSERT INTO `eve_alliance_info` (id, name, ticker) VALUES ('$alliance_id', '$name', '$ticker');";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
@@ -203,15 +277,15 @@ function citadeldb_alliance_info_getall() {
 
 function citadeldb_alliance_info_getblue_ids() {
     $conn = db_conn();
-    $sql = "SELECT * FROM `eve_alliance_info`;";
+    $sql = "SELECT * FROM `eve_alliance_info` WHERE blue = 1;";
     $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
 	$conn->close();
 	if (isset($result)) {
 		$alliance_ids = array();
 		foreach ($result as $alliance) {
-			if ($alliance['blue'] == 1) {
+			//if ($alliance['blue'] == 1) {
 				$alliance_ids[] = $alliance['id'];
-			}
+			//}
 		}
 		return $alliance_ids;
 	} else {
@@ -247,11 +321,14 @@ function citadeldb_alliance_info_unset_blue($alliance_id) {
 // Functions for work with `eve_corporation_info`
 function citadeldb_corporation_info_add($corporation_id, $name, $ticker) {
     $conn = db_conn();
+	$name = $conn->real_escape_string($name);
+	$ticker = $conn->real_escape_string($ticker);
     $sql = "INSERT INTO `eve_corporation_info` (id, name, ticker) VALUES ('$corporation_id', '$name', '$ticker');";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
     } else {
+		printf("Errormessage: %s\n", $conn->error);
 		$conn->close();
         return null;
     }
@@ -306,6 +383,22 @@ function citadeldb_corporation_info_get_alliance($alliance_id) {
 	$conn->close();
 	if (isset($result)) {
 		return $result;
+	} else {
+		return null;
+	}
+}
+
+function citadeldb_corporation_info_getalliance_ids($alliance_id) {
+    $conn = db_conn();
+    $sql = "SELECT * FROM `eve_corporation_info` WHERE alliance_id = '$alliance_id';";
+    $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+	$conn->close();
+	if (isset($result)) {
+		$corporation_ids = array();
+		foreach ($result as $corporation) {
+			$corporation_ids[] = $corporation['id'];
+		}
+		return $corporation_ids;
 	} else {
 		return null;
 	}
@@ -366,6 +459,7 @@ function citadeldb_corporation_info_unset_blue($corporation_id) {
 // Functions for work with `eve_character_info`
 function citadeldb_character_info_add($character_id, $name) {
     $conn = db_conn();
+	$name = $conn->real_escape_string($name);
     $sql = "INSERT INTO `eve_character_info` (id, name) VALUES ('$character_id', '$name');";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();

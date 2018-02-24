@@ -49,3 +49,30 @@ function auth_addmember($character_id, $character_data, $admins) {
 		citadeldb_users_set_admin($character_id);
 	}
 }
+
+function check_user($user) {
+	$character_id = $user['character_id'];
+	$character_cache = citadeldb_character_info_get($character_id);
+	$character_esi = esi_character_get_details($character_id);
+	
+	if ($character_cache['corporation_id'] != $character_esi['corporation_id']) {
+		$corporation_cache = citadeldb_corporation_info_get($character_esi['corporation_id']);
+		if ($corporation_cache == NULL) {
+			citadeldb_character_info_unset_corp($character_id);
+		} else {
+			citadeldb_character_info_set_corp($character_id, $character_esi['corporation_id']);
+		}
+	}
+	if ($character_cache['alliance_id'] != $character_esi['alliance_id']) {
+		if ($character_esi['alliance_id'] = 1) {
+			citadeldb_character_info_unset_alliance($character_id);
+		} else {
+			$alliance_cache = citadeldb_alliance_info_get($alliance_id);
+			if ($alliance_cache == NULL) {
+				citadeldb_character_info_unset_alliance($character_id);
+			} else {
+				citadeldb_character_info_set_alliance($character_id, $character_esi['alliance_id']);
+			}
+		}
+	}
+}

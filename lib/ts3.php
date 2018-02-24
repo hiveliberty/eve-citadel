@@ -3,10 +3,7 @@
 
 require_once(__DIR__ . '/../lib/vendor/ts3admin.class.php');
 
-$ts3_config = require __DIR__ . '/../config/ts3.php';
-
-function TSGroupListGet()
-{
+function ts3_group_list_get() {
 	try {
 		$ts3_config = require __DIR__ . '/../config/ts3.php';
 		$ts3_client = new ts3admin($ts3_config['url'], $ts3_config['query_port']);
@@ -30,8 +27,7 @@ function TSGroupListGet()
     }
 }
 
-function TSGroupGetByName($name)
-{
+function ts3_group_get_byname($name) {
 	try {
 		$ts3_config = require __DIR__ . '/../config/ts3.php';
 		$ts3_client = new ts3admin($ts3_config['url'], $ts3_config['query_port']);
@@ -56,16 +52,15 @@ function TSGroupGetByName($name)
 }
 
 //function TSGroupAdd($name, $permissions)
-function TSGroupAdd($name)
-{
+function ts3_group_add($name) {
 	try {
 		$ts3_config = require __DIR__ . '/../config/ts3.php';
 		$ts3_client = new ts3admin($ts3_config['url'], $ts3_config['query_port']);
 		if($ts3_client->getElement('success', $ts3_client->connect())) {
 			$permissions = array();
 			$permissions['i_group_needed_modify_power'] = array('75', '0', '0');
-			$permissions['i_group_needed_member_add_power'] = array('75', '0', '0');
-			$permissions['i_group_needed_member_remove_power'] = array('75', '0', '0');
+			$permissions['i_group_needed_member_add_power'] = array('100', '0', '0');
+			$permissions['i_group_needed_member_remove_power'] = array('100', '0', '0');
 
 			$ts3_client->login($ts3_config['user'], $ts3_config['pass']);
 			$ts3_client->selectServer($ts3_config['port']);
@@ -82,19 +77,18 @@ function TSGroupAdd($name)
     }
 }
 
-function TSAddUser($char_id, $char_name, $group_id)
-{
+function ts3_user_add($char_id, $char_name, $group_id) {
 	try {
 		$ts3_config = require __DIR__ . '/../config/ts3.php';
 		$ts3_client = new ts3admin($ts3_config['url'], $ts3_config['query_port']);
 		if($ts3_client->getElement('success', $ts3_client->connect())) {
-			$customFieldSet = array();
-			$customFieldSet['character_id'] = $char_id;
-			
+			$custom_field = array();
+			$custom_field['character_id'] = $char_id;
+
 			$ts3_client->login($ts3_config['user'], $ts3_config['pass']);
 			$ts3_client->selectServer($ts3_config['port']);
 
-			$user_data = $ts3_client->privilegekeyAdd(0, $group_id, 0, 'Auth token for '.$char_name, $customFieldSet);
+			$user_data = $ts3_client->privilegekeyAdd(0, $group_id, 0, 'Auth token for '.$char_name, $custom_field);
 			$ts3_client->quit();
 
 			return $user_data['data'];
@@ -105,8 +99,45 @@ function TSAddUser($char_id, $char_name, $group_id)
     }
 }
 
-function TSDelUser($char_id, $token)
-{
+function ts3_user_get_id($char_id) {
+	try {
+		$ts3_config = require __DIR__ . '/../config/ts3.php';
+		$ts3_client = new ts3admin($ts3_config['url'], $ts3_config['query_port']);
+		if($ts3_client->getElement('success', $ts3_client->connect())) {
+			$ts3_client->login($ts3_config['user'], $ts3_config['pass']);
+			$ts3_client->selectServer($ts3_config['port']);
+
+			$custom_field = $ts3_client->customSearch('character_id', $char_id);
+			$cldbid = $custom_field['data'][0]['cldbid'];
+
+			return $cldbid;
+		}
+    }
+	catch(Exception $e) {
+		return null;
+    }
+}
+
+function ts3_user_get_grouplist($cldbid) {
+	try {
+		$ts3_config = require __DIR__ . '/../config/ts3.php';
+		$ts3_client = new ts3admin($ts3_config['url'], $ts3_config['query_port']);
+		if($ts3_client->getElement('success', $ts3_client->connect())) {
+			$ts3_client->login($ts3_config['user'], $ts3_config['pass']);
+			$ts3_client->selectServer($ts3_config['port']);
+			
+			$client_groups = $ts3_client->serverGroupsByClientID($cldbid);
+			$client_groups = $client_groups['data'];
+
+			return $client_groups;
+		}
+    }
+	catch(Exception $e) {
+		return null;
+    }
+}
+
+function ts3_user_del($char_id, $token) {
 	try {
 		$ts3_config = require __DIR__ . '/../config/ts3.php';
 		$ts3_client = new ts3admin($ts3_config['url'], $ts3_config['query_port']);
@@ -116,8 +147,8 @@ function TSDelUser($char_id, $token)
 			$ts3_client->login($ts3_config['user'], $ts3_config['pass']);
 			$ts3_client->selectServer($ts3_config['port']);
 
-			$customfield = $ts3_client->customSearch('character_id', $char_id);
-			$cldbid = $customfield['data'][0]['cldbid'];
+			$custom_field = $ts3_client->customSearch('character_id', $char_id);
+			$cldbid = $custom_field['data'][0]['cldbid'];
 
 			$clientlist = $ts3_client->clientList();
 			$clientlist = $clientlist['data'];

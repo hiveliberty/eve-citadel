@@ -77,13 +77,13 @@ $app->get('/logout', function (Request $request, Response $response, $args) use 
 	session_unset();
 
     return $response->withRedirect('/');
+
 });
 
-$app->get('/dashboard', function (Request $request, Response $response, $args) use ($config) {
+$app->get('/dashboard', function (Request $request, Response $response) use ($config) {
 
 	$cookie = FigRequestCookies::get($request, 'session_key');
 	$session_key = $cookie->getValue();
-	$this->logger->info("Dashboard: session_key is ".$session_key);
 
 	if (isset($session_key)) {
 		if (citadeldb_session_keycheck($session_key)) {
@@ -142,7 +142,7 @@ $app->get('/dashboard', function (Request $request, Response $response, $args) u
 				'discord_url' => $discord_url,
 				'teamspeak_url' => $config['ts3_url'],
 				'teamspeak_nick' => $teamspeak_nick,
-				'teamspeak_token' => $_SESSION['teamspeak_data']['teamspeak_token'],
+				'teamspeak_token' => $_SESSION['teamspeak_data']['token'],
 				'character_name' => $_SESSION['character_info']['name'],
 				'corporation_name' => $_SESSION['corporation_info']['name'],
 				'alliance_name' => $alliance_name,
@@ -151,6 +151,7 @@ $app->get('/dashboard', function (Request $request, Response $response, $args) u
 			$response = $this->renderer->render($response, 'footer.phtml');
 
 			return $response;
+
 		} else {
 			return $response->withRedirect('/login');
 		}
@@ -164,6 +165,7 @@ $app->get('/dashboard/refresh', function (Request $request, Response $response) 
 	session_unset();
 
     return $response->withRedirect('/dashboard');
+
 });
 
 //$app->get('/eveonline/callback', function (Request $request, Response $response, $args) use ($config) {
@@ -206,7 +208,7 @@ $app->get('/callback-sso', function (Request $request, Response $response) use (
 
 			$citadel_session = citadeldb_session_get($user['id']);
 			if (isset($citadel_session['session_key'])) {
-				if (strtotime($citadel_session['expire']) <= time()) {
+				if (strtotime($citadel_session['expire_date']) <= time()) {
 					citadeldb_session_delete($citadel_session['session_key']);
 				}
 			}
@@ -220,7 +222,6 @@ $app->get('/callback-sso', function (Request $request, Response $response) use (
 				//->withMaxAge($expire)
 				//->rememberForever()
 			);
-			$this->logger->info("EVE-Callback: session_key is ".$session_key);
 
 			citadeldb_session_add($user['id'], $session_key, $expire_timestamp);
 
@@ -230,7 +231,7 @@ $app->get('/callback-sso', function (Request $request, Response $response) use (
 
 			//$url = $this->router->pathFor('dashboard',[], $user);
 			//return $response->withRedirect($url);
-			return $response->withRedirect('/dashboard');
+			return $response->withRedirect('/dashboard/refresh');
 		} else {
 			return $response->withRedirect('/login');
 		}
@@ -249,7 +250,7 @@ $app->get('/callback-sso', function (Request $request, Response $response) use (
 			}
 		}
 		unset($_SESSION['eve_state']);
-		return $response->withRedirect('/dashboard');
+		return $response->withRedirect('/dashboard/refresh');
 	} else {
 		return $response->withRedirect('/login');
 	}
@@ -270,7 +271,7 @@ $app->get('/discord/deactivate', function (Request $request, Response $response)
 	
 	unset($_SESSION['discord_id']);
 
-    return $response->withRedirect('/dashboard');
+    return $response->withRedirect('/dashboard/refresh');
 });
 
 $app->get('/discord/callback', function (Request $request, Response $response) use ($config) {
@@ -369,7 +370,7 @@ $app->get('/discord/callback', function (Request $request, Response $response) u
 			
 			unset($_SESSION['discord_state']);
 
-			return $response->withRedirect('/dashboard');
+			return $response->withRedirect('/dashboard/refresh');
 		} else {
 			return $response->withRedirect('/dashboard/refresh');
 		}
@@ -381,39 +382,45 @@ $app->get('/discord/callback', function (Request $request, Response $response) u
 
 $app->get('/teamspeak/activate', function (Request $request, Response $response) use ($config) {
 
-	if (!isset($_SESSION['character_id'])) {
-		return $response->withRedirect('/dashboard');
-	}
-	$char_info = esi_character_get_details($_SESSION['character_id']);
-	$corp_info = esi_corporation_get_details($char_info['corporation_id']);
-	foreach ($config['auth']['groups'] as $group) {
-		if ($corp_info['alliance_id'] == $group['id']) {
-			$role = $group['role'];
-			break;
-		}
-	}
-	$group_id = TSGroupGetByName($role);
-	if ($group_id == null) {
-		$group_id = TSGroupAdd($role);
-	}
-	$ts_user = TSAddUser($_SESSION['character_id'], $char_info['name'], $group_id);
-	teamspeak_users_add($_SESSION['user_id'], $ts_user['token']);
+	if (isset($_SESSION['character_info']) && isset($_SESSION['corporation_info'])) {
+		$corporation_id = $_SESSION['character_info']['corporation_id'];
+		$alliance_id = $_SESSION['character_info']['alliance_id'];
 
-    return $response->withRedirect('/dashboard');
+		if (auth_check_member($alliance_id, $corporation_id)) {
+			$auth_role = $config['auth']['role_member'];
+		} elseif (auth_check_blue($alliance_id, $corporation_id)) {
+			$auth_role = $config['auth']['role_blue'];
+		} else {
+			return $response->withRedirect('/fuckedup');
+		}
+
+		$auth_role_id = ts3_group_get_byname($auth_role);
+		if ($auth_role_id == null) {
+			$auth_role_id = ts3_group_add($auth_role);
+		}
+
+		$ts_user = ts3_user_add($_SESSION['character_id'], $char_info['name'], $auth_role_id);
+		teamspeak_users_add($_SESSION['user_id'], $ts_user['token']);
+
+		return $response->withRedirect('/dashboard/refresh');
+
+	} else {
+		return $response->withRedirect('/dashboard/refresh');
+	}
 });
 
 $app->get('/teamspeak/deactivate', function (Request $request, Response $response) use ($config) {
 
 	if (!isset($_SESSION['character_id'])) {
-		return $response->withRedirect('/dashboard');
+		return $response->withRedirect('/dashboard/refresh');
 	}
 
-	$ts_user = teamspeak_users_select($config["db"]["url"], $config["db"]["user"], $config["db"]["pass"], $config["db"]["dbname"], $_SESSION['user_id']);
-    TSDelUser($_SESSION['character_id'], $ts_user['teamspeak_token']);
+	$ts_user = teamspeak_users_select($_SESSION['user_id']);
+    ts3_user_del($_SESSION['character_id'], $ts_user['teamspeak_token']);
 	teamspeak_users_delete($_SESSION['user_id']);
 	unset($_SESSION['teamspeak_data']);
 
-    return $response->withRedirect('/dashboard');
+    return $response->withRedirect('/dashboard/refresh');
 });
 
 $app->get('/phpbb3/activate', function (Request $request, Response $response) use ($config) {
