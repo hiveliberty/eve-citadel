@@ -1,53 +1,135 @@
 -- SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 -- SET time_zone = "+00:00";
 
-CREATE TABLE IF NOT EXISTS `citadel_users` (
-	`id` int(11) NOT NULL AUTO_INCREMENT,
-	`character_id` varchar(128) NOT NULL,
-	`is_admin` tinyint(1) NOT NULL DEFAULT 0,
-	`added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (`id`),
-	UNIQUE KEY `character_id_unique` (`character_id`)
+CREATE TABLE IF NOT EXISTS `custom_storage` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `custom_key` varchar(191) NOT NULL,
+  `custom_value` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `custom_key_unique` (`custom_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `discord_queue_message` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `channel_id` varchar(64) NOT NULL,
+  `message` varchar(2048) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `citadel_groups` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`name` varchar(128) NOT NULL,
-	`discord_enabled` varchar(10) NOT NULL DEFAULT 'no',
-	`teamspeak_enabled` varchar(10) NOT NULL DEFAULT 'no',
-	`phpbb3_enabled` varchar(10) NOT NULL DEFAULT 'no',
+	`discord_enabled` varchar(5) NOT NULL DEFAULT 'no',
+	`teamspeak_enabled` varchar(5) NOT NULL DEFAULT 'no',
+	`phpbb3_enabled` varchar(5) NOT NULL DEFAULT 'no',
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `group_name_unique` (`group_name`)
+	UNIQUE KEY `group_name_unique` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `citadel_users_group` (
+CREATE TABLE IF NOT EXISTS `eve_alliance_info` (
+	`id` int(11) NOT NULL,
+	`name` varchar(50) NOT NULL,
+	`ticker` varchar(10) NOT NULL,
+	`blue` tinyint(1) NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `eve_corporation_info` (
+	`id` int(11) NOT NULL,
+	`name` varchar(50) NOT NULL,
+	`ticker` varchar(10) NOT NULL,
+	`blue` tinyint(1) NOT NULL DEFAULT 0,
+	`alliance_id` int(11) NULL,
+	PRIMARY KEY (`id`),
+	INDEX `ix_alliance_id` (`alliance_id` ASC),
+	CONSTRAINT `fk_corporations_info&alliance_info`
+		FOREIGN KEY (`alliance_id`)
+		REFERENCES `eve_alliance_info` (`id`)
+		ON DELETE SET NULL
+		ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `eve_character_info` (
+	`id` int(11) NOT NULL,
+	`name` varchar(128) NOT NULL,
+	`corporation_id` int(11) NULL,
+	`alliance_id` int(11) NULL,
+	PRIMARY KEY (`id`),
+	INDEX `ix_corporation_id` (`corporation_id` ASC),
+	CONSTRAINT `fk_character_info&corporations_info`
+		FOREIGN KEY (`corporation_id`)
+		REFERENCES `eve_corporation_info` (`id`)
+		ON DELETE SET NULL
+		ON UPDATE SET NULL,
+	INDEX `ix_alliance_id` (`alliance_id` ASC),
+	CONSTRAINT `fk_character_info&alliance_info`
+		FOREIGN KEY (`alliance_id`)
+		REFERENCES `eve_alliance_info` (`id`)
+		ON DELETE SET NULL
+		ON UPDATE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `citadel_users` (
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`character_id` int(11) NOT NULL,
+	`is_active` tinyint(1) NOT NULL DEFAULT 1,
+	`is_admin` tinyint(1) NOT NULL DEFAULT 0,
+	`added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (`id`),
+	INDEX `ix_character_id` (`character_id` ASC),
+	CONSTRAINT `fk_citadel_users&character_info`
+		FOREIGN KEY (`character_id`)
+		REFERENCES `eve_character_info` (`id`)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE IF NOT EXISTS `citadel_user_groups` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`user_id` int(11) NOT NULL,
 	`group_id` int(11) NOT NULL,
 	PRIMARY KEY (`id`),
-	INDEX `fk_citadel_users_group_citadel_users_idx` (`user_id` ASC),
-	CONSTRAINT `fk_citadel_users_group_citadel_users_idx`
+	INDEX `ix_user_id` (`user_id` ASC),
+	CONSTRAINT `fk_citadel_users_group&citadel_users`
 		FOREIGN KEY (`user_id`)
 		REFERENCES `citadel_users` (`id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-	INDEX `fk_citadel_users_group_citadel_groups_idx` (`group_id` ASC),
-	CONSTRAINT `fk_citadel_users_group_citadel_groups_idx`
+	INDEX `ix_group_id` (`group_id` ASC),
+	CONSTRAINT `fk_citadel_users_group&citadel_groups`
 		FOREIGN KEY (`group_id`)
 		REFERENCES `citadel_groups` (`id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `citadel_session` (
+CREATE TABLE IF NOT EXISTS `citadel_session_keys` (
 	`user_id` int(11) NOT NULL,
-	`session_key` varchar(40) NULL,
-	`expire` timestamp NULL,
+	`session_key` varchar(40) NOT NULL,
+	`expire_date` timestamp NOT NULL,
 	PRIMARY KEY (`session_key`),
-	INDEX `fk_citadel_session_users_idx` (`user_id` ASC),
-	CONSTRAINT `fk_citadel_session_users_idx`
+	INDEX `ix_user_id` (`user_id` ASC),
+	CONSTRAINT `fk_citadel_session_keys&citadel_users`
 		FOREIGN KEY (`user_id`)
 		REFERENCES `citadel_users` (`id`)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `esi_tokens` (
+	`character_id` int(11) NOT NULL,
+	`token_access` varchar(255) NULL,
+	`token_refresh` varchar(255) NULL,
+	`scope_name` varchar(255) NULL,
+	`expire_date` timestamp NULL DEFAULT NULL,
+	`update_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+		ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (`character_id`),
+	INDEX `ix_character_id` (`character_id` ASC),
+	CONSTRAINT `fk_esi_tokens&citadel_users`
+		FOREIGN KEY (`character_id`)
+		REFERENCES `eve_character_info` (`id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -56,8 +138,9 @@ CREATE TABLE IF NOT EXISTS `discord_users` (
 	`user_id` int(11) NOT NULL,
 	`discord_id` varchar(30) NULL,
 	PRIMARY KEY (`user_id`),
-	INDEX `fk_discord_users_citadel_users_idx` (`user_id` ASC),
-	CONSTRAINT `fk_discord_users_citadel_users_idx`
+	UNIQUE KEY `discord_id_unique` (`discord_id`),
+	INDEX `ix_user_id` (`user_id` ASC),
+	CONSTRAINT `fk_discord_users&citadel_users`
 		FOREIGN KEY (`user_id`)
 		REFERENCES `citadel_users` (`id`)
 		ON DELETE CASCADE
@@ -68,8 +151,8 @@ CREATE TABLE IF NOT EXISTS `teamspeak_users` (
 	`user_id` int(11) NOT NULL,
 	`token` varchar(50) NULL,
 	PRIMARY KEY (`user_id`),
-	INDEX `fk_teamspeak_users_citadel_users_idx` (`user_id` ASC),
-	CONSTRAINT `fk_teamspeak_users_citadel_users_idx`
+	INDEX `ix_user_id` (`user_id` ASC),
+	CONSTRAINT `fk_teamspeak_users&citadel_users`
 		FOREIGN KEY (`user_id`)
 		REFERENCES `citadel_users` (`id`)
 		ON DELETE CASCADE
@@ -81,88 +164,11 @@ CREATE TABLE IF NOT EXISTS `phpbb3_users` (
 	`username` varchar(50) NULL,
 	`password` varchar(50) NULL,
 	PRIMARY KEY (`user_id`),
-	INDEX `fk_phpbb3_users_citadel_users_idx` (`user_id` ASC),
-	CONSTRAINT `fk_phpbb3_users_citadel_users_idx`
+	UNIQUE KEY `username_unique` (`username`),
+	INDEX `ix_user_id` (`user_id` ASC),
+	CONSTRAINT `fk_phpbb3_users&citadel_users`
 		FOREIGN KEY (`user_id`)
 		REFERENCES `citadel_users` (`id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `citadel_cache_alliances` (
-	`id` int(11) NOT NULL,
-	`name` varchar(50) NOT NULL,
-	`ticker` varchar(10) NOT NULL,
-	`member` varchar(10) NOT NULL DEFAULT 'no',
-	`blue` varchar(10) NOT NULL DEFAULT 'no',
-	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `citadel_cache_corporations` (
-	`id` int(11) NOT NULL,
-	`name` varchar(50) NOT NULL,
-	`ticker` varchar(10) NOT NULL,
-	`member` varchar(10) NOT NULL DEFAULT 'no',
-	`blue` varchar(10) NOT NULL DEFAULT 'no',
-	`alliance_id` int(11) NULL,
-	PRIMARY KEY (`id`),
-	INDEX `fk_alliances_cache_corporations_cache_idx` (`alliance_id` ASC),
-	CONSTRAINT `fk_alliances_cache_corporations_cache_idx`
-		FOREIGN KEY (`alliance_id`)
-		REFERENCES `citadel_cache_alliances` (`id`)
-		ON DELETE SET NULL
-		ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `citadel_cache_characters` (
-	`user_id` int(11) NOT NULL,
-	`name` varchar(128) NOT NULL,
-	`member` varchar(10) NOT NULL DEFAULT 'no',
-	`blue` varchar(10) NOT NULL DEFAULT 'no',
-	`corporation_id` int(11) NULL,
-	PRIMARY KEY (`user_id`),
-	INDEX `fk_characters_cache_citadel_users_idx` (`user_id` ASC),
-	CONSTRAINT `fk_characters_cache_citadel_users_idx`
-		FOREIGN KEY (`user_id`)
-		REFERENCES `citadel_users` (`id`)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,
-	INDEX `fk_corporations_cache_characters_cache_idx` (`corporation_id` ASC),
-	CONSTRAINT `fk_corporations_cache_characters_cache_idx`
-		FOREIGN KEY (`corporation_id`)
-		REFERENCES `citadel_cache_corporations` (`id`)
-		ON DELETE SET NULL
-		ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `citadel_esi_tokens` (
-	`user_id` int(11) NOT NULL,
-	`token_access` varchar(255) NULL,
-	`token_refresh` varchar(255) NULL,
-	`scope` varchar(255) NULL,
-	`updated` timestamp NULL DEFAULT NULL,
-	`added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-		ON UPDATE CURRENT_TIMESTAMP,
-	PRIMARY KEY (`user_id`),
-	INDEX `fk_citadel_tokens_storage_citadel_users_idx` (`user_id` ASC),
-	CONSTRAINT `fk_citadel_tokens_storage_citadel_users_idx`
-		FOREIGN KEY (`user_id`)
-		REFERENCES `citadel_users` (`id`)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `citadel_custom` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `custom_key` varchar(191) NOT NULL,
-  `custom_value` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `custom_key_unique` (`custom_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `broadsword_queue_message` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `channel_id` varchar(64) NOT NULL,
-  `message` varchar(2048) NOT NULL,
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

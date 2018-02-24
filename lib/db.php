@@ -1,18 +1,14 @@
 <?php
-// Some custom lib
-
-
-
 function db_conn() {
 	$db_config = require __DIR__ . '/../config/db.php';
     $conn = new mysqli($db_config['url'], $db_config['user'], $db_config['pass'], $db_config['dbname']);
 	return $conn;
 }
 
-//function citadelUsersAdd($db, $user, $pass, $dbName, $characterID)
-function citadeldb_users_add($characterID) {
+// Functions for work with `citadel_users`
+function citadeldb_users_add($character_id) {
     $conn = db_conn();
-    $sql = "INSERT INTO `citadel_users` SET character_id = '$characterID';";
+    $sql = "INSERT INTO `citadel_users` SET character_id = '$character_id';";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -22,9 +18,9 @@ function citadeldb_users_add($characterID) {
     }
 }
 
-function citadeldb_users_add_admin($characterID) {
+function citadeldb_users_set_admin($character_id) {
     $conn = db_conn();
-	$sql = "INSERT INTO `citadel_users` (character_id, is_admin) VALUES ('$characterID', '1');";
+	$sql = "UPDATE `citadel_users` SET is_admin = '1' WHERE character_id = '$character_id';";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -34,12 +30,16 @@ function citadeldb_users_add_admin($characterID) {
     }
 }
 
-function citadeldb_users_select($characterID) {
+function citadeldb_users_select($character_id) {
     $conn = db_conn();
-    $sql = "SELECT id,character_id FROM `citadel_users` WHERE character_id = '$characterID' LIMIT 1;";
+    $sql = "SELECT id,character_id,is_active,is_admin FROM `citadel_users` WHERE character_id = '$character_id' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
-	return $result;
+	if (isset($result['id'])) {
+		return $result;
+	} else {
+		return null;
+	}
 }
 
 function citadeldb_users_select_id($id) {
@@ -54,7 +54,7 @@ function citadeldb_users_select_id($id) {
 	}
 }
 
-function citadeldb_users_check_admin($id) {
+function citadeldb_users_admincheck($id) {
     $conn = db_conn();
     $sql = "SELECT is_admin FROM `citadel_users` WHERE id = '$id' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
@@ -66,11 +66,23 @@ function citadeldb_users_check_admin($id) {
 	}
 }
 
-
-// Session functions
-function citadeldb_session_add($user_id, $session_key, $expire) {
+function citadeldb_users_check($character_id) {
     $conn = db_conn();
-    $sql = "INSERT INTO `citadel_session` (user_id, session_key, expire) VALUES ('$user_id', '$session_key', '$expire');";
+    $sql = "SELECT * FROM `citadel_users` WHERE character_id = '$character_id' LIMIT 1;";
+    $result = $conn->query($sql)->fetch_assoc();
+	$conn->close();
+	if (isset($result['id'])) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+// Functions for work with `citadel_session_keys`
+function citadeldb_session_add($user_id, $session_key, $expire_date) {
+    $conn = db_conn();
+    $sql = "INSERT INTO `citadel_session_keys` (user_id, session_key, expire_date) VALUES ('$user_id', '$session_key', '$expire_date');";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -82,7 +94,7 @@ function citadeldb_session_add($user_id, $session_key, $expire) {
 
 function citadeldb_session_update($user_id, $session_key) {
     $conn = db_conn();
-    $sql = "UPDATE `citadel_session` SET session_key = '$session_key' WHERE user_id = '$user_id';";
+    $sql = "UPDATE `citadel_session_keys` SET session_key = '$session_key' WHERE user_id = '$user_id';";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -94,7 +106,7 @@ function citadeldb_session_update($user_id, $session_key) {
 
 function citadeldb_session_delete($key) {
     $conn = db_conn();
-    $sql = "DELETE FROM `citadel_session` WHERE session_key = '$key';";
+    $sql = "DELETE FROM `citadel_session_keys` WHERE session_key = '$key';";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -106,7 +118,7 @@ function citadeldb_session_delete($key) {
 
 function citadeldb_session_get($id) {
     $conn = db_conn();
-    $sql = "SELECT * FROM `citadel_session` WHERE user_id = '$id' LIMIT 1;";
+    $sql = "SELECT * FROM `citadel_session_keys` WHERE user_id = '$id' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
 	if (isset($result)) {
@@ -118,7 +130,7 @@ function citadeldb_session_get($id) {
 
 function citadeldb_session_get_id($key) {
     $conn = db_conn();
-    $sql = "SELECT user_id FROM `citadel_session` WHERE session_key = '$key' LIMIT 1;";
+    $sql = "SELECT user_id FROM `citadel_session_keys` WHERE session_key = '$key' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
 	if (isset($result['user_id'])) {
@@ -130,7 +142,7 @@ function citadeldb_session_get_id($key) {
 
 function citadeldb_session_get_key($id) {
     $conn = db_conn();
-    $sql = "SELECT session_key FROM `citadel_session` WHERE user_id = '$id' LIMIT 1;";
+    $sql = "SELECT session_key FROM `citadel_session_keys` WHERE user_id = '$id' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
 	if (isset($result['session_key'])) {
@@ -140,22 +152,34 @@ function citadeldb_session_get_key($id) {
 	}
 }
 
-function citadeldb_session_check_key($key) {
+function citadeldb_session_keycheck($key) {
     $conn = db_conn();
-    $sql = "SELECT session_key FROM `citadel_session` WHERE session_key = '$key' LIMIT 1;";
+    $sql = "SELECT user_id,session_key FROM `citadel_session_keys` WHERE session_key = '$key' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
-	if (isset($result['session_key'])) {
+	if (isset($result['user_id'])) {
 		return true;
 	} else {
 		return false;
 	}
 }
 
-// Cache functions
-function citadeldb_cache_alliance_get($id) {
+// Functions for work with `eve_alliance_info`
+function citadeldb_alliance_info_add($alliance_id, $name, $ticker) {
     $conn = db_conn();
-    $sql = "SELECT * FROM `citadel_cache_alliances` WHERE user_id = '$id' LIMIT 1;";
+    $sql = "INSERT INTO `eve_alliance_info` (id, name, ticker) VALUES ('$alliance_id', '$name', '$ticker');";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_alliance_info_get($alliance_id) {
+    $conn = db_conn();
+    $sql = "SELECT * FROM `eve_alliance_info` WHERE id = '$alliance_id' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
 	if (isset($result)) {
@@ -165,9 +189,77 @@ function citadeldb_cache_alliance_get($id) {
 	}
 }
 
-function citadeldb_cache_character_get($id) {
+function citadeldb_alliance_info_getall() {
     $conn = db_conn();
-    $sql = "SELECT * FROM `citadel_cache_characters` WHERE user_id = '$id' LIMIT 1;";
+    $sql = "SELECT * FROM `eve_alliance_info`;";
+    $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+	$conn->close();
+	if (isset($result)) {
+		return $result;
+	} else {
+		return null;
+	}
+}
+
+function citadeldb_alliance_info_getblue_ids() {
+    $conn = db_conn();
+    $sql = "SELECT * FROM `eve_alliance_info`;";
+    $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+	$conn->close();
+	if (isset($result)) {
+		$alliance_ids = array();
+		foreach ($result as $alliance) {
+			if ($alliance['blue'] == 1) {
+				$alliance_ids[] = $alliance['id'];
+			}
+		}
+		return $alliance_ids;
+	} else {
+		return null;
+	}
+}
+
+function citadeldb_alliance_info_set_blue($alliance_id) {
+    $conn = db_conn();
+    $sql = "UPDATE `eve_alliance_info` SET blue = '1' WHERE id = '$alliance_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_alliance_info_unset_blue($alliance_id) {
+    $conn = db_conn();
+    $sql = "UPDATE `eve_alliance_info` SET blue = '0' WHERE id = '$alliance_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+
+// Functions for work with `eve_corporation_info`
+function citadeldb_corporation_info_add($corporation_id, $name, $ticker) {
+    $conn = db_conn();
+    $sql = "INSERT INTO `eve_corporation_info` (id, name, ticker) VALUES ('$corporation_id', '$name', '$ticker');";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_corporation_info_get($corporation_id) {
+    $conn = db_conn();
+    $sql = "SELECT * FROM `eve_corporation_info` WHERE id = '$corporation_id' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
 	if (isset($result)) {
@@ -177,9 +269,128 @@ function citadeldb_cache_character_get($id) {
 	}
 }
 
-function citadeldb_cache_corporation_get($id) {
+function citadeldb_corporation_info_getall() {
     $conn = db_conn();
-    $sql = "SELECT * FROM `citadel_cache_corporations` WHERE user_id = '$id' LIMIT 1;";
+    $sql = "SELECT * FROM `eve_corporation_info`;";
+    $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+	$conn->close();
+	if (isset($result)) {
+		return $result;
+	} else {
+		return null;
+	}
+}
+
+function citadeldb_corporation_info_getblue_ids() {
+    $conn = db_conn();
+    $sql = "SELECT * FROM `eve_corporation_info`;";
+    $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+	$conn->close();
+	if (isset($result)) {
+		$corporation_ids = array();
+		foreach ($result as $corporation) {
+			if ($corporation['blue'] == 1) {
+				$corporation_ids[] = $corporation['id'];
+			}
+		}
+		return $corporation_ids;
+	} else {
+		return null;
+	}
+}
+
+function citadeldb_corporation_info_get_alliance($alliance_id) {
+    $conn = db_conn();
+    $sql = "SELECT * FROM `eve_corporation_info` WHERE alliance_id = '$alliance_id';";
+    $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+	$conn->close();
+	if (isset($result)) {
+		return $result;
+	} else {
+		return null;
+	}
+}
+
+function citadeldb_corporation_info_set_alliance($corporation_id, $alliance_id) {
+    $conn = db_conn();
+	if ($alliance_id == 1) {
+		$alliance_id = NULL;
+	}
+    $sql = "UPDATE `eve_corporation_info` SET alliance_id = '$alliance_id' WHERE id = '$corporation_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_corporation_info_unset_alliance($corporation_id) {
+    $conn = db_conn();
+    $sql = "UPDATE `eve_corporation_info` SET alliance_id = 'NULL' WHERE id = '$corporation_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_corporation_info_set_blue($corporation_id) {
+    $conn = db_conn();
+    $sql = "UPDATE `eve_corporation_info` SET blue = '1' WHERE id = '$corporation_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_corporation_info_unset_blue($corporation_id) {
+    $conn = db_conn();
+    $sql = "UPDATE `eve_corporation_info` SET blue = '0' WHERE id = '$corporation_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+
+// Functions for work with `eve_character_info`
+function citadeldb_character_info_add($character_id, $name) {
+    $conn = db_conn();
+    $sql = "INSERT INTO `eve_character_info` (id, name) VALUES ('$character_id', '$name');";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_character_info_addfull($character_id, $name, $corporation_id, $alliance_id) {
+    $conn = db_conn();
+    $sql = "INSERT INTO `eve_character_info` (id, name, corporation_id, alliance_id) VALUES ('$character_id', '$name', '$corporation_id', '$alliance_id');";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_character_info_get($character_id) {
+    $conn = db_conn();
+    $sql = "SELECT * FROM `eve_character_info` WHERE id = '$character_id' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
 	if (isset($result)) {
@@ -189,58 +400,21 @@ function citadeldb_cache_corporation_get($id) {
 	}
 }
 
-// Storage Tokens Functions
-function citadeldb_token_add($user_id, $token_access, $token_refresh, $scope, $updated) {
+function citadeldb_character_info_getall() {
     $conn = db_conn();
-    $sql = "INSERT INTO `citadel_esi_tokens` (user_id, token_access, token_refresh, scope, updated) VALUES ('$user_id', '$token_access', '$token_refresh', '$scope', '$updated');";
-    if ($conn->query($sql) === TRUE) {
-		$conn->close();
-        return null;
-    } else {
-		$conn->close();
-        return null;
-    }
-}
-
-function citadeldb_token_update($user_id, $token_access, $scope, $updated) {
-    $conn = db_conn();
-	$sql = "UPDATE `citadel_esi_tokens` SET token_access = '$token_access', updated = '$updated' WHERE user_id = '$user_id' AND scope = '$scope';";
-    if ($conn->query($sql) === TRUE) {
-		$conn->close();
-        return null;
-    } else {
-		$conn->close();
-        return null;
-    }
-}
-
-function citadeldb_token_updatefull($user_id, $token_access, $token_refresh, $scope, $updated) {
-    $conn = db_conn();
-	$sql = "UPDATE `citadel_esi_tokens` SET token_access = '$token_access', token_refresh = '$token_refresh', updated = '$updated' WHERE user_id = '$user_id' AND scope = '$scope';";
-    if ($conn->query($sql) === TRUE) {
-		$conn->close();
-        return null;
-    } else {
-		$conn->close();
-        return null;
-    }
-}
-
-function citadeldb_token_get($user_id, $scope) {
-    $conn = db_conn();
-	$sql = "SELECT token_access, token_refresh, updated FROM `citadel_esi_tokens` WHERE user_id = '$user_id' AND scope = '$scope' LIMIT 1;";
-    $result = $conn->query($sql)->fetch_assoc();
+    $sql = "SELECT * FROM `eve_character_info`;";
+    $result = $conn->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
 	$conn->close();
-	if (isset($result['token_access']) && isset($result['token_refresh'])) {
+	if (isset($result)) {
 		return $result;
 	} else {
 		return null;
 	}
 }
 
-function citadeldb_token_del($user_id, $scope) {
+function citadeldb_character_info_set_corp($character_id, $corporation_id) {
     $conn = db_conn();
-	$sql = "DELETE FROM `citadel_esi_tokens` WHERE user_id = '$user_id' AND scope = '$scope';";
+    $sql = "UPDATE `eve_character_info` SET corporation_id = '$corporation_id' WHERE id = '$character_id';";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -250,10 +424,112 @@ function citadeldb_token_del($user_id, $scope) {
     }
 }
 
-// Storage Custom Functions
+function citadeldb_character_info_unset_corp($character_id) {
+    $conn = db_conn();
+    $sql = "UPDATE `eve_character_info` SET corporation_id = 'NULL' WHERE id = '$character_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_character_info_set_alliance($character_id, $alliance_id) {
+    $conn = db_conn();
+    $sql = "UPDATE `eve_character_info` SET alliance_id = '$alliance_id' WHERE id = '$character_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_character_info_unset_alliance($character_id) {
+    $conn = db_conn();
+    $sql = "UPDATE `eve_character_info` SET alliance_id = 'NULL' WHERE id = '$character_id';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+
+// Functions for work with `esi_tokens`
+function citadeldb_token_add($character_id, $access_token, $refresh_token, $scope, $expire_date) {
+    $conn = db_conn();
+    $sql = "INSERT INTO `esi_tokens` (character_id, access_token, refresh_token, scope_name, expire_date)
+			VALUES ('$character_id', '$access_token', '$refresh_token', '$scope', '$expire_date');";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_token_update($character_id, $access_token, $scope, $expire_date) {
+    $conn = db_conn();
+	$sql = "UPDATE `esi_tokens` SET access_token = '$access_token', expire_date = '$expire_date'
+			WHERE character_id = '$character_id' AND scope_name = '$scope';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_token_updatefull($character_id, $access_token, $refresh_token, $scope, $expire_date) {
+    $conn = db_conn();
+	$sql = "UPDATE `esi_tokens` SET access_token = '$access_token', refresh_token = '$refresh_token', expire_date = '$expire_date'
+			WHERE character_id = '$character_id' AND scope_name = '$scope';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+function citadeldb_token_get($character_id, $scope) {
+    $conn = db_conn();
+	$sql = "SELECT access_token, refresh_token, expire_date FROM `esi_tokens`
+			WHERE character_id = '$character_id' AND scope_name = '$scope' LIMIT 1;";
+    $result = $conn->query($sql)->fetch_assoc();
+	$conn->close();
+	if (isset($result['access_token']) && isset($result['refresh_token'])) {
+		return $result;
+	} else {
+		return null;
+	}
+}
+
+function citadeldb_token_del($character_id, $scope) {
+    $conn = db_conn();
+	$sql = "DELETE FROM `esi_tokens` WHERE character_id = '$character_id' AND scope_name = '$scope';";
+    if ($conn->query($sql) === TRUE) {
+		$conn->close();
+        return null;
+    } else {
+		$conn->close();
+        return null;
+    }
+}
+
+// Functions for work with `custom_storage`
 function citadeldb_custom_add($custom_key, $custom_value) {
     $conn = db_conn();
-    $sql = "INSERT INTO `citadel_custom` (custom_key, custom_value) VALUES ('$custom_key', '$custom_value');";
+    $sql = "INSERT INTO `custom_storage` (custom_key, custom_value) VALUES ('$custom_key', '$custom_value');";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -265,7 +541,7 @@ function citadeldb_custom_add($custom_key, $custom_value) {
 
 function citadeldb_custom_update($custom_key, $custom_value) {
     $conn = db_conn();
-	$sql = "UPDATE `citadel_custom` SET custom_value = '$custom_value' WHERE custom_key = '$custom_key';";
+	$sql = "UPDATE `custom_storage` SET custom_value = '$custom_value' WHERE custom_key = '$custom_key';";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -277,7 +553,7 @@ function citadeldb_custom_update($custom_key, $custom_value) {
 
 function citadeldb_custom_get($custom_key) {
     $conn = db_conn();
-	$sql = "SELECT custom_value FROM `citadel_custom` WHERE custom_key = '$custom_key' LIMIT 1;";
+	$sql = "SELECT custom_value FROM `custom_storage` WHERE custom_key = '$custom_key' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
 	if (isset($result['custom_value'])) {
@@ -289,7 +565,7 @@ function citadeldb_custom_get($custom_key) {
 
 function citadeldb_custom_del($custom_key) {
     $conn = db_conn();
-	$sql = "DELETE FROM `citadel_custom` WHERE custom_key = '$custom_key';";
+	$sql = "DELETE FROM `custom_storage` WHERE custom_key = '$custom_key';";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -340,7 +616,7 @@ function discord_users_delete($user_id) {
 // TeamSpeakDB Functions
 function teamspeak_users_add($user_id, $token) {
     $conn = db_conn();
-	$sql = "INSERT INTO `teamspeak_users` (user_id, teamspeak_token) VALUES ('$user_id', '$token');";
+	$sql = "INSERT INTO `teamspeak_users` (user_id, token) VALUES ('$user_id', '$token');";
     if ($conn->query($sql) === TRUE) {
 		$conn->close();
         return null;
@@ -352,10 +628,10 @@ function teamspeak_users_add($user_id, $token) {
 
 function teamspeak_users_select($user_id) {
     $conn = db_conn();
-    $sql = "SELECT teamspeak_uid,teamspeak_token FROM `teamspeak_users` WHERE user_id = '$user_id' LIMIT 1;";
+    $sql = "SELECT * FROM `teamspeak_users` WHERE user_id = '$user_id' LIMIT 1;";
     $result = $conn->query($sql)->fetch_assoc();
 	$conn->close();
-	if (isset($result['teamspeak_token'])) {
+	if (isset($result['token'])) {
 		return $result;
 	} else {
 		return null;

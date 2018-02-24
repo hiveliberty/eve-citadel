@@ -30,7 +30,7 @@
 							<p style="text-align:center">
 								Discord Service:
 								<div class="l-services-buttons-box">
-									<?php if ($discord_auth_state == "no") : ?>
+									<?php if ($discord_authorized == "no") : ?>
 										<a href="<?= $discord_url; ?>" class="menu-button">Активировать</a>
 									<?php else: ?>
 										<a href="http://portal.bsod.space/discord/deactivate" class="menu-button">Деактивировать</a>
@@ -99,8 +99,8 @@
 						</div>
 						<div>
 							<p style="text-align:left">
-								Your main char is: <?= $char_name; ?><br>
-								Your Corporation: <?= $corp_name; ?><br>
+								Your main char is: <?= $character_name; ?><br>
+								Your Corporation: <?= $corporation_name; ?><br>
 								Your Alliance: <?= $alliance_name; ?><br>
 							</p>
 						</div>
