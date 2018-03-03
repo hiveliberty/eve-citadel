@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `citadel_groups` (
 	`teamspeak_enabled` tinyint(1) NOT NULL DEFAULT 0,
 	`phpbb3_enabled` tinyint(1) NOT NULL DEFAULT 0,
 	`discord_hoist` tinyint(1) NOT NULL DEFAULT 0,
-	`discord_color` int(11) NOT NULL DEFAULT 0,
+	`color` int(11) NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `group_name_unique` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
