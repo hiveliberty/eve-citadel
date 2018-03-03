@@ -9,6 +9,15 @@ CREATE TABLE IF NOT EXISTS `custom_storage` (
   UNIQUE KEY `custom_key_unique` (`custom_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `config_storage` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `config_type` varchar(30) NOT NULL,
+  `config_key` varchar(100) NOT NULL,
+  `config_value` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `config_key_unique` (`config_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `discord_queue_message` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `channel_id` varchar(64) NOT NULL,
@@ -19,9 +28,11 @@ CREATE TABLE IF NOT EXISTS `discord_queue_message` (
 CREATE TABLE IF NOT EXISTS `citadel_groups` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`name` varchar(128) NOT NULL,
-	`discord_enabled` varchar(5) NOT NULL DEFAULT 'no',
-	`teamspeak_enabled` varchar(5) NOT NULL DEFAULT 'no',
-	`phpbb3_enabled` varchar(5) NOT NULL DEFAULT 'no',
+	`discord_enabled` tinyint(1) NOT NULL DEFAULT 0,
+	`teamspeak_enabled` tinyint(1) NOT NULL DEFAULT 0,
+	`phpbb3_enabled` tinyint(1) NOT NULL DEFAULT 0,
+	`discord_hoist` tinyint(1) NOT NULL DEFAULT 0,
+	`discord_color` int(11) NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `group_name_unique` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -84,7 +95,6 @@ CREATE TABLE IF NOT EXISTS `citadel_users` (
 		ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
 CREATE TABLE IF NOT EXISTS `citadel_user_groups` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`user_id` int(11) NOT NULL,
@@ -119,8 +129,8 @@ CREATE TABLE IF NOT EXISTS `citadel_session_keys` (
 
 CREATE TABLE IF NOT EXISTS `esi_tokens` (
 	`character_id` int(11) NOT NULL,
-	`token_access` varchar(255) NULL,
-	`token_refresh` varchar(255) NULL,
+	`access_token` varchar(255) NULL,
+	`refresh_token` varchar(255) NULL,
 	`scope_name` varchar(255) NULL,
 	`expire_date` timestamp NULL DEFAULT NULL,
 	`update_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP

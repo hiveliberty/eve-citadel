@@ -1,0 +1,55 @@
+		<!-- <link rel="stylesheet" type="text/css" href="assets/css/authorized_style.css"> -->
+    </head>
+
+    <body>
+
+		<div class="l-grid-dashboard content-width">
+
+			<div id="dashboard_header" class="l-grid-header color-header">
+			</div>
+
+			<div id="dashboard_menu" class="l-grid-menu color-menu">
+				<div class="menu-button-position">
+					<a href="http://portal.bsod.space/" class="menu-button">Главная</a>
+				</div>
+				<div class="menu-button-position">
+					<a href="http://portal.bsod.space/dashboard/refresh" class="menu-button">Обновить</a>
+				</div>
+				<div class="menu-button-position">
+					<a href="http://portal.bsod.space/logout" class="menu-button">Выход</a>
+				</div>
+			</div>
+
+			<div id="dashboard_main" class="l-grid-main color-main color-dashboard-services">
+
+				<div id="dashboard_content" class="l-grid-dashboard-services">
+
+					<div class="l-dashboard-services color-main">
+
+						<div>
+							<p style="text-align:center">
+								phpBB3 Username:
+								<div class="l-services-buttons-box">
+									<?= $phpbb3_username; ?>
+								</div>
+							</p>
+							<p style="text-align:center">
+								phpBB3 Password:
+								<div class="l-services-buttons-box">
+									<?= $phpbb3_password; ?>
+								</div>
+							</p>
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<div id="dashboard_footer" class="l-grid-footer color-footer">
+			</div>
+
+		</div>
+
+    </body>
