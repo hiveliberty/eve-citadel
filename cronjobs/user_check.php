@@ -19,7 +19,7 @@ $db_client = new citadelDB();
 $auth_manager = new AuthManager($db_client);
 $esi_client = new ESIClient();
 if (!$esi_client->is_online()) {
-	die("[".date("Y-m-d H:i:s", time())."] EVE ESI not online");
+	die("[".date("Y-m-d H:i:s", time())."] EVE ESI not online\n");
 }
 if ($config['services']['ts3_enabled']) {
 	$ts_client = new ts3client();
@@ -36,6 +36,15 @@ foreach(array_chunk($users, 5, true) as $users_chunk) {
 	foreach ($users_chunk as $user) {
 		$character_id = $user['character_id'];
 		$character_esi = $esi_client->character_get_details($character_id);
+
+		if (isset($character_esi['corporation_id'])) {
+			if (!isset($character_esi['alliance_id'])) {
+				continue;
+			}
+		} else {
+			continue;
+		}
+
 		$character_cache = $db_client->character_info_get($character_id);
 		$alliance_esi_id = $character_esi['alliance_id'];
 		$alliance_cached_id = $character_cache['alliance_id'];
@@ -61,7 +70,7 @@ foreach(array_chunk($users, 5, true) as $users_chunk) {
 			$auth_manager->auth_role_check($user['id'], false);
 			$auth_manager->corp_role_check($user['id'], $group_old, $group_new, false);
 		} else {
-			print_r("Now user {$character_esi['name']} is not member or blue. Delete all roles.");
+			print_r("[".date("Y-m-d H:i:s", time())."] Now user {$character_esi['name']} is not member or blue. Delete all roles.\n");
 
 			if ($config['services']['ts3_enabled']) {
 				$ts_token = $db_client->teamspeak_get_token($user['id']);

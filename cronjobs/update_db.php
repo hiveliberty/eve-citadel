@@ -27,7 +27,7 @@ if ($member_id != null) {
 
 	$esi_client = new ESIClient("tranquility", $access_token);
 	if (!$esi_client->is_online()) {
-		die("[".date("Y-m-d H:i:s", time())."] EVE ESI not online");
+		die("[".date("Y-m-d H:i:s", time())."] EVE ESI not online\n");
 	}
 
 	print_r("[".date("Y-m-d H:i:s", time())."] Checking owner alliance.\n");

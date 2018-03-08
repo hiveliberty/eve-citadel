@@ -33,7 +33,7 @@ class ESIClient {
     function __destruct() {
         curl_close($this->curl);
     }
-	
+
 	function request($url) {
 		try {
 			$esi_request = self::BASE_URL . $url;
@@ -42,7 +42,17 @@ class ESIClient {
 			$result = curl_exec($this->curl);
 			$result = json_decode($result, TRUE);
 
-			return $result;
+			$response = curl_getinfo($this->curl);
+
+			if (isset($response['http_code'])) {
+				if ($response['http_code'] == 200) {
+					return $result;
+				} else {
+					return null;
+				}
+			} else {
+				return null;
+			}
 		}
 		catch(Exception $e) {
 			return null;
@@ -89,8 +99,8 @@ class ESIClient {
 	public function character_get_details($id) {
 		$url = "/v4/characters/{$id}/?datasource={$this->datasource}";
 		$response = $this->request($url);
-		if (!isset($response['alliance_id'])) {
-			$response['alliance_id'] = 1;
+		if ($response != null && !isset($response['alliance_id'])) {
+			$response['alliance_id'] = null;
 		}
 		return $response;
 	}
