@@ -1,3 +1,3 @@
-[Readme English](https://github.com/hiveliberty/eve-citadel/README_EN.md)<br>
+[Readme English](https://github.com/hiveliberty/eve-citadel/blob/master/README_EN.md)<br>
 
-[Readme Russian](https://github.com/hiveliberty/eve-citadel//README_RU.md)
+[Readme Russian](https://github.com/hiveliberty/eve-citadel/blob/master/README_RU.md)
