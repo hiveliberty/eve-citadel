@@ -1,3 +1,8 @@
-[Readme English](https://github.com/hiveliberty/eve-citadel/README_EN.md)<br>
+## Based on EVE Online SSO, centralized authentication system for services like Discord, TeamSpeak3 and forum-engine phpBB3.
+<br>
 
-[Readme Russian](https://github.com/hiveliberty/eve-citadel//README_RU.md)
+## Централизованный портал авторизации для Discord, TeamSpeak3 и форумного движка phpBB3, использующая EVE Online SSO.
+<br>
+
+<br>
+Read wiki for more info.

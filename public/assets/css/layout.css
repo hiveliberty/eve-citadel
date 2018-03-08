@@ -85,40 +85,80 @@
 	margin: 2px auto 2px;
 	padding: 10px 0px 20px 0px;
 	width: 360px;
+	border: 1px dotted transparent;
+	transition: .5s;
 }
-.l-services-buttons-box {
-	display: grid;
+.l-dashboard-service-box:hover {
+	border: 1px dotted rgb(255,246,73,0.5);
+}
+.l-dashboard-service-name {
 	margin: auto;
-	max-width: 80%;
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+.l-services-buttons-box {
+	display: block;
+	margin: auto;
+	width: 320px;
+	height: 40px;
+}
+.l-services-buttons-box:not(:first-child) {
+  margin-top: 6px;
+}
+
+.l-phpbb3-box {
+	margin: auto;
+	width: 320px;
+}
+.l-phpbb3-box:not(:last-child) {
+	margin-top: 10px;
+	margin-bottom: 10px;	
+}
+.l-phpbb3-login-box {
+	width: 100%;
+	height: 30px;
+	padding-top: 4px;
 }
 
 .l-index {
 	margin: auto;
-	width: 300px;
+	width: 360px;
 }
 .l-index-box-logo {
-	margin: auto;
-	max-width: 256px;
-	align-content: center;
-	justify-content: center;
-}
-.l-index-box-buttons {
-	margin-top: 40px;
+	margin-bottom: 40px;
 	margin-left: auto;
 	margin-right: auto;
-	padding: 2px 0px 5px 0px;
 	width: 256px;
-	transition: .4s;
+	height: 256px;
+	transition: .5s;
 }
 @media screen and (min-width: 476px) {
-	.l-index-box-buttons {
-		margin: 60px auto 0px;
+	.l-index-box-logo {
+		margin-bottom: 60px;
 	}
 }
 @media screen and (min-width: 768px) {
-	.l-index-box-buttons {
-		margin: 100px auto 0px;
+	.l-index-box-logo {
+		margin-bottom: 100px;
 	}
+}
+.l-index-box-buttons {
+	margin: auto;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	width: 300px;
+}
+
+.l-login-box {
+	margin: auto;
+	width: 100%;
+}
+.l-login-button {
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 300px;
 }
 
 .l-header {
@@ -127,11 +167,12 @@
 }
 .l-footer {
 	margin: auto;
-	padding-top: 10px;
+	padding-top: 15px;
 	padding-bottom: 4px;
 	font-size: 12px;
 	text-align: center;
 	width: 360px;
+	height: 100%;
 }
 
 .l-box-avatar {

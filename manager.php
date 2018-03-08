@@ -127,10 +127,14 @@ if (isset($argv[1])) {
 			break;
 
 		case 'test':
-			$color = 0;
-			$color = dechex($color);
-			$color = mb_strtoupper($color, 'UTF-8');
-			var_dump($color);
+			//$color = 0;
+			//$color = dechex($color);
+			//$color = mb_strtoupper($color, 'UTF-8');
+			//var_dump($color);
+			$esi = new ESIClient("tranquility");
+			var_dump($esi->character_get_details($argv[2]));
+			//$sync = new SyncManager();
+			//$sync->user_groups();
 			break;
 
 		default:

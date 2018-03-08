@@ -146,6 +146,7 @@ class SyncManager {
 					if (isset($discord_role_names[$citadel_group['name']])) {
 						if (in_array($discord_role_names[$citadel_group['name']],$discord_user_roles)) {
 							$this->discord->user_role_del($discord_id, $discord_role_names[$citadel_group['name']]);
+							usleep(5000000);
 						}
 					}
 				}
@@ -155,6 +156,7 @@ class SyncManager {
 						if (in_array($discord_role_names[$citadel_group['name']],$discord_user_roles)) {
 							if (!in_array($citadel_group['id'],$user_groups)) {
 								$this->discord->user_role_del($discord_id, $discord_role_names[$citadel_group['name']]);
+								usleep(5000000);
 							}
 						}
 					}
@@ -165,10 +167,12 @@ class SyncManager {
 					if ($group['discord_enabled']) {
 						if (!in_array($discord_role_names[$group['name']],$discord_user_roles)) {
 							$this->discord->user_role_add($discord_id, $discord_role_names[$group['name']]);
+							usleep(5000000);
 						}
 					} else {
 						if (in_array($discord_role_names[$group['name']],$discord_user_roles)) {
 							$this->discord->user_role_del($discord_id, $discord_role_names[$group['name']]);
+							usleep(5000000);
 						}
 					}
 				}

@@ -99,7 +99,7 @@ class AuthManager {
 		$character_cache = $this->db->character_info_get($character_id);
 
 		if ($character_cache == null) {
-			if ($character_esi['alliance_id'] != 1) {
+			if ($character_esi['alliance_id'] != null) {
 				$this->db->character_info_addfull($character_id, $character_esi['name'], $character_esi['corporation_id'], $character_esi['alliance_id']);
 			} else {
 				$this->db->character_info_add($character_id, $character_esi['name']);
