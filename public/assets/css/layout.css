@@ -1,0 +1,150 @@
+.content-width {
+	margin: auto;
+	/**position: relative;**/
+	max-width: 100%;
+	transition: .4s;
+	align-content: center;
+}
+@media screen and (min-width: 768px) {
+	.content-width {
+		margin: 10px auto;
+		/** max-width: 95%; **/
+	}
+}
+@media screen and (min-width: 1280px) {
+	.content-width {
+		margin: 15px auto;
+		max-width: 95%;
+	}
+}
+@media screen and (min-width: 1280px) {
+	.content-width {
+		margin: 20px auto;
+		max-width: 90%;
+	}
+}
+@media screen and (min-width: 1408px) {
+	.content-width {
+		margin: 25px auto;
+		max-width: 85%;
+	}
+}
+@media screen and (min-width: 1536px) {
+	.content-width {
+		margin: 30px auto;
+		max-width: 80%;
+	}
+}
+@media screen and (min-width: 1920px) {
+	.content-width {
+		margin: 35px auto;
+		max-width: 75%;
+	}
+}
+@media screen and (min-width: 3840px) {
+	.content-width {
+		margin: 40px auto;
+		max-width: 70%;
+	}
+}
+
+.l-grid-dashboard {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto auto 60px;
+	grid-row-gap: 4px;
+	grid-column-gap: 4px;
+	grid-template-areas:
+		'header'
+		'content'
+		'footer';
+	transition: .4s;
+}
+@media screen and (min-width: 476px) {
+	.l-grid-dashboard {
+		grid-template-columns: 1fr 400px 1fr;
+		grid-template-rows: 60px auto 60px;
+		grid-template-areas:
+			'header header header'
+			'content content content'
+			'footer footer footer';
+	}
+}
+
+.l-grid-area-header {
+	grid-area: header;
+}
+.l-grid-area-footer {
+	grid-area: footer;
+}
+.l-grid-area-content {
+	grid-area: content;
+}
+
+.l-dashboard-service-box {
+	margin: 2px auto 2px;
+	padding: 10px 0px 20px 0px;
+	width: 360px;
+}
+.l-services-buttons-box {
+	display: grid;
+	margin: auto;
+	max-width: 80%;
+}
+
+.l-index {
+	margin: auto;
+	width: 300px;
+}
+.l-index-box-logo {
+	margin: auto;
+	max-width: 256px;
+	align-content: center;
+	justify-content: center;
+}
+.l-index-box-buttons {
+	margin-top: 40px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 2px 0px 5px 0px;
+	width: 256px;
+	transition: .4s;
+}
+@media screen and (min-width: 476px) {
+	.l-index-box-buttons {
+		margin: 60px auto 0px;
+	}
+}
+@media screen and (min-width: 768px) {
+	.l-index-box-buttons {
+		margin: 100px auto 0px;
+	}
+}
+
+.l-header {
+	margin: auto;
+	width: 360px;
+}
+.l-footer {
+	margin: auto;
+	padding-top: 10px;
+	padding-bottom: 4px;
+	font-size: 12px;
+	text-align: center;
+	width: 360px;
+}
+
+.l-box-avatar {
+	width: 60px;
+	height: 60px;
+	margin: 0;
+	padding: 0;
+	z-index: -1;
+}
+.l-box-logininfo {
+	width: 100%;
+	height: auto;
+	margin: 0;
+	padding: 0px 0px 0px 0px;
+	text-align: center;
+}

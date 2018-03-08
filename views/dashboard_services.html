@@ -1,0 +1,68 @@
+{% extends "dashboard_layout.html" %}
+
+{% block dashboard_main %}
+					<div class="display-block">
+
+						{% if discord_enabled %}
+							<div class="l-dashboard-service-box color-index-background">
+								<p style="text-align:center">
+									Discord Service:
+								</p>
+								<div class="l-services-buttons-box">
+									{% if not discord_authorized %}
+										<a href="{{discord_url}}" class="button service-button">Активировать</a>
+									{% else %}
+										<a href="{{portal_config['portal_url']}}/discord/deactivate" class="button service-button">Деактивировать</a>
+									{% endif %}
+								</div>
+							</div>
+						{% endif %}
+
+						{% if ts3_enabled %}
+							<div class="l-dashboard-service-box color-index-background">
+								<p style="text-align:center">
+									TeamSpeak3 Service:
+								</p>
+								<div class="l-services-buttons-box">
+									{% if ts3_token == null %}
+										<a href="{{portal_config['portal_url']}}/teamspeak/activate" class="button service-button">Активировать</a>
+									{% else %}
+										<a href="{{portal_config['portal_url']}}/teamspeak/deactivate" class="button service-button">Деактивировать</a>
+									{% endif %}
+								</div>
+								{% if ts3_token != null %}
+									<div class="l-services-buttons-box">
+											<a href="ts3server://{{ts3_url}}?token={{ts3_token}}&nickname={{ts3_nick}}" class="button service-button">Войти в TS3</a>
+									</div>
+								{% endif %}
+							</div>
+						{% endif %}
+
+						{% if phpbb3_enabled %}
+							<div class="l-dashboard-service-box color-index-background">
+								<p style="text-align:center">
+									Forum Service:
+								</p>
+								<div class="l-services-buttons-box">
+									{% if phpbb3_username == null %}
+										<a href="{{portal_config['portal_url']}}/phpbb3/activate" class="button service-button">Активировать</a>
+									{% else %}
+										<a href="{{portal_config['portal_url']}}/phpbb3/deactivate" class="button service-button">Деактивировать</a>
+									{% endif %}
+								</div>
+							</div>
+						{% endif %}
+
+						{% if is_admin %}
+							<div class="l-dashboard-service-box color-index-background">
+								<p style="text-align:center">
+									Add custom tokens:
+								</p>
+								<div class="l-services-buttons-box">
+									<a href="{{portal_config['portal_url']}}/login/contacts" class="button service-button">Add Contacts Token</a>
+								</div>
+							</div>
+						{% endif %}
+
+					</div>
+{% endblock dashboard_main %}

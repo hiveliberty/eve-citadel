@@ -1,0 +1,29 @@
+{% extends "dashboard_layout.html" %}
+
+{% block dashboard_main %}
+					<div class="display-block">
+						<div class="l-dashboard-service-box color-index-background">
+
+							<div>
+								<div class="login-phpbb3">
+									Save your login-password before leaving this page!
+								</div>
+
+								<p style="text-align:center">
+									phpBB3 Username:
+								</p>
+								<div class="l-services-buttons-box login-phpbb3 border-dotted">
+									{{phpbb3_username}}
+								</div>
+
+								<p style="text-align:center">
+									phpBB3 Password:
+								</p>
+								<div class="l-services-buttons-box login-phpbb3 border-dotted">
+									{{phpbb3_password}}
+								</div>
+							</div>
+
+						</div>
+					</div>
+{% endblock dashboard_main %}
