@@ -56,30 +56,30 @@ img, embed, object, video {
 	height: auto;
 }
 
-.div-align-top {
-	vertical-align: top;
+.text--center {
+	text-align: center;
 }
-.centered {
-	margin: auto;
+.text--bold {
+	font-weight: bold;
 }
-.border-dotted {
-	border: 1px dotted rgb(255,246,73,0.2);
-}
-.login-phpbb3 {
-	text-align:center;
+.text--color-yello {
 	color: rgb(255,246,73,1.0);
 }
 
-.display-grid {
+.vertical-align--top {
+	vertical-align: top;
+}
+
+.display--grid {
 	display: grid;
 }
-.display-subgrid {
+.display--subgrid {
 	display: subgrid;
 }
-.display-block {
+.display--block {
 	display: block;
 }
-.display-inline-block {
+.display--inline-block {
 	display: inline-block;
 }
 
@@ -98,15 +98,8 @@ img, embed, object, video {
 .border-yellow {
 	border: 1px solid yellow;
 }
-
-.color-header {
-	color: #ff0000;
-	/**background-color: #1e3c52;**/
-}
-
-.color-nav {
-	color: #ffff00;
-	/**background-color: #1e3c52;**/
+.border-dotted {
+	border: 1px dotted rgb(255,246,73,0.2);
 }
 
 .color-main {

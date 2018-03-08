@@ -48,7 +48,26 @@ class ESIClient {
 			return null;
 		}
 	}
-	
+
+	public function is_online() {
+		$status = $this->status();
+		if (isset($status) && isset($status['players'])) {
+			if ($status['players'] == null && (int)$status['players'] < 100) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	public function status() {
+		$url = "/v1/status/?datasource={$this->datasource}";
+		$response = $this->request($url);
+		return $response;
+	}
+
 	public function alliance_get_contacts($id) {
 		$url = "/v1/alliances/{$id}/contacts/?datasource={$this->datasource}&token={$this->token}";
 		$response = $this->request($url);

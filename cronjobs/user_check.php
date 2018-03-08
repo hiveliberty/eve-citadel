@@ -18,6 +18,9 @@ require_once(__DIR__ . '/../lib/discord.class.php');
 $db_client = new citadelDB();
 $auth_manager = new AuthManager($db_client);
 $esi_client = new ESIClient();
+if (!$esi_client->is_online()) {
+	die("[".date("Y-m-d H:i:s", time())."] EVE ESI not online");
+}
 if ($config['services']['ts3_enabled']) {
 	$ts_client = new ts3client();
 }

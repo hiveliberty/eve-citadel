@@ -10,13 +10,26 @@
 	float: left;
 	width: 60px;
 	height: 60px;
-	border: 1px dotted rgb(255,246,73,0.2);
+	border: 1px dotted rgb(255,246,73,0.1);
+	transition: .5s;
 }
-.nav-box-logininfo {
-	width: 100%;
-	height: auto;
+.nav-box-avatar:hover {
+	/**background: rgb(40,60,24,0.9);**/
+	border: 1px dotted rgb(255,246,73,0.22);
+}
+
+.nav-box-charname {
+	width: 240px;
+	height: 60px;
+	padding-top: 17px;
+	padding-left: 4px;
+	font-size: 20px;
 	text-align: center;
-	border: 1px solid rgb(255,246,73,0.2);
+	border: 1px dotted rgb(255,246,73,0.1);
+	transition: .5s;
+}
+.nav-box-charname:hover {
+	border: 1px dotted rgb(255,246,73,0.22);
 }
 
 .nav-button {
@@ -47,7 +60,7 @@
 .dropdown {
 	float: right;
     position: relative;
-	width: 160px;
+	width: 60px;
 	height: 60px;
 	font-size: 1.9em;
 	padding: 0px;
@@ -64,8 +77,8 @@
 .dropdown-content {
     display: none;
     position: absolute;
-    /**right: 0;
-    background-color: #f9f9f9;**/
+    right: 0;
+    /**background-color: #f9f9f9;**/
 	/**background: rgb(82,92,74,0.9);**/
 	background: rgb(68,66,27,0.97);
 	font-size: 0.5em;

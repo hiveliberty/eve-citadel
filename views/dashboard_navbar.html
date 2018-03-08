@@ -1,17 +1,20 @@
 					<div class="l-header">
-						<div class="nav-box-avatar display-inline-block">
+						<div class="nav-box-avatar display--inline-block">
 							{% if character_id != null %}
 								<picture>
 									<img src="https://imageserver.eveonline.com/Character/{{character_id}}_256.jpg" alt="avatar">
 								</picture>
 							{% endif %}
 						</div>
-						<div id="navbar-menu" class="dropdown display-inline-block">
-							<div class="nav-button">menu</div>
+						<div class="nav-box-charname display--inline-block color-index-background-2">
+							{{character_name}}
+						</div>
+						<div id="navbar-menu" class="dropdown display--inline-block">
+							<div class="nav-button">m</div>
 							<div class="dropdown-content">
-								<div class="nav-box-logininfo display-inline-block">
+								<!--<div class="nav-box-logininfo display-inline-block">
 									You are logged as:<br>{{character_name}}
-								</div>
+								</div>-->
 								<a href="{{portal_config['portal_url']}}">main</a>
 								<a href="{{portal_config['portal_url']}}/dashboard">dashboard</a>
 								<a href="{{portal_config['forum_url']}}">forum</a>

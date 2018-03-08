@@ -16,6 +16,7 @@ require_once(__DIR__ . '/../lib/esi.class.php');
 $db_client = new citadelDB();
 $eveinfo_manager = new EveInfoManager($db_client);
 $member_id = $db_client->custom_get("member_id");
+
 if ($member_id != null) {
 	$contacts_token = $db_client->custom_get('contacts_token');
 	if ($contacts_token != null) {
@@ -25,6 +26,9 @@ if ($member_id != null) {
 	}
 
 	$esi_client = new ESIClient("tranquility", $access_token);
+	if (!$esi_client->is_online()) {
+		die("[".date("Y-m-d H:i:s", time())."] EVE ESI not online");
+	}
 
 	print_r("[".date("Y-m-d H:i:s", time())."] Checking owner alliance.\n");
 	$eveinfo_manager->check_alliance($member_id);
