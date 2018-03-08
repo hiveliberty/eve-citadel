@@ -112,6 +112,10 @@ class DiscordCitadelClient {
 		return $this->roles;
 	}
 
+	public function guild_role_get($role_name) {
+		return $this->get_role($role_name);
+	}
+
 	public function role_add($role_name, $role_color = 0, $role_hoist = false) {
 		$role = $this->client->guild->createGuildRole([
 			'guild.id' => (int)$this->config['guild_id'],
@@ -134,6 +138,17 @@ class DiscordCitadelClient {
 		$roles = $this->guild_roles();
 		$roles = $this->make_key_name($roles);
 		return $roles;
+	}
+
+	public function user_add($discord_id, $token, $nick = null, $roles = null) {
+		$response = $this->client->guild->addGuildMember([
+			'guild.id' => (int)$this->config['guild_id'],
+			'user.id' => (int)$discord_id,
+			'access_token' => (string)$token,
+			'nick' => (string)$nick,
+			'roles' => $roles
+		]);
+		return $response;
 	}
 
 	public function user_del($discord_id) {

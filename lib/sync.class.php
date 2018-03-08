@@ -18,10 +18,16 @@ class SyncManager {
 	
 	function __construct() {
 		$this->db = new citadelDB();
-		$this->ts = new ts3client();
-		$this->phpbb3 = new phpBB3client();
-		$this->discord = new DiscordCitadelClient();
 		$this->config = require __DIR__ . '/../config/app.php';
+		if ($this->config['services']['ts3_enabled']) {
+			$this->ts = new ts3client();
+		}
+		if ($this->config['services']['phpbb3_enabled']) {
+			$this->phpbb3 = new phpBB3client();
+		}
+		if ($this->config['services']['discord_enabled']) {
+			$this->discord = new DiscordCitadelClient();
+		}
 	}
 
     function __destruct() {
@@ -240,35 +246,61 @@ class SyncManager {
 	}
 
 	function server_groups() {
+		$config = $this->config['services'];
 		$groups = $this->db->groups_getall();
-		$ts_roles = $this->ts->group_list_get();
-		$discord_roles = $this->discord->guild_roles_get();
-		$phpbb3_roles = $this->phpbb3->group_getall();
+		if ($config['ts3_enabled']) {
+			$ts_roles = $this->ts->group_list_get();
+		}
+		if ($config['discord_enabled']) {
+			$discord_roles = $this->discord->guild_roles_get();
+		}
+		if ($config['phpbb3_enabled']) {
+			$phpbb3_roles = $this->phpbb3->group_getall();
+		}
 
 		foreach ($groups as $group) {
-			$this->sync_groups_teamspeak($group, $ts_roles);
-			$this->sync_groups_discord($group, $discord_roles);
-			$this->sync_groups_phpbb3($group, $phpbb3_roles);
-			usleep(1000000);
+			if ($config['ts3_enabled']) {
+				$this->sync_groups_teamspeak($group, $ts_roles);
+			}
+			if ($config['phpbb3_enabled']) {
+				$this->sync_groups_phpbb3($group, $phpbb3_roles);
+			}
+			if ($config['discord_enabled']) {
+				$this->sync_groups_discord($group, $discord_roles);
+				usleep(1000000);
+			}
 		}
 	}
 
 	function user_groups() {
+		$config = $this->config['services'];
 		$users = $this->db->users_get_active();
 		$citadel_groups = $this->db->groups_getall();
-		$this->discord->guild_roles();
-		$discord_roles = $this->discord->guild_roles_get();
-		$ts_roles = $this->ts->group_list_get();
-		$phpbb3_roles = $this->phpbb3->group_getall();
+		if ($config['discord_enabled']) {
+			$this->discord->guild_roles();
+			$discord_roles = $this->discord->guild_roles_get();
+		}
+		if ($config['ts3_enabled']) {
+			$ts_roles = $this->ts->group_list_get();
+		}
+		if ($config['phpbb3_enabled']) {
+			$phpbb3_roles = $this->phpbb3->group_getall();
+		}
 
 		foreach(array_chunk($users, 5, true) as $users_chunk) {
 			foreach ($users_chunk as $user) {
 				$user_groups = $this->db->usergroups_getby_user($user['id']);
 
-				$this->sync_user_teamspeak($user_groups, $ts_roles, $citadel_groups, $user);
-				$this->sync_user_discord($user_groups, $discord_roles, $citadel_groups, $user);
-				$this->sync_user_phpbb3($user_groups, $phpbb3_roles, $citadel_groups, $user);
-				usleep(1000000);
+				if ($config['ts3_enabled']) {
+					$this->sync_user_teamspeak($user_groups, $ts_roles, $citadel_groups, $user);
+				}
+				if ($config['phpbb3_enabled']) {
+					$this->sync_user_phpbb3($user_groups, $phpbb3_roles, $citadel_groups, $user);
+				}
+				if ($config['discord_enabled']) {
+					$this->sync_user_discord($user_groups, $discord_roles, $citadel_groups, $user);
+					usleep(1000000);
+				}
 			}
 			usleep(5000000);
 		}

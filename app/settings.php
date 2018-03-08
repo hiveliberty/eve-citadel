@@ -9,6 +9,11 @@ return [
             'template_path' => __DIR__ . '/../templates/',
         ],
 
+        'view' => [
+            'views_path' => __DIR__ . '/../views/',
+			'cache_path' => __DIR__ . '/../views/cache/',
+        ],
+
         // Monolog settings
         'logger' => [
             'name' => 'slim-app',

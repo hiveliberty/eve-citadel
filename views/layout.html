@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-		<title>Bright Side of Death</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <!-- <link rel="shortcut icon" href="../../assets/ico/favicon.ico"> -->
+		<link rel="shortcut icon" href="/assets/img/favicon/favicon.ico">
 
-        <meta charset="utf-8"/>
-		<!--[if IE]>
-			<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-		<![endif]-->
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-
+		<!--
 		<link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicon/apple-icon-57x57.png">
 		<link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicon/apple-icon-60x60.png">
 		<link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicon/apple-icon-72x72.png">
@@ -26,10 +27,27 @@
 		<meta name="msapplication-TileColor" content="#ffffff">
 		<meta name="msapplication-TileImage" content="/assets/img/favicon/ms-icon-144x144.png">
 		<meta name="theme-color" content="#ffffff">
+		-->
 
         <!-- <link href='//fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'> -->
 		<!-- <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css"> -->
 		<link rel="stylesheet" type="text/css" href="/assets/css/normalize.css">
-		<link rel="stylesheet" type="text/css" href="/assets/css/layout.css">
-		<link rel="stylesheet" type="text/css" href="/assets/css/other.css">
+		<!-- <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css"> -->
+		<link rel="stylesheet" type="text/css" href="/assets/css/main.css">
 		<link rel="stylesheet" type="text/css" href="/assets/css/buttons.css">
+		<link rel="stylesheet" type="text/css" href="/assets/css/layout.css">
+		<link rel="stylesheet" type="text/css" href="/assets/css/menu.css">
+
+        <title>{{portal_config['title']}}</title>
+
+    </head>
+
+    <body>
+
+        <div class="content-width color-main">
+            {% block content %} {% endblock %}
+        </div>
+
+		<!-- <script src="/assets/js/stuff.js"></script> -->
+    </body>
+</html>

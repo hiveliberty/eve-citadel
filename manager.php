@@ -133,13 +133,6 @@ if (isset($argv[1])) {
 			var_dump($color);
 			break;
 
-		case 'test_role':
-			$discord_client = new DiscordCitadelClient();
-			$role = $discord_client->get_role("Member");
-			var_dump($role);
-			unset($db_client, $sync);
-			break;
-
 		default:
 			die("Unknown command.\n");
 			break;

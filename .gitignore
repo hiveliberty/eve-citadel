@@ -6,9 +6,11 @@
 /config/logger.php
 /install/db_init_old.sql
 /public/assets/img/bsod-logo.png
-/public/assets/img/background/*
+/public/assets/img/background/
 /public/assets/img/favicon/*
 /public/assets/css/stuff/
+/public/assets/js/
+/views/stuff/
 /templates/test/
 /lib/esi_class.php
 /lib/old/

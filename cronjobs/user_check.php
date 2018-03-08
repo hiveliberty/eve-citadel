@@ -18,9 +18,15 @@ require_once(__DIR__ . '/../lib/discord.class.php');
 $db_client = new citadelDB();
 $auth_manager = new AuthManager($db_client);
 $esi_client = new ESIClient();
-$ts_client = new ts3client();
-$phpbb3_client = new phpBB3client();
-$discord_client = new DiscordCitadelClient();
+if ($config['services']['ts3_enabled']) {
+	$ts_client = new ts3client();
+}
+if ($config['services']['phpbb3_enabled']) {
+	$phpbb3_client = new phpBB3client();
+}
+if ($config['services']['discord_enabled']) {
+	$discord_client = new DiscordCitadelClient();
+}
 $users = $db_client->users_get_active();
 
 foreach(array_chunk($users, 5, true) as $users_chunk) {
@@ -31,51 +37,57 @@ foreach(array_chunk($users, 5, true) as $users_chunk) {
 		$alliance_esi_id = $character_esi['alliance_id'];
 		$alliance_cached_id = $character_cache['alliance_id'];
 		$corp_esi_id = $character_esi['corporation_id'];
-		$corporation_esi = $db_client->corporation_info_get($corp_esi_id);
+		$corporation_esi = $esi_client->corporation_get_details($corp_esi_id);
 		$corp_cached_id = $character_cache['corporation_id'];
 		$corporation_cache = $db_client->corporation_info_get($corp_cached_id);
-		$user_groups = $db_client->usergroups_getby_user($user['id']);
+		//$user_groups = $db_client->usergroups_getby_user($user['id']);
 		$group_new_name = corp_group_name($corporation_esi['ticker']);
 		$group_old_name = corp_group_name($corporation_cache['ticker']);
 
-		$member_group = $db_client->groups_getby_name($config['auth']['role_member']);
-		$blue_group = $db_client->groups_getby_name($config['auth']['role_blue']);
+		//$member_group = $db_client->groups_getby_name($config['auth']['role_member']);
+		//$blue_group = $db_client->groups_getby_name($config['auth']['role_blue']);
 		$group_new = $db_client->groups_getby_name($group_new_name);
 		$group_old = $db_client->groups_getby_name($group_old_name);
 
 		if ($auth_manager->is_member($alliance_esi_id, $corp_esi_id)) {
 			$auth_manager->character_check_membership($character_id, $character_esi, $character_cache);
-			$auth_manager->auth_role_check($user['id'], $member_group, $blue_group, $user_groups, true);
-			$auth_manager->corp_role_check($user['id'], $group_old, $group_new, $user_groups, true);
+			$auth_manager->auth_role_check($user['id'], true);
+			$auth_manager->corp_role_check($user['id'], $group_old, $group_new, true);
 		} elseif ($auth_manager->is_blue($alliance_esi_id, $corp_esi_id)) {
 			$auth_manager->character_check_membership($character_id, $character_esi, $character_cache);
-			$auth_manager->auth_role_check($user['id'], $member_group, $blue_group, $user_groups, false);
-			$auth_manager->corp_role_check($user['id'], $group_old, $group_new, $user_groups, false);
+			$auth_manager->auth_role_check($user['id'], false);
+			$auth_manager->corp_role_check($user['id'], $group_old, $group_new, false);
 		} else {
 			print_r("Now user {$character_esi['name']} is not member or blue. Delete all roles.");
-			$ts_token = $db_client->teamspeak_get_token($user['id']);
 
-			if ($discord_id != null) {
-				$db_client->teamspeak_delete($user['id']);
-				$ts_client->user_del($character_id, $ts_token);
+			if ($config['services']['ts3_enabled']) {
+				$ts_token = $db_client->teamspeak_get_token($user['id']);
+				if ($ts_token != null) {
+					$db_client->teamspeak_delete($user['id']);
+					$ts_client->user_del($character_id, $ts_token);
+				}
 			}
 
-			$discord_id = $db_client->discord_get_id($user['id']);
-			if ($discord_id != null) {
-				$discord_client->user_del($discord_id);
+			if ($config['services']['discord_enabled']) {
+				$discord_id = $db_client->discord_get_id($user['id']);
+				if ($discord_id != null) {
+					$discord_client->user_del($discord_id);
+				}
 			}
 
-			$phpbb3_username = $db_client->phpbb3_get_username($user['id']);
-			if ($phpbb3_username != null) {
-				$fake_password = password_generate();
-				$user_email = "revoke_".uniqid()."@localhost";
-				$pwhash = password_hash($fake_password, PASSWORD_DEFAULT);
+			if ($config['services']['phpbb3_enabled']) {
+				$phpbb3_username = $db_client->phpbb3_get_username($user['id']);
+				if ($phpbb3_username != null) {
+					$fake_password = password_generate();
+					$user_email = "revoke_".uniqid()."@localhost";
+					$pwhash = password_hash($fake_password, PASSWORD_DEFAULT);
 
-				$phpbb3_client->user_update($phpbb3_username, $user_email, $pwhash);
-				$phpbb3_client->user_sessions_del($phpbb3_username);
-				$phpbb3_client->user_autologin_del($phpbb3_username);
-				$phpbb3_client->user_deactivate($phpbb3_username);
-				$db_client->phpbb3_delete($user['id']);
+					$phpbb3_client->user_update($phpbb3_username, $user_email, $pwhash);
+					$phpbb3_client->user_sessions_del($phpbb3_username);
+					$phpbb3_client->user_autologin_del($phpbb3_username);
+					$phpbb3_client->user_deactivate($phpbb3_username);
+					$db_client->phpbb3_delete($user['id']);
+				}
 			}
 
 			$db_client->usergroups_deleteby_user($user['id']);

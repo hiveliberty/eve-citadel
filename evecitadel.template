@@ -1,0 +1,6 @@
+# Crontab for Citadel Auth System
+
+*/2 *     * * *     root   php /path/to/app/cronjobs/sessions_check.php >> /dev/null 2>&1
+*/10 *     * * *     root   php /path/to/app/cronjobs/sync_groups.php >> /path/to/app/logs/sync_groups.log 2>&1
+*/15 *     * * *     root   php /path/to/app/cronjobs/update_db.php >> /dev/null 2>&1
+*/30 *     * * *     root   php /path/to/app/cronjobs/user_check.php >> /path/to/app/logs/user_check.log 2>&1

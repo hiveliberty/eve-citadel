@@ -21,10 +21,6 @@ session_start();
 $settings = require __DIR__ . '/../app/settings.php';
 $app = new \Slim\App($settings);
 
-// Load app config
-$config = require __DIR__ . '/../config/app.php';
-//require_once(__DIR__ . '/../src/config.php');
-
 // Set up dependencies
 require __DIR__ . '/../app/dependencies.php';
 

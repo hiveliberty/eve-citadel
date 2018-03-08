@@ -1,0 +1,157 @@
+/** https://colorscheme.ru/#1L51T6td3w0w0 **/
+
+html {
+	/** background: url('../img/background/bg_04.jpg') no-repeat scroll; **/
+	background: url('../img/background.jpg') no-repeat fixed center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-ms-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	background-position: center;
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    /** font-size: 14px;
+    line-height: 1.42857143;
+    color: #333; **/
+}
+
+*,
+*::before,
+*::after {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: auto;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.004) !important;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+/**
+html {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+}
+
+div {
+	border: 1px solid red;
+}
+**/
+
+img, embed, object, video {
+	max-width: 100%;
+	height: auto;
+}
+
+.div-align-top {
+	vertical-align: top;
+}
+.centered {
+	margin: auto;
+}
+.border-dotted {
+	border: 1px dotted rgb(255,246,73,0.2);
+}
+.login-phpbb3 {
+	text-align:center;
+	color: rgb(255,246,73,1.0);
+}
+
+.display-grid {
+	display: grid;
+}
+.display-subgrid {
+	display: subgrid;
+}
+.display-block {
+	display: block;
+}
+.display-inline-block {
+	display: inline-block;
+}
+
+.border-red {
+	border: 1px solid red;
+}
+.border-blue {
+	border: 1px solid blue;
+}
+.border-green {
+	border: 1px solid green;
+}
+.border-orange {
+	border: 1px solid orange;
+}
+.border-yellow {
+	border: 1px solid yellow;
+}
+
+.color-header {
+	color: #ff0000;
+	/**background-color: #1e3c52;**/
+}
+
+.color-nav {
+	color: #ffff00;
+	/**background-color: #1e3c52;**/
+}
+
+.color-main {
+	/** color: #00ff00; **/
+	/** color: rgb(215,215,155); **/
+	color: rgb(215,215,155);
+	/**background-color: #1e3c52;**/
+}
+
+.color-footer {
+	color: #ff00ff;
+	/**background-color: #1e3c52;**/
+}
+
+.color-index-background {
+	/**background: rgb(104,103,84,0.3);**/
+	background: rgb(104,103,84,0.4);
+}
+.color-index-background-2 {
+	/**background: rgb(104,103,84,0.3);**/
+	background: rgb(104,103,84,0.24);
+}
+.color-dashboard-services {
+	background: rgb(104,103,84,0.4);
+}
+.border-background {
+	border: 1px dotted rgb(255,246,73,0.2);
+}
+
+.serif {
+  font-family: Times, Times New Roman, Georgia, serif;
+}
+
+.sansserif {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.monospace {
+  font-family: Lucida Console, Courier, monospace;
+}
+
+.cursive {
+  font-family: cursive;
+}
+
+.fantasy {
+  font-family: fantasy;
+}

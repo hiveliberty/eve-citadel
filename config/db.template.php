@@ -3,5 +3,8 @@ return [
 	'url' => 'hostname',
 	'user' => 'user',
 	'pass' => 'pass',
-	'dbname' => 'dbname',
+	'db' => [
+		'citadel' => 'citadel',
+		'phpbb3' => 'phpbb3',
+	],
 ];

@@ -1,52 +1,46 @@
-.menu-button {
-	display: grid;
-	/**display: inline-block;**/
-	width: 100%;
-	height: 1.7em;
-	border: 2px solid rgb(92,104,84);
-	margin: auto;
-
-	background: rgb(104,103,84,0.4);
+.button {
+	background: transparent;
+	color: rgb(235,227,186,1.0);
 
 	outline: none;
 
-	font-size: 1.3em;
 	text-align: center;
 	text-decoration: none;
+	-ms-user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 	user-select: none;
-	font-family: "Open Sans", Helvetica, Arial, sans-serif;
-	color: rgb(187,226,172);
-	padding: 10px 0px 0px 0px;
 
 	transition: .5s;
 }
-.menu-button:hover {
-	border: 2px solid rgb(126,142,115);
-	background: rgb(104,103,84,1.0);
-	color: rgb(130,210,110);
+.button:hover {
+	background: rgb(197,197,150,0.4);
+	color: rgb(255,246,73,1.0);
 }
-.menu-button-position {
-	display: grid;
-	margin: 2px auto 0px;
-	padding: 0px 2px 0px 0px;
-	max-width: 150px;
-	transition: .4s;
+.index-button {
+	width: 100%;
+	height: 1.7em;
+	position: relative;
+	margin: 4px auto 0px;
+
+	font-size: 1.9em;
+	padding: 0.26em 0px 0px 0px;
+
+	transition: .5s;
 }
-@media screen and (min-width: 476px) {
-	.menu-button-position {
-		display: grid;
-		margin: 4px auto 0px;
-		padding: 0px 2px 0px 0px;
-		max-width: 150px;
-		transition: .4s;
-	}
+.service-button {
+	width: 300px;
+	height: 1.7em;
+	position: relative;
+	margin: 4px auto 0px;
+
+	font-size: 1.3em;
+	padding: 0.26em 0px 0px 0px;
+	
+	border: 1px dotted rgb(255,246,73,0.2);
+
+	transition: .5s;
 }
-@media screen and (min-width: 768px) {
-	.menu-button-position {
-		display: grid;
-		margin: 6px auto 0px;
-		padding: 0px 2px 0px 0px;
-		max-width: 150px;
-		transition: .4s;
-	}
+.service-button:hover {
+	border: 1px dotted rgb(255,246,73,0.4);
 }

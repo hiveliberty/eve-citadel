@@ -11,6 +11,7 @@ class AuthManager {
 		} else {
 			$this->db = $db_client;
 		}
+		$this->config = require __DIR__ . '/../config/app.php';
 	}
 
     function __destruct() {
@@ -40,7 +41,9 @@ class AuthManager {
 		}
 	}
 
-	function corp_role_check($user_id, $group_old, $group_new, $user_groups, $is_member = false) {
+	function corp_role_check($user_id, $group_old, $group_new, $is_member = false) {
+		$user_groups = $this->db->usergroups_getby_user($user_id);
+
 		if ($is_member) {
 			if ($group_old['id'] == $group_new['id']) {
 				if (!in_array($group_old['id'],$user_groups)) {
@@ -61,7 +64,10 @@ class AuthManager {
 		}
 	}
 
-	function auth_role_check($user_id, $member_group, $blue_group, $user_groups, $is_member = false) {
+	function auth_role_check($user_id, $is_member = false) {
+		$user_groups = $this->db->usergroups_getby_user($user_id);
+		$member_group = $this->db->groups_getby_name($this->config['auth']['role_member']);
+		$blue_group = $this->db->groups_getby_name($this->config['auth']['role_blue']);
 
 		if ($is_member) {
 			if (!in_array($member_group['id'],$user_groups)) {
@@ -91,6 +97,7 @@ class AuthManager {
 
 	function auth_user_add($character_id, $character_esi, $admins) {
 		$character_cache = $this->db->character_info_get($character_id);
+
 		if ($character_cache == null) {
 			if ($character_esi['alliance_id'] != 1) {
 				$this->db->character_info_addfull($character_id, $character_esi['name'], $character_esi['corporation_id'], $character_esi['alliance_id']);
@@ -98,13 +105,13 @@ class AuthManager {
 				$this->db->character_info_add($character_id, $character_esi['name']);
 				$this->db->character_info_set_corp($character_id, $character_esi['corporation_id']);
 			}
-			$this->db->users_add($character_id);
+			$this->db->user_add($character_id);
 		} else {
-			$this->db->check_membership($character_id, $character_esi, $character_cache);
-			$this->db->users_add($character_id);
+			$this->character_check_membership($character_id, $character_esi, $character_cache);
+			$this->db->user_add($character_id);
 		}
 		if (in_array($character_id, $admins)) {
-			$this->db->users_set_admin($character_id);
+			$this->db->user_set_admin($character_id);
 		}
 	}
 }
