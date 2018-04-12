@@ -238,10 +238,10 @@ class SyncManager {
 			$group_name = corp_group_name($corporation['ticker']);
 			if ($config['set_corp_role']) {
 				if ($this->db->groups_getby_name($group_name) == null) {
-					$this->db->authgroups_add($group_name, $config['corp_color'], $config['corp_hoist']);
+					$this->db->authgroups_add($group_name, 1, $config['corp_color'], $config['corp_hoist']);
 				} else {
 					$this->db->groups_service_enable($group_name);
-					$this->db->groups_update($group_name, $config['corp_color'], $config['corp_hoist']);
+					$this->db->groups_update($group_name, 1, $config['corp_color'], $config['corp_hoist']);
 				}
 			} else {
 				$this->db->groups_service_disable($group_name);

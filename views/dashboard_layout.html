@@ -2,11 +2,12 @@
 
 {% block content %}
 			<div class="l-grid-dashboard">
+
 				<div id="dashboard_grid_header" class="l-grid-area-header">
 					{{ include('dashboard_navbar.html') }}
 				</div>
 				
-				<div id="dashboard_grid_content_center" class="l-grid-area-content">
+				<div id="dashboard_grid_content" class="l-grid-area-content">
 					{% block dashboard_main %}{% endblock dashboard_main %}
 				</div>
 

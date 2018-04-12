@@ -11,6 +11,7 @@ use RestCord\DiscordClient;
 
 //$mc = new Memcached();
 //$mc->addServer("localhost", 11211);
+//
 
 require_once(__DIR__ . '/../lib/db.class.php');
 require_once(__DIR__ . '/../lib/cURL.php');
@@ -202,6 +203,153 @@ $app->get('/dashboard/refresh', function (Request $request, Response $response) 
 
     return $response->withRedirect('/dashboard');
 
+});
+
+$app->get('/admin/groups', function (Request $request, Response $response) use ($config_app) {
+	$db_client = new citadelDB();
+
+	if ($db_client->user_admin($_SESSION['user_id'])) {
+		$groups = $db_client->groups_getall_nothidden();
+		$users = $db_client->user_get_all_full();
+
+		unset($db_client);
+		if (!isset($_SESSION['admin'])) {
+			$_SESSION['admin'] = null;
+		}
+		if (isset($_SESSION['admin']['temp'])) {
+			var_dump($_SESSION['admin']['temp']);
+		}
+
+		return $this->view->render($response, 'dashboard_groups.html', [
+			'portal_config' => $config_app['portal'],
+			'character_id' => $_SESSION['character_id'],
+			'character_name' => $_SESSION['character_info']['name'],
+			'is_admin' => $_SESSION['is_admin'],
+			'admin_array' => $_SESSION['admin'],
+			'users' => $users,
+			'groups' => $groups
+		]);
+
+	} else {
+		unset($db_client);
+		return $response->withRedirect('/dashboard');
+	}
+});
+
+$app->post('/admin/groups', function (Request $request, Response $response) use ($config_app) {
+	$_SESSION['admin'] = array();
+	$action = $request->getParam("submit");
+	$db_client = new citadelDB();
+
+	switch ($action) {
+		case 'add':
+			$user_id = $request->getParam("user_id");
+			$user_groups = $db_client->usergroups_getby_user($user_id);
+			$pending_groups = $request->getParam("pending_groups");
+			if (isset($user_id) && $user_id != "null") {
+				if (isset($pending_groups)) {
+					foreach ($pending_groups as $group_id) {
+						if (!in_array($group_id,$user_groups)) {
+							$db_client->usergroups_add($user_id, $group_id);
+						}
+					}
+				}
+			}
+			break;
+
+		case 'delete':
+			$user_id = $request->getParam("user_id");
+			$user_groups = $db_client->usergroups_getby_user($user_id);
+			$pending_groups = $request->getParam("pending_groups");
+			if (isset($user_id) && $user_id != "null") {
+				if (isset($pending_groups)) {
+					foreach ($pending_groups as $group_id) {
+						if (in_array($group_id,$user_groups)) {
+							$db_client->usergroups_delete($user_id, $group_id);
+						}
+					}
+				}
+			}
+			break;
+
+		case 'get':
+			$user_id = $request->getParam("user_id");
+			if (isset($user_id) && $user_id != "null") {
+				$_SESSION['admin']['user_groups'] = $db_client->usergroups_getfullby_user($user_id);
+				$user = $db_client->user_get_full($user_id);
+				$_SESSION['admin']['user_name'] = $user['name'];
+			}
+			break;
+
+		case 'group_add':
+			$group_name = $request->getParam("group_name");
+			$group_color = hexdec($request->getParam("group_color"));
+			$all_services = (int)$request->getParam("all_services");
+			$teamspeak = (int)$request->getParam("teamspeak");
+			$discord = (int)$request->getParam("discord");
+			$phpbb3 = (int)$request->getParam("phpbb3");
+			$hoist = (int)$request->getParam("hoist");
+			
+			if (!isset($hoist)) {
+				$hoist = 0;
+			}
+			if (isset($all_services) && $all_services) {
+				$teamspeak = 1;
+				$discord = 1;
+				$phpbb3 = 1;
+			}
+
+			$group = $db_client->groups_getby_name($group_name);
+			if ($group == null) {
+				$db_client->groups_add($group_name, $group_color, $hoist);
+				$group = $db_client->groups_getby_name($group_name);
+				if ($teamspeak) {
+					$db_client->groups_set_teamspeak($group['id']);
+				}
+				if ($discord) {
+					$db_client->groups_set_discord($group['id']);
+				}
+				if ($phpbb3) {
+					$db_client->groups_set_phpbb3($group['id']);
+				}
+			} else {
+				$db_client->groups_update($group_name, 0, $group_color, $hoist);
+				$group = $db_client->groups_getby_name($group_name);
+				if ($teamspeak) {
+					$db_client->groups_set_teamspeak($group['id']);
+				} else {
+					$db_client->groups_unset_teamspeak($group['id']);
+				}
+				if ($discord) {
+					$db_client->groups_set_discord($group['id']);
+				} else {
+					$db_client->groups_unset_discord($group['id']);
+				}
+				if ($phpbb3) {
+					$db_client->groups_set_phpbb3($group['id']);
+				} else {
+					$db_client->groups_unset_phpbb3($group['id']);
+				}
+			}
+
+			break;
+
+		case 'group_deactivate':
+			$group_id = $request->getParam("group_id");
+			$db_client->groups_service_disable_by_id($group_id);
+			$db_client->group_set_hidden($group_id);
+			break;
+
+		case 'clear':
+			unset($_SESSION['admin']);
+			break;
+
+		default:
+			break;
+	}
+
+	unset($db_client);
+	return $response->withRedirect('/admin/groups');
 });
 
 $app->get('/callback-sso', function (Request $request, Response $response) use ($config_app, $config_discord) {

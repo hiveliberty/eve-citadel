@@ -69,31 +69,33 @@ class EveInfoManager {
 		$alliance_corporations = $this->esi->alliance_get_corporations($alliance_id);
 		$member_id = $this->db->custom_get("member_id");
 
-		if ($corporation_cache_ids != $alliance_corporations) {
-			if ($corporation_cache_ids != null) {
-				foreach ($corporation_cache_ids as $corporation_cache_id) {
-					if (!in_array($corporation_cache_id,$alliance_corporations)) {
-						$this->db->corporation_info_unset_alliance($corporation_cache_id);
-						$corporation_cache = $this->db->corporation_info_get($corporation_cache_id);
-						$group_name = corp_group_name($corporation_cache['ticker']);
-						if ($this->db->groups_getby_name($group_name) != null) {
-							$this->db->groups_service_disable($group_name);
+		if ($alliance_corporations != null) {
+			if ($corporation_cache_ids != $alliance_corporations) {
+				if ($corporation_cache_ids != null) {
+					foreach ($corporation_cache_ids as $corporation_cache_id) {
+						if (!in_array($corporation_cache_id,$alliance_corporations)) {
+							$this->db->corporation_info_unset_alliance($corporation_cache_id);
+							$corporation_cache = $this->db->corporation_info_get($corporation_cache_id);
+							$group_name = corp_group_name($corporation_cache['ticker']);
+							if ($this->db->groups_getby_name($group_name) != null) {
+								$this->db->groups_service_disable($group_name);
+							}
 						}
 					}
 				}
-			}
 
-			foreach ($alliance_corporations as $corporation_id) {
-				$this->check_corporation($corporation_id);
-				$this->db->corporation_info_set_alliance($corporation_id, $alliance_id);
-				if ($alliance_id == $member_id) {
-					$corporation_cache = $this->db->corporation_info_get($corporation_id);
-					$group_name = corp_group_name($corporation_cache['ticker']);
-					if ($this->db->groups_getby_name($group_name) == null) {
-						$this->db->authgroups_add($group_name, $config['corp_color'], $config['corp_hoist']);
-					} else {
-						$this->db->groups_service_enable($group_name);
-						$this->db->groups_update($group_name, $config['corp_color'], $config['corp_hoist']);
+				foreach ($alliance_corporations as $corporation_id) {
+					$this->check_corporation($corporation_id);
+					$this->db->corporation_info_set_alliance($corporation_id, $alliance_id);
+					if ($alliance_id == $member_id) {
+						$corporation_cache = $this->db->corporation_info_get($corporation_id);
+						$group_name = corp_group_name($corporation_cache['ticker']);
+						if ($this->db->groups_getby_name($group_name) == null) {
+							$this->db->authgroups_add($group_name, 1, $config['corp_color'], $config['corp_hoist']);
+						} else {
+							$this->db->groups_service_enable($group_name);
+							$this->db->groups_update($group_name, 1, $config['corp_color'], $config['corp_hoist']);
+						}
 					}
 				}
 			}

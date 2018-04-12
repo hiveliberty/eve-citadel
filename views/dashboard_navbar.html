@@ -20,6 +20,9 @@
 								<a href="{{portal_config['forum_url']}}">forum</a>
 								<a href="{{portal_config['killboard_url']}}">killboard</a>
 								<a href="{{portal_config['portal_url']}}/dashboard/refresh">refresh session</a>
+								{% if is_admin %}
+								<a href="{{portal_config['portal_url']}}/admin/groups">groups</a>
+								{% endif %}
 								<a href="{{portal_config['portal_url']}}/logout">logout</a>
 							</div>
 						</div>

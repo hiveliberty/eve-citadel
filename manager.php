@@ -28,7 +28,12 @@ if (isset($argv[1])) {
 						$db_client->custom_update("member_id", $argv[3]);
 					}
 					print_r("Added {$argv[3]} as owner.\n");
-					unset($db_client);
+
+					$eveinfo_manager = new EveInfoManager($db_client);
+					$eveinfo_manager->check_alliance($member_id);
+					print_r("Info for ID {$argv[3]} is loaded to cache.\n");
+
+					unset($db_client, $eveinfo_manager);
 					break;
 				case 'check':
 					$member_id = $db_client->custom_get("member_id");
@@ -83,10 +88,10 @@ if (isset($argv[1])) {
 				case 'init':
 					$sync = new SyncManager();
 					if ($db_client->groups_getby_name($config['auth']['role_member']) == null) {
-						$db_client->authgroups_add($config['auth']['role_member'], $config['auth']['member_color']);
+						$db_client->authgroups_add($config['auth']['role_member'], 1, $config['auth']['member_color']);
 					}
 					if ($db_client->groups_getby_name($config['auth']['role_blue']) == null) {
-						$db_client->authgroups_add($config['auth']['role_blue'], $config['auth']['blue_color']);
+						$db_client->authgroups_add($config['auth']['role_blue'], 1, $config['auth']['blue_color']);
 					}
 					$member_id = $db_client->custom_get("member_id");
 					if ($member_id == null) {
@@ -127,14 +132,19 @@ if (isset($argv[1])) {
 			break;
 
 		case 'test':
-			//$color = 0;
-			//$color = dechex($color);
+			$color = "#8A8A8A";
+			$color = hexdec($color);
 			//$color = mb_strtoupper($color, 'UTF-8');
-			//var_dump($color);
-			$esi = new ESIClient("tranquility");
-			var_dump($esi->character_get_details($argv[2]));
+			var_dump($color);
+			
+			//$esi = new ESIClient("tranquility");
+			//var_dump($esi->character_get_details($argv[2]));
+			
 			//$sync = new SyncManager();
 			//$sync->user_groups();
+			
+			//$user = $db_client->user_get_full($argv['2']);
+			//var_dump($user);
 			break;
 
 		default:
