@@ -1,14 +1,7 @@
-{% extends "layout.html" %}
+{% extends "index_layout.html" %}
 
-{% block content %}
-			<div class="l-index display--block">
-				<div class="l-index-box-logo display--block">
-					<img src="/assets/img/logo.png" alt="Logo">
-				</div>
-				<div class="l-index-box-buttons display--block color-index-background">
+{% block index_content %}
 					<a href="{{portal_config['portal_url']}}/dashboard" class="button index-button display--block">dashboard</a>
 					<a href="{{portal_config['forum_url']}}" class="button index-button display--block">forum</a>
 					<a href="{{portal_config['killboard_url']}}" class="button index-button display--block">killboard</a>
-				</div>
-			</div>
-{% endblock content %}
+{% endblock index_content %}
