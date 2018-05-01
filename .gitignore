@@ -7,6 +7,7 @@
 /install/db_init_old.sql
 /public/assets/img/bsod-logo.png
 /public/assets/img/logo.png
+/public/assets/img/backup/*
 /public/assets/img/background/
 /public/assets/img/favicon/*
 /public/assets/css/stuff/
@@ -18,6 +19,7 @@
 /vendor/
 /logs/*
 !/logs/README.md
+backup
 composer.lock
 test.php
 evecitadel
