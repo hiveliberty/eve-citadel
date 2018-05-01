@@ -5,11 +5,6 @@
 /config/discord.php
 /config/logger.php
 /install/db_init_old.sql
-/public/assets/img/bsod-logo.png
-/public/assets/img/logo.png
-/public/assets/img/backup/*
-/public/assets/img/background/
-/public/assets/img/favicon/*
 /public/assets/css/stuff/
 /public/assets/js/
 /views/stuff/
