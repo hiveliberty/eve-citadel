@@ -9,6 +9,7 @@ require_once(__DIR__ . '/lib/db.class.php');
 require_once(__DIR__ . '/lib/other.php');
 require_once(__DIR__ . '/lib/sync.class.php');
 require_once(__DIR__ . '/lib/esi.class.php');
+require_once(__DIR__ . '/lib/eveinfo.class.php');
 require_once(__DIR__ . '/lib/phpbb3.class.php');
 require_once(__DIR__ . '/lib/discord.class.php');
 
@@ -129,22 +130,6 @@ if (isset($argv[1])) {
 					break;
 
 			}
-			break;
-
-		case 'test':
-			$color = "#8A8A8A";
-			$color = hexdec($color);
-			//$color = mb_strtoupper($color, 'UTF-8');
-			var_dump($color);
-			
-			//$esi = new ESIClient("tranquility");
-			//var_dump($esi->character_get_details($argv[2]));
-			
-			//$sync = new SyncManager();
-			//$sync->user_groups();
-			
-			//$user = $db_client->user_get_full($argv['2']);
-			//var_dump($user);
 			break;
 
 		default:
