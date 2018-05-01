@@ -29,22 +29,22 @@
 		<meta name="theme-color" content="#ffffff">
 		-->
 
-        <!-- <link href='//fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'> -->
-		<!-- <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css"> -->
-		<link rel="stylesheet" type="text/css" href="/assets/css/normalize.css">
-		<!-- <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css"> -->
+		<link rel="stylesheet" type="text/css" href="/assets/css/vendor/normalize.css">
 		<link rel="stylesheet" type="text/css" href="/assets/css/main.css">
 		<link rel="stylesheet" type="text/css" href="/assets/css/buttons.css">
 		<link rel="stylesheet" type="text/css" href="/assets/css/layout.css">
 		<link rel="stylesheet" type="text/css" href="/assets/css/menu.css">
+		<link rel="stylesheet" type="text/css" href="/assets/css/admin.css">
+		
+		<link href="https://fonts.googleapis.com/css?family=Exo+2&amp;subset=cyrillic" rel="stylesheet">
 
         <title>{{portal_config['title']}}</title>
 
     </head>
 
-    <body>
+    <body class="font--set-color font--set-family">
 
-        <div class="content-width color-main">
+        <div class="content-width">
             {% block content %} {% endblock %}
         </div>
 

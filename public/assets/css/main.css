@@ -1,5 +1,12 @@
 /** https://colorscheme.ru/#1L51T6td3w0w0 **/
 
+:root {
+	--header-height: 60px;
+	--footer-height: 60px;
+	--dashboard-width: 400px;
+	--dashboard-box-width: 380px;
+}
+
 html {
 	/** background: url('../img/background/bg_04.jpg') no-repeat scroll; **/
 	background: url('../img/background.jpg') no-repeat fixed center;
@@ -17,7 +24,6 @@ body {
 	margin: 0;
 	padding: 0;
 	width: 100%;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     /** font-size: 14px;
     line-height: 1.42857143;
     color: #333; **/
@@ -51,6 +57,40 @@ div {
 }
 **/
 
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+	appearance: none;
+
+	-ms-user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+   /*-webkit-appearance: none; 
+   /*-moz-appearance: none;
+   appearance: none;       /* remove default arrow */
+   /*background-image: url(...);   /* add custom arrow */
+}
+select:focus {
+    outline: none; /* removing default browsers outline on focus */
+}
+
+input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+}
+
+input[type='color'] {
+  vertical-align: middle;
+}
+
 img, embed, object, video {
 	max-width: 100%;
 	height: auto;
@@ -65,7 +105,17 @@ img, embed, object, video {
 .text--color-yello {
 	color: rgb(255,246,73,1.0);
 }
+.text--color-yellow {
+	color: rgb(255,246,73,1.0);
+}
 
+.align--center {
+	margin-left: auto;
+	margin-right: auto;
+}
+.float--left {
+	float: left;
+}
 .vertical-align--top {
 	vertical-align: top;
 }
@@ -83,22 +133,26 @@ img, embed, object, video {
 	display: inline-block;
 }
 
-.border-red {
+.border--red {
 	border: 1px solid red;
 }
-.border-blue {
+.border--blue {
 	border: 1px solid blue;
 }
-.border-green {
+.border--green {
 	border: 1px solid green;
 }
-.border-orange {
+.border--orange {
 	border: 1px solid orange;
 }
-.border-yellow {
+.border--yellow {
 	border: 1px solid yellow;
 }
+
 .border-dotted {
+	border: 1px dotted rgb(255,246,73,0.2);
+}
+.border--dotted {
 	border: 1px dotted rgb(255,246,73,0.2);
 }
 
@@ -129,22 +183,33 @@ img, embed, object, video {
 	border: 1px dotted rgb(255,246,73,0.2);
 }
 
-.serif {
-  font-family: Times, Times New Roman, Georgia, serif;
+.font--set-color {
+	color: rgb(215,215,155);
+}
+.font--set-family {
+    font-family: 'Exo 2', sans-serif;
+}
+
+.serif--one {
+	font-family: Times, Times New Roman, Georgia, serif;
+}
+
+.serif--two {
+	font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
 }
 
 .sansserif {
-  font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
 .monospace {
-  font-family: Lucida Console, Courier, monospace;
+	font-family: Lucida Console, Courier, monospace;
 }
 
 .cursive {
-  font-family: cursive;
+	font-family: cursive;
 }
 
 .fantasy {
-  font-family: fantasy;
+	font-family: fantasy;
 }

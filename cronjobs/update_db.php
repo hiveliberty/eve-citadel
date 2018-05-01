@@ -30,18 +30,20 @@ if ($member_id != null) {
 		die("[".date("Y-m-d H:i:s", time())."] EVE ESI not online\n");
 	}
 
-	print_r("[".date("Y-m-d H:i:s", time())."] Checking owner alliance.\n");
-	$eveinfo_manager->check_alliance($member_id);
+	//print_r("[".date("Y-m-d H:i:s", time())."] Checking owner alliance.\n");
+	//$eveinfo_manager->check_alliance($member_id);
 	print_r("[".date("Y-m-d H:i:s", time())."] Checking owner corporations.\n");
 	$eveinfo_manager->check_alliance_corporations($member_id, $config['auth']);
 
 	if ($access_token != null) {
 		print_r("[".date("Y-m-d H:i:s", time())."] Checking blue standings.\n");
 		$contacts = $esi_client->alliance_get_contacts($member_id);
-		print_r("[".date("Y-m-d H:i:s", time())."] Checking blue alliances.\n");
-		$eveinfo_manager->check_blue_alliances($contacts, $config['auth']);
-		print_r("[".date("Y-m-d H:i:s", time())."] Checking blue corporations.\n");
-		$eveinfo_manager->check_blue_corporations($contacts);
+		if ($contacts != null) {
+			print_r("[".date("Y-m-d H:i:s", time())."] Checking blue alliances.\n");
+			$eveinfo_manager->check_blue_alliances($contacts, $config['auth']);
+			print_r("[".date("Y-m-d H:i:s", time())."] Checking blue corporations.\n");
+			$eveinfo_manager->check_blue_corporations($contacts);
+		}
 	}
 
 	unset($db_client, $eveinfo_manager, $esi_client);

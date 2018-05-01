@@ -117,6 +117,49 @@ class citadelDB {
 		}
 	}
 
+	function user_get_all_full() {
+		$sql = "SELECT
+					citadel_users.id,
+					eve_character_info.name
+				FROM
+					citadel_users
+				INNER JOIN
+					eve_character_info
+				ON
+					citadel_users.character_id=eve_character_info.id
+				WHERE
+					is_active = 1
+				ORDER BY
+					eve_character_info.name ASC;";
+		$result = $this->db->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+		if (isset($result)) {
+			return $result;
+		} else {
+			return null;
+		}
+	}
+
+	function user_get_full($id) {
+		$sql = "SELECT
+					citadel_users.id,
+					eve_character_info.name
+				FROM
+					citadel_users
+				INNER JOIN
+					eve_character_info
+				ON
+					citadel_users.character_id=eve_character_info.id
+				WHERE
+					citadel_users.id = '$id'
+				LIMIT 1;";
+		$result = $this->db->query($sql)->fetch_assoc();
+		if (isset($result)) {
+			return $result;
+		} else {
+			return null;
+		}
+	}
+
 	// Functions for work with `citadel_session_keys`
 	function session_add($user_id, $session_key, $expire_date) {
 		$sql = "INSERT INTO `citadel_session_keys` (user_id, session_key, expire_date) VALUES ('$user_id', '$session_key', '$expire_date');";
@@ -651,10 +694,10 @@ class citadelDB {
 		}
 	}
 
-	function authgroups_add($group_name, $color = 0, $discord_hoist = 0) {
+	function authgroups_add($group_name, $hidden = 0, $color = 0, $discord_hoist = 0) {
 		$sql = "INSERT INTO `citadel_groups`
-				(name, discord_enabled, teamspeak_enabled, phpbb3_enabled, color, discord_hoist)
-				VALUES ('$group_name', '1', '1', '1', '$color', '$discord_hoist');";
+				(name, discord_enabled, teamspeak_enabled, phpbb3_enabled, color, discord_hoist, hidden)
+				VALUES ('$group_name', '1', '1', '1', '$color', '$discord_hoist', '$hidden');";
 		if ($this->db->query($sql) === TRUE) {
 			return true;
 		} else {
@@ -662,8 +705,8 @@ class citadelDB {
 		}
 	}
 
-	function groups_update($group_name, $color = 0, $discord_hoist = 0) {
-		$sql = "UPDATE `citadel_groups` SET color = '$color', discord_hoist = '$discord_hoist' WHERE name = '$group_name';";
+	function groups_update($group_name, $hidden = 0, $color = 0, $discord_hoist = 0) {
+		$sql = "UPDATE `citadel_groups` SET color = '$color', discord_hoist = '$discord_hoist', hidden = '$hidden' WHERE name = '$group_name';";
 		if ($this->db->query($sql) === TRUE) {
 			return null;
 		} else {
@@ -682,6 +725,15 @@ class citadelDB {
 
 	function groups_service_disable($group_name) {
 		$sql = "UPDATE `citadel_groups` SET discord_enabled = 0, teamspeak_enabled = 0, phpbb3_enabled = 0 WHERE name = '$group_name';";
+		if ($this->db->query($sql) === TRUE) {
+			return null;
+		} else {
+			return null;
+		}
+	}
+
+	function groups_service_disable_by_id($group_id) {
+		$sql = "UPDATE `citadel_groups` SET discord_enabled = 0, teamspeak_enabled = 0, phpbb3_enabled = 0 WHERE id = '$group_id';";
 		if ($this->db->query($sql) === TRUE) {
 			return null;
 		} else {
@@ -752,6 +804,15 @@ class citadelDB {
 		}
 	}
 
+	function group_set_hidden($group_id) {
+		$sql = "UPDATE `citadel_groups` SET hidden = 1 WHERE id = '$group_id';";
+		if ($this->db->query($sql) === TRUE) {
+			return null;
+		} else {
+			return null;
+		}
+	}
+
 	function groups_getby_name($group_name) {
 		$sql = "SELECT * FROM `citadel_groups` WHERE name = '$group_name' LIMIT 1;";
 		$result = $this->db->query($sql)->fetch_assoc();
@@ -774,6 +835,16 @@ class citadelDB {
 
 	function groups_getall() {
 		$sql = "SELECT * FROM `citadel_groups`;";
+		$result = $this->db->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+		if (isset($result)) {
+			return $result;
+		} else {
+			return null;
+		}
+	}
+	
+	function groups_getall_nothidden() {
+		$sql = "SELECT * FROM `citadel_groups` WHERE hidden = 0;";
 		$result = $this->db->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
 		if (isset($result)) {
 			return $result;

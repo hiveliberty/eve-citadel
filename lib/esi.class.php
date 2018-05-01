@@ -40,12 +40,12 @@ class ESIClient {
 			curl_setopt($this->curl, CURLOPT_URL, $esi_request);
 
 			$result = curl_exec($this->curl);
-			$result = json_decode($result, TRUE);
 
-			$response = curl_getinfo($this->curl);
+			$response_info = curl_getinfo($this->curl);
 
-			if (isset($response['http_code'])) {
-				if ($response['http_code'] == 200) {
+			if (isset($response_info['http_code'])) {
+				if ($response_info['http_code'] >= 200 && $response_info['http_code'] <= 299) {
+					$result = json_decode($result, TRUE);
 					return $result;
 				} else {
 					return null;

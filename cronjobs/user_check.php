@@ -37,13 +37,20 @@ foreach(array_chunk($users, 5, true) as $users_chunk) {
 		$character_id = $user['character_id'];
 		$character_esi = $esi_client->character_get_details($character_id);
 
-		if (isset($character_esi['corporation_id'])) {
-			if (!isset($character_esi['alliance_id'])) {
-				continue;
-			}
-		} else {
+		if (isset($character_esi) && $character_esi != null) {
 			continue;
+		} else {
+			print_r("[".date("Y-m-d H:i:s", time())."] ESI is not online. Stop user checking.\n");
+			break 2;
 		}
+
+		//if (isset($character_esi['corporation_id'])) {
+		//	if (!isset($character_esi['alliance_id'])) {
+		//		continue;
+		//	}
+		//} else {
+		//	continue;
+		//}
 
 		$character_cache = $db_client->character_info_get($character_id);
 		$alliance_esi_id = $character_esi['alliance_id'];

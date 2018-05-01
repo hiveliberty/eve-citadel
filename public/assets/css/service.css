@@ -144,7 +144,6 @@
 	margin-right: auto;
 	width: 256px;
 	height: 256px;
-	background: rgb(104,103,84,0.4);
 	transition: .5s;
 }
 @media screen and (min-width: 476px) {
