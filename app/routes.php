@@ -27,9 +27,13 @@ require_once(__DIR__ . '/../lib/phpbb3.class.php');
 $config_app = require __DIR__ . '/../config/app.php';
 if ($config_app['services']['discord_enabled']) {
 	$config_discord = require __DIR__ . '/../config/discord.php';
+} else {
+	$config_discord = null;
 }
 if ($config_app['services']['ts3_enabled']) {
 	$config_ts3 = require __DIR__ . '/../config/ts3.php';
+} else {
+	$config_ts3 = null;
 }
 
 // Routes

@@ -13,7 +13,8 @@ class phpBB3client {
 
 	public function sanitize_username($username) {
 		$username = mb_strtolower($username, 'UTF-8');
-		$username = preg_replace('/[^a-z0-9 -]+/', '', $username);
+		$username = str_replace("'", '_', $username);
+		$username = preg_replace('/[^a-z0-9 -_]+/', '', $username);
 		$username = str_replace(' ', '_', $username);
 		return $username;
 	}
@@ -53,8 +54,8 @@ class phpBB3client {
 
 	public function user_add($username, $username_clean, $user_password, $user_email, $group_id, $user_regdate, $user_permissions = "", $user_sig = "") {
 		$sql = "INSERT INTO `phpbb_users`
-				(username, username_clean, user_password, user_email, group_id, user_regdate, user_permissions, user_sig, user_lang)
-				VALUES ('$username', '$username_clean', '$user_password', '$user_email', '$group_id', '$user_regdate', '$user_permissions', '$user_sig', 'en')";
+				(username, username_clean, user_password, user_email, group_id, user_regdate, user_permissions, user_sig, user_lang, user_style)
+				VALUES ('$username', '$username_clean', '$user_password', '$user_email', '$group_id', '$user_regdate', '$user_permissions', '$user_sig', 'en', '1')";
 		if ($this->db->query($sql) === TRUE) {
 			return true;
 		} else {
