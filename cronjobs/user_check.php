@@ -30,27 +30,20 @@ if ($config['services']['phpbb3_enabled']) {
 if ($config['services']['discord_enabled']) {
 	$discord_client = new DiscordCitadelClient();
 }
+
 $users = $db_client->users_get_active();
+
+print_r("[".date("Y-m-d H:i:s", time())."] Started users checking.\n");
 
 foreach(array_chunk($users, 5, true) as $users_chunk) {
 	foreach ($users_chunk as $user) {
 		$character_id = $user['character_id'];
 		$character_esi = $esi_client->character_get_details($character_id);
 
-		if (isset($character_esi) && $character_esi != null) {
-			continue;
-		} else {
+		if (!isset($character_esi) && $character_esi == null) {
 			print_r("[".date("Y-m-d H:i:s", time())."] ESI is not online. Stop user checking.\n");
 			break 2;
 		}
-
-		//if (isset($character_esi['corporation_id'])) {
-		//	if (!isset($character_esi['alliance_id'])) {
-		//		continue;
-		//	}
-		//} else {
-		//	continue;
-		//}
 
 		$character_cache = $db_client->character_info_get($character_id);
 		$alliance_esi_id = $character_esi['alliance_id'];
@@ -59,12 +52,9 @@ foreach(array_chunk($users, 5, true) as $users_chunk) {
 		$corporation_esi = $esi_client->corporation_get_details($corp_esi_id);
 		$corp_cached_id = $character_cache['corporation_id'];
 		$corporation_cache = $db_client->corporation_info_get($corp_cached_id);
-		//$user_groups = $db_client->usergroups_getby_user($user['id']);
 		$group_new_name = corp_group_name($corporation_esi['ticker']);
 		$group_old_name = corp_group_name($corporation_cache['ticker']);
 
-		//$member_group = $db_client->groups_getby_name($config['auth']['role_member']);
-		//$blue_group = $db_client->groups_getby_name($config['auth']['role_blue']);
 		$group_new = $db_client->groups_getby_name($group_new_name);
 		$group_old = $db_client->groups_getby_name($group_old_name);
 

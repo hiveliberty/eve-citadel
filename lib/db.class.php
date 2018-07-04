@@ -430,6 +430,7 @@ class citadelDB {
 	}
 
 	function character_info_addfull($character_id, $name, $corporation_id, $alliance_id) {
+		$name = $this->db->real_escape_string($name);
 		$sql = "INSERT INTO `eve_character_info` (id, name, corporation_id, alliance_id) VALUES ('$character_id', '$name', '$corporation_id', '$alliance_id');";
 		if ($this->db->query($sql) === TRUE) {
 			return null;

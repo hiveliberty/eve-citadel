@@ -41,7 +41,7 @@ class AuthManager {
 		}
 	}
 
-	function corp_role_check($user_id, $group_old, $group_new, $is_member = false) {
+	function corp_role_check($user_id, $group_old, $group_new, $is_member = false, $discord_client = null) {
 		$user_groups = $this->db->usergroups_getby_user($user_id);
 
 		if ($is_member) {
@@ -50,6 +50,8 @@ class AuthManager {
 					$this->db->usergroups_add($user_id, $group_old['id']);
 				}
 			} else {
+				//$discord_id = $this->db->discord_get_id($user_id);
+				//$discord_client->user_nick_set($discord_id, $discord_nick);
 				if (in_array($group_old['id'],$user_groups)) {
 					$this->db->usergroups_delete($user_id, $group_old['id']);
 				}
