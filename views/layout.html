@@ -4,8 +4,11 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
+		<meta name="robots" content="index, nofollow"/>
+		<meta name="robots" content="noarchive"/>
         <meta name="author" content="">
+        <meta name="description" content="{{portal_config['meta_description']}}">
+		<meta name="Keywords" content="{{portal_config['meta_keywords']}}">
         <!-- <link rel="shortcut icon" href="../../assets/ico/favicon.ico"> -->
 		<link rel="shortcut icon" href="/assets/img/favicon/favicon.ico">
 
@@ -48,6 +51,9 @@
             {% block content %} {% endblock %}
         </div>
 
+		<div id="dashboard_grid_footer" class="l-grid-area-footer">
+			{{ include('dashboard_footer.html') }}
+		</div>
 		<!-- <script src="/assets/js/stuff.js"></script> -->
     </body>
 </html>

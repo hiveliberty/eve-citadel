@@ -81,6 +81,7 @@ foreach(array_chunk($users, 5, true) as $users_chunk) {
 				$discord_id = $db_client->discord_get_id($user['id']);
 				if ($discord_id != null) {
 					$discord_client->user_del($discord_id);
+					$db_client->discord_delete($user['id']);
 				}
 			}
 
@@ -100,6 +101,9 @@ foreach(array_chunk($users, 5, true) as $users_chunk) {
 			}
 
 			$db_client->usergroups_deleteby_user($user['id']);
+			$db_client->character_info_unset_alliance($character_id);
+			$db_client->character_info_unset_corp($character_id);
+			$db_client->user_deactivate($character_id);
 		}
 
 		unset(

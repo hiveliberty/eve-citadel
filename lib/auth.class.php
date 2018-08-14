@@ -52,11 +52,13 @@ class AuthManager {
 			} else {
 				//$discord_id = $this->db->discord_get_id($user_id);
 				//$discord_client->user_nick_set($discord_id, $discord_nick);
-				if (in_array($group_old['id'],$user_groups)) {
-					$this->db->usergroups_delete($user_id, $group_old['id']);
-				}
-				if (!in_array($group_new['id'],$user_groups)) {
-					$this->db->usergroups_add($user_id, $group_new['id']);
+				if (isset($group_new)) {
+					if (in_array($group_old['id'],$user_groups)) {
+						$this->db->usergroups_delete($user_id, $group_old['id']);
+					}
+					if (!in_array($group_new['id'],$user_groups)) {
+						$this->db->usergroups_add($user_id, $group_new['id']);
+					}
 				}
 			}
 		} else {

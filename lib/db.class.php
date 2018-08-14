@@ -380,9 +380,10 @@ class citadelDB {
 
 	function corporation_info_set_alliance($corporation_id, $alliance_id) {
 		if ($alliance_id == 1) {
-			$alliance_id = NULL;
+			$sql = "UPDATE `eve_corporation_info` SET alliance_id = NULL WHERE id = '$corporation_id';";
+		} else {
+			$sql = "UPDATE `eve_corporation_info` SET alliance_id = '$alliance_id' WHERE id = '$corporation_id';";
 		}
-		$sql = "UPDATE `eve_corporation_info` SET alliance_id = '$alliance_id' WHERE id = '$corporation_id';";
 		if ($this->db->query($sql) === TRUE) {
 			return null;
 		} else {
@@ -391,7 +392,7 @@ class citadelDB {
 	}
 
 	function corporation_info_unset_alliance($corporation_id) {
-		$sql = "UPDATE `eve_corporation_info` SET alliance_id = 'NULL' WHERE id = '$corporation_id';";
+		$sql = "UPDATE `eve_corporation_info` SET alliance_id = NULL WHERE id = '$corporation_id';";
 		if ($this->db->query($sql) === TRUE) {
 			return null;
 		} else {
@@ -469,7 +470,7 @@ class citadelDB {
 	}
 
 	function character_info_unset_corp($character_id) {
-		$sql = "UPDATE `eve_character_info` SET corporation_id = 'NULL' WHERE id = '$character_id';";
+		$sql = "UPDATE `eve_character_info` SET corporation_id = NULL WHERE id = '$character_id';";
 		if ($this->db->query($sql) === TRUE) {
 			return null;
 		} else {
@@ -487,7 +488,7 @@ class citadelDB {
 	}
 
 	function character_info_unset_alliance($character_id) {
-		$sql = "UPDATE `eve_character_info` SET alliance_id = 'NULL' WHERE id = '$character_id';";
+		$sql = "UPDATE `eve_character_info` SET alliance_id = NULL WHERE id = '$character_id';";
 		if ($this->db->query($sql) === TRUE) {
 			return null;
 		} else {
