@@ -1,10 +1,17 @@
 <?php
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
 class phpBB3client {
 	
 	function __construct() {
+		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 		$config = require __DIR__ . '/../config/db.php';
 		$this->db = new mysqli($config['url'], $config['user'], $config['pass'], $config['db']['phpbb3']);
+		
+		$this->logger = new Logger('phpBB3client');
+		$this->logger->pushHandler(new StreamHandler(__DIR__ . '/../logs/other.log', Logger::WARNING));
 	}
 
     function __destruct() {
@@ -53,13 +60,19 @@ class phpBB3client {
 	}
 
 	public function user_add($username, $username_clean, $user_password, $user_email, $group_id, $user_regdate, $user_permissions = "", $user_sig = "") {
-		$sql = "INSERT INTO `phpbb_users`
+		try {
+			$username = $this->db->real_escape_string($username);
+			$sql = "INSERT INTO `phpbb_users`
 				(username, username_clean, user_password, user_email, group_id, user_regdate, user_permissions, user_sig, user_lang, user_style)
 				VALUES ('$username', '$username_clean', '$user_password', '$user_email', '$group_id', '$user_regdate', '$user_permissions', '$user_sig', 'en', '1')";
-		if ($this->db->query($sql) === TRUE) {
-			return true;
-		} else {
-			return false;
+			if ($this->db->query($sql) === TRUE) {
+				return true;
+			} else {
+				return false;
+			}
+		//} catch(mysqli_sql_exception $e) {
+		} catch(Exception $e) {
+			$this->logger->error($e);
 		}
 	}
 

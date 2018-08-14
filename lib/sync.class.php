@@ -170,9 +170,12 @@ class SyncManager {
 							usleep(5000000);
 						}
 					} else {
-						if (in_array($discord_role_names[$group['name']],$discord_user_roles)) {
-							$this->discord->user_role_del($discord_id, $discord_role_names[$group['name']]);
-							usleep(5000000);
+						// вызывало undefined variable, когда группа есть, но не дискордовская
+						if (isset($discord_role_names[$group['name']])) {
+							if (in_array($discord_role_names[$group['name']],$discord_user_roles)) {
+								$this->discord->user_role_del($discord_id, $discord_role_names[$group['name']]);
+								usleep(5000000);
+							}
 						}
 					}
 				}
@@ -189,7 +192,7 @@ class SyncManager {
 				foreach ($citadel_groups as $citadel_group) {
 					if (isset($service_roles[$citadel_group['name']])) {
 						if (array_key_exists($citadel_group['name'],$phpbb3_user_roles)) {
-							print_r("phpBB3: Delete user from group {$citadel_group['name']}.\n");
+							print_r("phpBB3: Delete user {$user['id']} from group {$citadel_group['name']}.\n");
 							$this->phpbb3->user_group_del($phpbb3_username, $service_roles[$citadel_group['name']]);
 						}
 					}
@@ -198,10 +201,12 @@ class SyncManager {
 				foreach ($citadel_groups as $citadel_group) {
 					if (isset($service_roles[$citadel_group['name']])) {
 						//if (in_array($phpbb3_roles[$citadel_group['name']],$phpbb3_user_roles)) {
-						if (in_array($citadel_group['name'],$phpbb3_user_roles)) {
-							if (!in_array($citadel_group['id'],$user_groups)) {
-								print_r("phpBB3: Delete user from group {$citadel_group['name']}.\n");
-								$this->phpbb3->user_group_del($phpbb3_username, $service_roles[$citadel_group['name']]);
+						if (is_array($phpbb3_user_roles)) {
+							if (in_array($citadel_group['name'],$phpbb3_user_roles)) {
+								if (!in_array($citadel_group['id'],$user_groups)) {
+									print_r("phpBB3: Delete user {$user['id']} from group {$citadel_group['name']}.\n");
+									$this->phpbb3->user_group_del($phpbb3_username, $service_roles[$citadel_group['name']]);
+								}
 							}
 						}
 					}
@@ -210,15 +215,20 @@ class SyncManager {
 				foreach ($user_groups as $user_group) {
 					$group = $this->db->groups_getby_id($user_group);
 					if ($group['phpbb3_enabled']) {
-						if (!in_array($group['name'],$phpbb3_user_roles)) {
-						//if (!in_array($service_roles[$server_group['name']],$phpbb3_user_roles)) {
-							print_r("phpBB3: Add user to group {$group['name']}.\n");
+						if (is_array($phpbb3_user_roles)) {
+							if (!in_array($group['name'],$phpbb3_user_roles)) {
+							//if (!in_array($service_roles[$server_group['name']],$phpbb3_user_roles)) {
+								print_r("phpBB3: Add user {$user['id']} to group {$group['name']}.\n");
+								$this->phpbb3->user_group_add($phpbb3_username, $service_roles[$group['name']], 0);
+							}
+						} else {
+							print_r("phpBB3: Add user {$user['id']} to group {$group['name']}.\n");
 							$this->phpbb3->user_group_add($phpbb3_username, $service_roles[$group['name']], 0);
 						}
 					} else {
 						if (in_array($group['name'],$phpbb3_user_roles)) {
 						//if (in_array($service_roles[$server_group['name']],$phpbb3_user_roles)) {
-							print_r("phpBB3: Delete user from group {$group['name']}.\n");
+							print_r("phpBB3: Delete user {$user['id']} from group {$group['name']}.\n");
 							$this->phpbb3->user_group_del($phpbb3_username, $service_roles[$group['name']]);
 						}
 					}

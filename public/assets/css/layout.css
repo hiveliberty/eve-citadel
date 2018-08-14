@@ -144,7 +144,7 @@
 	margin-right: auto;
 	width: 256px;
 	height: 256px;
-	background: rgb(104,103,84,0.4);
+	/*background: rgb(104,103,84,0.4);*/
 	transition: .5s;
 }
 @media screen and (min-width: 476px) {
@@ -182,7 +182,7 @@
 .l-footer {
 	margin: auto;
 	padding-top: 15px;
-	padding-bottom: 4px;
+	padding-bottom: 15px;
 	font-size: 12px;
 	text-align: center;
 	width: var(--dashboard-box-width);
