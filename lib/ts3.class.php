@@ -163,13 +163,13 @@ class ts3client {
 
 				foreach ($clientlist as $client) {
 					if ($client['client_database_id'] == $cldbid) {
-						$response = $this->ts_client->clientKick($client['clid'], $kickMode = "server", $kickmsg = "Auth service deleted");
+						$this->ts_client->clientKick($client['clid'], $kickMode = "server", $kickmsg = "Auth service deleted");
 					}
 				}
 
 				$this->ts_client->clientDbDelete($cldbid);
 
-				return $response;
+				return null;
 			}
 		}
 		catch(Exception $e) {
