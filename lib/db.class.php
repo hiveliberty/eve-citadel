@@ -160,6 +160,35 @@ class citadelDB {
 		}
 	}
 
+	// eve_sso_pendings
+	function sso_pending_add($key, $action) {
+		$sql = "INSERT INTO `eve_sso_pending` (pending_key, pending_action) VALUES ('$key', '$action');";
+		if ($this->db->query($sql) === TRUE) {
+			return null;
+		} else {
+			return null;
+		}
+	}
+
+	function sso_pending_get($key) {
+		$sql = "SELECT pending_action FROM `eve_sso_pending` WHERE pending_key = '$key';";
+		$result = $this->db->query($sql)->fetch_assoc();
+		if (isset($result['pending_action'])) {
+			return $result['pending_action'];
+		} else {
+			return null;
+		}
+	}
+
+	function sso_pending_del($key) {
+		$sql = "DELETE FROM `eve_sso_pending` WHERE pending_key = '$key';";
+		if ($this->db->query($sql) === TRUE) {
+			return null;
+		} else {
+			return null;
+		}
+	}
+
 	// Functions for work with `citadel_session_keys`
 	function session_add($user_id, $session_key, $expire_date) {
 		$sql = "INSERT INTO `citadel_session_keys` (user_id, session_key, expire_date) VALUES ('$user_id', '$session_key', '$expire_date');";

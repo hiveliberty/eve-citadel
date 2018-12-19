@@ -13,7 +13,7 @@ use Monolog\Handler\RotatingFileHandler;
 $output = "[%datetime%] %channel%.%level_name%: %message%\n";
 $formatter = new LineFormatter($output);
 $logger = new Logger('user_check');
-$log_handler_file = new StreamHandler(__DIR__ . '/../logs/user_check-'.date("Y-m-d_H-i-s", time()).'.log', Logger::INFO);
+$log_handler_file = new StreamHandler(__DIR__ . '/../logs/user_check/user_check-'.date("Y-m-d_H-i-s", time()).'.log', Logger::INFO);
 $log_handler_console = new StreamHandler('php://stdout', Logger::INFO);
 $log_handler_console->setFormatter($formatter);
 $log_handler_file->setFormatter($formatter);
@@ -140,7 +140,7 @@ foreach(array_chunk($users, 5, true) as $users_chunk) {
 		);
 		usleep(500000);
 	}
-	usleep(3000000);
+	usleep(2000000);
 }
 $logger->info("User checking has been completed");
 unset($esi_client, $ts_client, $phpbb3_client);
