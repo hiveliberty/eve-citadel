@@ -167,7 +167,11 @@ class CallbackManager {
 			} else {
 				$discord_client->user_add($discord_id, $token, $discord_nick, $roles_to_add);
 			}
+
 			$this->db->discord_add($_SESSION['user_id'], $discord_id);
+			if ($this->db->discord_member_exist($discord_id)) {
+				$this->db->discord_member_authorized_set($discord_id);
+			}
 
 			unset($auth_manager,$discord_client);
 		}

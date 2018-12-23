@@ -12,10 +12,12 @@
 /views/old/
 /templates/test/
 /lib/esi_class.php
+/lib/groups.class.php
 /lib/old/
 /vendor/
 /logs/*
 /screenshots/*
+/tests
 !/logs/README.md
 backup
 composer.lock
@@ -27,3 +29,4 @@ evecitadel
 composer.json.old
 routes.php.old
 README_RU.md
+phpunit.xml

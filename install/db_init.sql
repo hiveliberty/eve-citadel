@@ -1,14 +1,14 @@
 -- SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 -- SET time_zone = "+00:00";
 
-CREATE TABLE IF NOT EXISTS `eve_sso_pending` (
+CREATE TABLE IF NOT EXISTS `callback_pending` (
 	`pending_id` int(11) NOT NULL AUTO_INCREMENT,
 	`pending_key` varchar(191) NOT NULL,
 	`pending_action` varchar(255) NOT NULL,
 	`pending_subaction` varchar(255) NULL,
 	`pending_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`pending_id`),
-	UNIQUE KEY `uk_eve_sso_pending_pending_key` (`pending_key`)
+	UNIQUE KEY `uk_callback_pending_pending_key` (`pending_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `custom_storage` (
@@ -167,6 +167,14 @@ CREATE TABLE IF NOT EXISTS `esi_token_types` (
 		REFERENCES `esi_tokens` (`token_id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `discord_members` (
+	`discord_id` varchar(30) NOT NULL,
+	`discord_username` varchar(128) NULL,
+	`is_bot` tinyint(1) NOT NULL DEFAULT 0,
+	`is_authorized` tinyint(1) NOT NULL DEFAULT 0,
+	PRIMARY KEY (`discord_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `discord_users` (
