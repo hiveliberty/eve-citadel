@@ -64,6 +64,14 @@ class DiscordCitadelClient {
 		return false;
 	}
 
+	function user_exist($id) {
+		
+		if ($this->user_get($id) != null) {
+			return true;
+		}
+		return false;
+	}
+
 	function get_role($role_name) {
 		foreach ($this->roles as $role) {
 			if ($role->name == $role_name) {
@@ -159,6 +167,18 @@ class DiscordCitadelClient {
 				'access_token' => (string)$token,
 				'nick' => (string)$this->sanitize_name($nick),
 				'roles' => $roles
+			]);
+			return $response;
+		} catch(Exception $e) {
+			$this->logger->error($e);
+		}
+	}
+
+	public function user_get($discord_id) {
+		try {
+			$response = $this->client->guild->getGuildMember([
+				'guild.id' => (int)$this->config['guild_id'],
+				'user.id' => (int)$discord_id
 			]);
 			return $response;
 		} catch(Exception $e) {

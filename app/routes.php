@@ -16,7 +16,7 @@ use RestCord\DiscordClient;
 require_once(__DIR__ . '/../lib/db.class.php');
 require_once(__DIR__ . '/../lib/cURL.php');
 require_once(__DIR__ . '/../lib/other.php');
-//require_once(__DIR__ . '/../lib/sync.class.php');
+require_once(__DIR__ . '/../lib/callback.class.php');
 require_once(__DIR__ . '/../lib/auth.class.php');
 require_once(__DIR__ . '/../lib/esi.class.php');
 require_once(__DIR__ . '/../lib/ts3.class.php');
@@ -46,11 +46,17 @@ $app->get('/', function (Request $request, Response $response) use ($config_app)
 });
 
 $app->get('/login', function (Request $request, Response $response) use ($config_app) {
-	$_SESSION['eve_state'] = uniqid();
+	$state = uniqid();
+	$db_client = new citadelDB();
+
+	$callback_url = $config_app['portal']['portal_url']."/callback";
 
 	//$ssoURL = "https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=" . $config_app['sso']['callbackURL'] . "&client_id=" . $config_app['sso']['clientID'] . "&scope=publicData" . "&state=" . $state;
 
-	$sso_url = "https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=" . $config_app['sso']['callbackURL'] . "&client_id=" . $config_app['sso']['clientID'] . "&state=" . $_SESSION['eve_state'];
+	$sso_url = "https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=" . $callback_url . "&client_id=" . $config_app['sso']['clientID'] . "&state=" . $state;
+
+	$db_client->callback_pending_add($state, "login");
+	unset($db_client);
 
 	return $this->view->render($response, 'login.html', [
 		'portal_config' => $config_app['portal'],
@@ -62,9 +68,12 @@ $app->get('/login/contacts', function (Request $request, Response $response) use
 	$db_client = new citadelDB();
 
 	if ($db_client->user_admin($_SESSION['user_id'])) {
-		$_SESSION['eve_state'] = uniqid();
+		$state = uniqid();
+		$callback_url = $config_app['portal']['portal_url']."/callback";
 		
-		$sso_url = "https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=" . $config_app['sso']['callbackURL'] . "&client_id=" . $config_app['sso']['clientID'] . "&scope=esi-alliances.read_contacts.v1" . "&state=" . $_SESSION['eve_state'] . 'contacts';
+		$sso_url = "https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=" . $callback_url . "&client_id=" . $config_app['sso']['clientID'] . "&scope=esi-alliances.read_contacts.v1" . "&state=" . $state;
+
+		$db_client->callback_pending_add($state, "token_add_contacts");
 
 		unset($db_client);
 
@@ -94,7 +103,6 @@ $app->get('/logout', function (Request $request, Response $response, $args) use 
 });
 
 $app->get('/dashboard', function (Request $request, Response $response) use ($config_app, $config_discord) {
-
 	$cookie = FigRequestCookies::get($request, 'session_key');
 	$session_key = $cookie->getValue();
 
@@ -154,8 +162,10 @@ $app->get('/dashboard', function (Request $request, Response $response) use ($co
 
 			$discord_authorized = false;
 			if ($_SESSION['discord_id'] == null) {
-				$_SESSION['discord_state'] = uniqid();
-				$discord_url = "https://discordapp.com/api/oauth2/authorize?client_id=" . $config_discord["client_id"] . "&redirect_uri=" . $config_discord['callback_url'] . "&response_type=code" . "&scope=identify guilds.join" . "&state=" . $_SESSION['discord_state'];
+				$state = uniqid();
+				$db_client->callback_pending_add($state, "discord_activate");
+				$callback_url = $config_app['portal']['portal_url']."/callback";
+				$discord_url = "https://discordapp.com/api/oauth2/authorize?client_id=" . $config_discord["client_id"] . "&redirect_uri=" . $callback_url . "&response_type=code" . "&scope=identify guilds.join" . "&state=" . $state;
 			} else {
 				$discord_authorized = true;
 				$discord_url = null;
@@ -174,7 +184,7 @@ $app->get('/dashboard', function (Request $request, Response $response) use ($co
 
 			unset($db_client);
 
-			return $this->view->render($response, 'dashboard_services.html', [
+			return $this->view->render($response, 'dashboard/services.html', [
 				'portal_config' => $config_app['portal'],
 				'character_id' => $_SESSION['character_id'],
 				'character_name' => $_SESSION['character_info']['name'],
@@ -202,11 +212,8 @@ $app->get('/dashboard', function (Request $request, Response $response) use ($co
 })->setName('dashboard');
 
 $app->get('/dashboard/refresh', function (Request $request, Response $response) {
-
 	session_unset();
-
     return $response->withRedirect('/dashboard');
-
 });
 
 $app->get('/admin/groups', function (Request $request, Response $response) use ($config_app) {
@@ -224,7 +231,7 @@ $app->get('/admin/groups', function (Request $request, Response $response) use (
 			var_dump($_SESSION['admin']['temp']);
 		}
 
-		return $this->view->render($response, 'dashboard_groups.html', [
+		return $this->view->render($response, 'dashboard/groups.html', [
 			'portal_config' => $config_app['portal'],
 			'character_id' => $_SESSION['character_id'],
 			'character_name' => $_SESSION['character_info']['name'],
@@ -356,187 +363,45 @@ $app->post('/admin/groups', function (Request $request, Response $response) use 
 	return $response->withRedirect('/admin/groups');
 });
 
-$app->get('/callback-sso', function (Request $request, Response $response) use ($config_app, $config_discord) {
+$app->get('/callback', function (Request $request, Response $response) use ($config_app, $config_discord) {
 
 	$state = $request->getParam("state");
-	$code = $request->getParam("code");
-
-	$base64 = base64_encode($config_app["sso"]["clientID"] . ":" . $config_app["sso"]["secretKey"]);
-	$tokenURL = "https://login.eveonline.com/oauth/token";
-	$verifyURL = "https://login.eveonline.com/oauth/verify";
-	$data = json_decode(sendData($tokenURL, array(
-		"grant_type" => "authorization_code",
-		"code" => $code
-	), array("Authorization: Basic {$base64}")));
-
-	$access_token = $data->access_token;
-	$refresh_token = $data->refresh_token;
-
-	$data = json_decode(sendData($verifyURL, array(), array("Authorization: Bearer {$access_token}")));
-	$character_id = $data->CharacterID;
 
 	$db_client = new citadelDB();
+	$pending = $db_client->callback_pending_get($state);
+	$db_client->callback_pending_del($state);
+	unset($db_client);
+	
+	$mgr = new CallbackManager();
 
-	if ($state == $_SESSION['eve_state']) {
-		if (isset($character_id)) {
-			$esi_client = new ESIClient();
-			$auth_manager = new AuthManager($db_client);
-			$character_esi = $esi_client->character_get_details($character_id);
-			$corporation_id = $character_esi['corporation_id'];
-			$alliance_id = $character_esi['alliance_id'];
-			$user = $db_client->user_get($character_id);
-			if ($user == null) {
-				if ($auth_manager->is_member($alliance_id, $corporation_id)) {
-					//$auth_group = $config_app['auth']['role_member'];
-					$is_member = true;
-				} elseif ($auth_manager->is_blue($alliance_id, $corporation_id)) {
-					//$auth_group = $config_app['auth']['role_blue'];
-					$is_member = false;
-				} else {
-					return $response->withRedirect('/fuckedup');
-				}
-
-				$auth_manager->auth_user_add($character_id, $character_esi, $config_app['auth']['default_admins']);
-				$user = $db_client->user_get($character_id);
-				//$group = $db_client->groups_getby_name($auth_group);
-				//$db_client->usergroups_add($user['id'], $group['id']);
-
-				$corporation_esi = $esi_client->corporation_get_details($corporation_id);
-				//$user_groups = $db_client->usergroups_getby_user($user['id']);
-				//$member_group = $db_client->groups_getby_name($config_app['auth']['role_member']);
-				//$blue_group = $db_client->groups_getby_name($config_app['auth']['role_blue']);
-				//$group_old = null;
-				$corp_name = corp_group_name($corporation_esi['ticker']);
-				$corp_group = $db_client->groups_getby_name($corp_name);
-
-				$auth_manager->auth_role_check($user['id'], $is_member);
-				$auth_manager->corp_role_check($user['id'], null, $corp_group, $is_member);
-			}
-
-			$citadel_session = $db_client->session_get($user['id']);
-			if (isset($citadel_session['session_key'])) {
-				if (strtotime($citadel_session['expire_date']) <= time()) {
-					$db_client->session_delete($citadel_session['session_key']);
-				}
-			}
-
-			$session_key = uniqidReal(40);
-			$expire =  time()+60*60*24;
-			$expire_timestamp = date("Y-m-d H:i:s", $expire);
-			$response = FigResponseCookies::set($response, SetCookie::create('session_key')
-				->withValue($session_key)
-				->withExpires($expire)
-				//->withMaxAge($expire)
-				//->rememberForever()
-			);
-
-			$db_client->session_add($user['id'], $session_key, $expire_timestamp);
-
-			unset($_SESSION['eve_state'], $esi_client, $db_client, $auth_manager);
-
-			$_SESSION['session_key'] = $session_key;
-
-			return $response->withRedirect('/dashboard/refresh');
-		} else {
-			unset($db_client);
-			return $response->withRedirect('/login');
-		}
-	} elseif ($state == ($_SESSION['eve_state'].'contacts')) {
-		$scope = 'esi-alliances.read_contacts.v1';
-		$expire_date =  time()+19*60;
-		$expire_date = date("Y-m-d H:i:s", $expire_date);
-		$contacts_token = $db_client->custom_get('contacts_token');
-		if (!isset($contacts_token)) {
-			$token_data = $db_client->token_get($_SESSION['user_id'], $scope);
-			if ($token_data == null) {
-				$db_client->token_add($_SESSION['character_id'], $access_token, $refresh_token, $scope, $expire_date);
-				$db_client->custom_add('contacts_token', $_SESSION['character_id']);
-			} else {
-				$db_client->token_updatefull($_SESSION['character_id'], $access_token, $refresh_token, $scope, $expire_date);
-			}
-		}
-		unset($_SESSION['eve_state'], $db_client);
-		return $response->withRedirect('/dashboard/refresh');
-	} else {
-		unset($db_client);
-		return $response->withRedirect('/login');
-	}
-});
-
-$app->get('/discord/callback', function (Request $request, Response $response) use ($config_app, $config_discord) {
-
-	$code = $request->getParam("code");
-	$state = $request->getParam("state");
-
-	if ($state == $_SESSION['discord_state']) {
-		$discordOAuthProvider = new \Discord\OAuth\Discord([
-			'clientId' => $config_discord["client_id"],
-			'clientSecret' => $config_discord["secret_key"],
-			'redirectUri' => $config_discord["callback_url"]
-		]);
-
-		$token = $discordOAuthProvider->getAccessToken('authorization_code', [
-			'code' => $code,
-		]);
-
-		$user = $discordOAuthProvider->getResourceOwner($token);
-		$discord_id = $user->id;
-
-		$discord_client = new DiscordCitadelClient();
-
-		if (isset($_SESSION['character_info']) && isset($_SESSION['corporation_info'])) {
-			$db_client = new citadelDB();
-			$auth_manager = new AuthManager($db_client);
-			$corporation_id = $_SESSION['character_info']['corporation_id'];
-			$alliance_id = $_SESSION['character_info']['alliance_id'];
-
-			if ($auth_manager->is_member($alliance_id, $corporation_id)) {
-				$auth_group = $config_app['auth']['role_member'];
-			} elseif ($auth_manager->is_blue($alliance_id, $corporation_id)) {
-				$auth_group = $config_app['auth']['role_blue'];
-			} else {
-				return $response->withRedirect('/fuckedup');
-			}
-
-			if ($config_app['auth']['set_name_enforce']) {
-				$discord_nick = $_SESSION['character_info']['name'];
-				if ($config_app['auth']['set_corp_ticker']) {
-					$discord_nick = "[".$_SESSION['corporation_info']['ticker']."] ".$discord_nick;
-				}
-			}
-
-			$discord_roles = $discord_client->make_key_name();
-			$roles_to_add = array();
-			$roles_to_add[] = $discord_roles[$auth_group];
-
-			$discord_client->user_add($discord_id, $token, $discord_nick, $roles_to_add);
-			$db_client->discord_add($_SESSION['user_id'], $discord_id);
-
-			unset($_SESSION['discord_state'], $discord_client, $db_client, $auth_manager);
-			return $response->withRedirect('/dashboard/refresh');
-		} else {
-			return $response->withRedirect('/dashboard/refresh');
-		}
-	} else {
-		unset($_SESSION['discord_state']);
-		return $response->withRedirect('/dashboard/refresh');
+	switch ($pending) {
+		case 'login':
+			$response = $mgr->user_login($request, $response);
+			unset($mgr);
+			return $response->withRedirect('/dashboard');
+		case 'token_add_contacts':
+			// $mgr->token_add_contacts($request, $response);
+			unset($mgr);
+			return $response->withRedirect('/dashboard');
+		case 'discord_activate':
+			$response = $mgr->discord_activate($request, $response);
+			unset($mgr);
+			return $response->withRedirect('/dashboard');
+		default:
+			return $response->withRedirect('/');
 	}
 });
 
 $app->get('/discord/deactivate', function (Request $request, Response $response) {
-
 	$db_client = new citadelDB();
 	$discord_client = new DiscordCitadelClient();
 	$discord_client->user_del($_SESSION['discord_id']);
 	$db_client->discord_delete($_SESSION['user_id']);
-	
 	unset($_SESSION['discord_id'], $discord_client, $db_client);
-
     return $response->withRedirect('/dashboard/refresh');
 });
 
 $app->get('/teamspeak/activate', function (Request $request, Response $response) use ($config_app) {
-
 	if (isset($_SESSION['character_id']) && isset($_SESSION['character_info'])) {
 		$corporation_id = $_SESSION['character_info']['corporation_id'];
 		$alliance_id = $_SESSION['character_info']['alliance_id'];
@@ -566,7 +431,6 @@ $app->get('/teamspeak/activate', function (Request $request, Response $response)
 });
 
 $app->get('/teamspeak/deactivate', function (Request $request, Response $response) {
-
 	if (isset($_SESSION['character_id'])) {
 		$db_client = new citadelDB();
 		$ts_client = new ts3client();
@@ -583,7 +447,6 @@ $app->get('/teamspeak/deactivate', function (Request $request, Response $respons
 });
 
 $app->get('/phpbb3/activate', function (Request $request, Response $response) use ($config_app) {
-
 	if (isset($_SESSION['character_id']) && isset($_SESSION['character_info'])) {
 		$corporation_id = $_SESSION['character_info']['corporation_id'];
 		$alliance_id = $_SESSION['character_info']['alliance_id'];
@@ -635,7 +498,7 @@ $app->get('/phpbb3/activate', function (Request $request, Response $response) us
 
 		unset($phpbb3_client, $db_client, $auth_manager);
 
-		return $this->view->render($response, 'dashboard_phpbb3.html', [
+		return $this->view->render($response, 'dashboard/phpbb3.html', [
 			'portal_config' => $config_app['portal'],
 			'character_id' => $_SESSION['character_id'],
 			'character_name' => $_SESSION['character_info']['name'],
@@ -650,7 +513,6 @@ $app->get('/phpbb3/activate', function (Request $request, Response $response) us
 });
 
 $app->get('/phpbb3/deactivate', function (Request $request, Response $response) {
-
 	if (isset($_SESSION['phpbb3_username']) && isset($_SESSION['user_id'])) {
 		$db_client = new citadelDB();
 		$phpbb3_client = new phpBB3client();
@@ -663,7 +525,6 @@ $app->get('/phpbb3/deactivate', function (Request $request, Response $response) 
 		$phpbb3_client->user_sessions_del($_SESSION['phpbb3_username']);
 		$phpbb3_client->user_autologin_del($_SESSION['phpbb3_username']);
 		$phpbb3_client->user_deactivate($_SESSION['phpbb3_username']);
-		//$phpbb3_client->user_del($_SESSION['phpbb3_username']);
 		$db_client->phpbb3_delete($_SESSION['user_id']);
 
 		unset($_SESSION['phpbb3_username'], $phpbb3_client, $db_client);
@@ -672,11 +533,8 @@ $app->get('/phpbb3/deactivate', function (Request $request, Response $response) 
 	} else {
 		return $response->withRedirect('/dashboard/refresh');
 	}
-
 });
 
-//$app->get('/eveonline/callback', function (Request $request, Response $response, $args) use ($config_app) {
-//$app->get('/callback-sso', function (Request $request, Response $response, $args) use ($config_app) {
 $app->get('/test', function (Request $request, Response $response) {
     // Sample log message
     //$this->logger->info("Slim-Skeleton '/' route");

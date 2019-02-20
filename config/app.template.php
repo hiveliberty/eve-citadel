@@ -18,7 +18,6 @@ return [
 	'sso' => [
 		'clientID' => '',
 		'secretKey' => '',
-		'callbackURL' => 'http://example.com/callback-sso',
 	],
 	'phpbb3' => [
 		'path' => '',

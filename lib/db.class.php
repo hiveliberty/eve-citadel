@@ -160,6 +160,54 @@ class citadelDB {
 		}
 	}
 
+	// callback_pendings
+	function callback_pending_add($key, $action) {
+		$sql = "INSERT INTO `callback_pending` (pending_key, pending_action) VALUES ('$key', '$action');";
+		if ($this->db->query($sql) === TRUE) {
+			return null;
+		} else {
+			return null;
+		}
+	}
+
+	function callback_pending_get($key) {
+		$sql = "SELECT pending_action FROM `callback_pending` WHERE pending_key = '$key';";
+		$result = $this->db->query($sql)->fetch_assoc();
+		if (isset($result['pending_action'])) {
+			return $result['pending_action'];
+		} else {
+			return null;
+		}
+	}
+
+	function callback_pending_get_all() {
+		$sql = "SELECT * FROM `callback_pending`;";
+		$result = $this->db->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
+		if (isset($result)) {
+			return $result;
+		} else {
+			return null;
+		}
+	}
+
+	function callback_pending_del($key) {
+		$sql = "DELETE FROM `callback_pending` WHERE pending_key = '$key';";
+		if ($this->db->query($sql) === TRUE) {
+			return null;
+		} else {
+			return null;
+		}
+	}
+
+	function callback_pending_increset() {
+		$sql = "ALTER TABLE `callback_pending` AUTO_INCREMENT = 1;";
+		if ($this->db->query($sql) === TRUE) {
+			return null;
+		} else {
+			return null;
+		}
+	}
+
 	// Functions for work with `citadel_session_keys`
 	function session_add($user_id, $session_key, $expire_date) {
 		$sql = "INSERT INTO `citadel_session_keys` (user_id, session_key, expire_date) VALUES ('$user_id', '$session_key', '$expire_date');";
@@ -617,6 +665,43 @@ class citadelDB {
 
 	function discord_delete($user_id) {
 		$sql = "DELETE FROM `discord_users` WHERE user_id = '$user_id';";
+		if ($this->db->query($sql) === TRUE) {
+			return null;
+		} else {
+			return null;
+		}
+	}
+
+	function discord_member_exist($discord_id) {
+		$sql = "SELECT * FROM `discord_members` WHERE discord_id = '$discord_id';";
+		$result = $this->db->query($sql)->fetch_assoc();
+		if (isset($result['discord_username'])) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function discord_member_authorized_set($discord_id) {
+		$sql = "UPDATE `discord_members` SET is_authorized = 1 WHERE discord_id = '$discord_id';";
+		if ($this->db->query($sql) === TRUE) {
+			return null;
+		} else {
+			return null;
+		}
+	}
+
+	function discord_member_authorized_unset($discord_id) {
+		$sql = "UPDATE `discord_members` SET is_authorized = 0 WHERE discord_id = '$discord_id';";
+		if ($this->db->query($sql) === TRUE) {
+			return null;
+		} else {
+			return null;
+		}
+	}
+
+	function discord_member_delete($discord_id) {
+		$sql = "DELETE FROM `discord_members` WHERE discord_id = '$discord_id';";
 		if ($this->db->query($sql) === TRUE) {
 			return null;
 		} else {

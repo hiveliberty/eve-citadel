@@ -1,6 +1,16 @@
 -- SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 -- SET time_zone = "+00:00";
 
+CREATE TABLE IF NOT EXISTS `callback_pending` (
+	`pending_id` int(11) NOT NULL AUTO_INCREMENT,
+	`pending_key` varchar(191) NOT NULL,
+	`pending_action` varchar(255) NOT NULL,
+	`pending_subaction` varchar(255) NULL,
+	`pending_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (`pending_id`),
+	UNIQUE KEY `uk_callback_pending_pending_key` (`pending_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `custom_storage` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `custom_key` varchar(191) NOT NULL,
@@ -129,6 +139,7 @@ CREATE TABLE IF NOT EXISTS `citadel_session_keys` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `esi_tokens` (
+	`token_id` int(11) NOT NULL AUTO_INCREMENT,
 	`character_id` int(11) NOT NULL,
 	`access_token` varchar(255) NULL,
 	`refresh_token` varchar(255) NULL,
@@ -136,13 +147,34 @@ CREATE TABLE IF NOT EXISTS `esi_tokens` (
 	`expire_date` timestamp NULL DEFAULT NULL,
 	`update_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 		ON UPDATE CURRENT_TIMESTAMP,
-	PRIMARY KEY (`character_id`),
+	PRIMARY KEY (`token_id`),
 	INDEX `ix_character_id` (`character_id` ASC),
 	CONSTRAINT `fk_esi_tokens&citadel_users`
 		FOREIGN KEY (`character_id`)
 		REFERENCES `eve_character_info` (`id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `esi_token_types` (
+	`type_id` int(11) NOT NULL AUTO_INCREMENT,
+	`token_id` int(11) NOT NULL,
+	`token_type` varchar(255) NULL,
+	PRIMARY KEY (`type_id`),
+	INDEX `ix_token_id` (`token_id` ASC),
+	CONSTRAINT `fk_esi_token_types&esi_tokens`
+		FOREIGN KEY (`token_id`)
+		REFERENCES `esi_tokens` (`token_id`)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `discord_members` (
+	`discord_id` varchar(30) NOT NULL,
+	`discord_username` varchar(128) NULL,
+	`is_bot` tinyint(1) NOT NULL DEFAULT 0,
+	`is_authorized` tinyint(1) NOT NULL DEFAULT 0,
+	PRIMARY KEY (`discord_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `discord_users` (

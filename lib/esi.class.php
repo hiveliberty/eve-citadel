@@ -7,7 +7,7 @@
 
 class ESIClient {
 	
-	const BASE_URL = "https://esi.tech.ccp.is";
+	const BASE_URL = "https://esi.evetech.net";
 	
 	function __construct($datasource = "tranquility", $token = null) {
 		$this->user_agent = "EVE Citadel Auth System";
@@ -25,7 +25,9 @@ class ESIClient {
 				CURLOPT_SSL_VERIFYPEER => true,
 				CURLOPT_SSL_VERIFYHOST => 2,
 				CURLOPT_FOLLOWLOCATION => true,
-				CURLOPT_TIMEOUT => 16
+				CURLOPT_CONNECTTIMEOUT => 20,
+				//CURLOPT_TIMEOUT => 16
+				CURLOPT_TIMEOUT => 32
 			)
 		);
 	}
