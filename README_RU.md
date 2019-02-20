@@ -13,13 +13,6 @@
 * TeamSpeak3
 * phpBB3
 
-## History
-
-В процессе слияния двух альянсов в EVE Online, потребовалась более простая альтернатива проекту [Alliance Auth](https://github.com/allianceauth/allianceauth).
-На тот момент у одного альянса был лишь сервер дискорд и бот [Broadsword](https://github.com/hiveliberty/Broadsword) для авторизации игроков альянса на сервере дискорда, а второй альянс использовал, ранее упомянутый, Alliance Auth.
-
-В итоге, был написан веб-сервис на микро веб-фрэймворке Slim для PHP.
-
 ## Getting Started
 
 Инструкции ниже помогут установить систему.
@@ -32,7 +25,6 @@
 ```
 Необходимые компоненты:
 apache2
-libapache2-mpm-itk
 php5.5+
 php-pear
 php-mbstring
@@ -42,17 +34,45 @@ mariadb
 composer
 ```
 
+```
+Не обязательные компоненты (по желанию):
+libapache2-mpm-itk (не обязательное)
+```
+
+Вам необходимо создать приложение на портале разработчиком EVE-Online:
+https://developers.eveonline.com/<br>
+Для использования с Discord необходимо будет создать бота тут:
+https://discordapp.com/developers/applications/
+
 ### Installing
+Установка будет описана под ОС Debian 9.
+
 ```
-Клонируем репозиторий:
+Клонируем репозиторий, например, в /var/www:
 #git clone https://github.com/hiveliberty/eve-citadel.git
-#cd eve-citadel
+У вас должна появиться директория eve-citadel.
 
-Актуализируем (обновление выполнять аналогичным образом):
-#git checkout v1.X.X (1.X.X - смотрите последнюю актуальную версию)
+Cоздаем базу (субд у вас уже должна быть установлена).
+Создаем поьзователя с полными правами на эту базу.
+Импортируем дамп базы (db_init.sql) из папки install.
 
-```
+Выполняем конфигурацию приложения в директории config.
+Файлы *.template.php переименовываем в *.php (* - имя файла)
+
+Добавляем владельца-альянс и выполняем создание и синхронизацию групп:
+#cd /var/www/eve-citadel
+#php manager.php owner add your_alliance_id
+#php manager.php groups init
+#php cronjobs/update_db.php
+
+Из корня папки необходимо скопировать файл evecitadel в /etc/cron.d, поправив пути до файлов.
+
+Это необходимый минимум, который необходимо выполнить.
+
+За более подробной помощью можно обращаться через Discord.
+
 to be continue...
+```
 
 ## Built With
 
@@ -61,17 +81,6 @@ to be continue...
 * [restcord](https://github.com/restcord/restcord) - Discord REST API Client
 * [oauth2-discord](https://github.com/moutard3/oauth2-discord) - Discord OAuth2 client
 
-## Versioning
-
-Проект использует [SemVer](http://semver.org/) для версионирования. Но это не точно :)<br>
-Чтобы просмотреть доступные версии, смотрите [тэги этого репозитория](https://github.com/your/project/tags).
-
-## Authors
-
-* **Eino Efimov** - *Initial work* - [hiveliberty](https://github.com/hiveliberty)
-
-Полный список участников - [contributors](https://github.com/hiveliberty/eve-citadel/contributors).
-
 ## License
 
 Этот продукт распространяется под лицензией [MIT License](LICENSE.md).
@@ -79,4 +88,3 @@ to be continue...
 ## Acknowledgments
 
 * Этот проект использует библиотеку [ts3admin](http://ts3admin.info). Библиотека встроена.
-
