@@ -1,4 +1,6 @@
 # EVE Citadel
+[REAMDE EN Version](README_EN.md)<br>
 [REAMDE RU Version](README_RU.md)
 
-Based on EVE Online SSO, centralized authentication system for services like Discord, TeamSpeak3 and forum-engine phpBB3.
+### Contacts
+Discord Community: https://discord.gg/ZDf8yBW
