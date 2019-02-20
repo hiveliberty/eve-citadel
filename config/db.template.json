@@ -1,0 +1,23 @@
+{
+	"citadel": {
+		"host": "localhost",
+		"port":  3306,
+		"db": "db_name",
+		"user":  "user",
+		"pass": "pass"
+	},
+	"teamspeak": {
+		"host": "localhost",
+		"port":  3306,
+		"db": "db_name",
+		"user":  "user",
+		"pass": "pass"
+	},
+	"phpBB3": {
+		"host": "localhost",
+		"port":  3306,
+		"db": "db_name",
+		"user":  "user",
+		"pass": "pass"
+	}
+}

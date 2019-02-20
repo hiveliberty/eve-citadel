@@ -166,6 +166,7 @@ class CallbackManager {
 				}
 			} else {
 				$discord_client->user_add($discord_id, $token, $discord_nick, $roles_to_add);
+				usleep(500000);
 			}
 
 			$this->db->discord_add($_SESSION['user_id'], $discord_id);

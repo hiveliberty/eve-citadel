@@ -14,12 +14,20 @@
 								<div class="l-admin-user-selector display--block">
 
 									<form class="display--inline-block" action="#" method="post">
-										<select class="admin-select" name="user_id" id="users">
-											<option value="null">select user</option>
+										<!-- <select class="admin-select" name="user_id" id="users"> -->
+											<!-- <option value="null">select user</option> -->
+											<!-- {% for user in users %} -->
+											<!-- <option value="{{user.id}}">{{user.name}}</option> -->
+											<!-- {% endfor %} -->
+										<!-- </select> -->
+
+										<input type="text" name="user_id" list="userlist" class="admin-select">
+										<datalist id="userlist">
 											{% for user in users %}
 											<option value="{{user.id}}">{{user.name}}</option>
 											{% endfor %}
-										</select>
+										</datalist>
+
 										<input type="hidden" name="submit" value="get">
 										<button class="button admin-button" type="submit">get</button>
 									</form>
@@ -68,12 +76,20 @@
 								<form action="#" method="post">
 
 									<div class="l-admin-user-selector display--block">
-										<select class="admin-select" name="user_id" id="users">
-											<option value="null">select user</option>
+										<!-- <select class="admin-select" name="user_id" id="users"> -->
+											<!-- <option value="null">select user</option> -->
+											<!-- {% for user in users %} -->
+											<!-- <option value="{{user.id}}">{{user.name}}</option> -->
+											<!-- {% endfor %} -->
+										<!-- </select> -->
+
+										<input type="text" name="user_id" list="userlist" class="admin-select">
+										<datalist id="userlist">
 											{% for user in users %}
 											<option value="{{user.id}}">{{user.name}}</option>
 											{% endfor %}
-										</select>
+										</datalist>
+
 										<button class="button admin-button" type="submit">submit</button>
 									</div>
 

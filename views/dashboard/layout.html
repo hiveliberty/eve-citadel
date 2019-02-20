@@ -1,19 +1,15 @@
-{% extends "layout.html" %}
+{% extends "base/layout.html" %}
 
 {% block content %}
 			<div class="l-grid-dashboard">
 
-				<div id="dashboard_grid_header" class="l-grid-area-header">
+				<div id="dashboard_navbar" class="l-grid-area-header">
 					{{ include('dashboard/navbar.html') }}
 				</div>
 				
-				<div id="dashboard_grid_content" class="l-grid-area-content">
+				<div id="dashboard_content" class="l-grid-area-content">
 					{% block dashboard_main %}{% endblock dashboard_main %}
 				</div>
-
-				<!-- <div id="dashboard_grid_footer" class="l-grid-area-footer">
-					{{ include('dashboard/footer.html') }}
-				</div> -->
 
 			</div>
 {% endblock content %}

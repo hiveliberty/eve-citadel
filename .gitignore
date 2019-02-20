@@ -1,14 +1,32 @@
-/cronjobs/old/
+# exlude _new stuff
+*_new.php
+*_new.html
+*_new.css
+*_new.sql
+
+# exlude install stuff
+/public/install.php
+/app/routes_install.php
+/lib/config.class.php
+/views/pages/install.html
+/views/install/layout.html
+
+# exlude config
 /config/app.php
 /config/ts3.php
 /config/db.php
 /config/discord.php
 /config/logger.php
 /config/config.sqlite3
+/config/db.json
+
+# exlude other stuff
+/cronjobs/old/
 /install/db_init_old.sql
 /public/assets/css/stuff/
 /public/assets/js/
 /views/stuff/
+/views/dashboard/old/
 /views/old/
 /templates/test/
 /lib/esi_class.php
@@ -21,12 +39,10 @@
 !/logs/README.md
 backup
 composer.lock
-install_route.php
 test.php
 test2.php
 test*.php
 evecitadel
 composer.json.old
 routes.php.old
-README_RU.md
 phpunit.xml

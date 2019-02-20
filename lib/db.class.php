@@ -675,7 +675,7 @@ class citadelDB {
 	function discord_member_exist($discord_id) {
 		$sql = "SELECT * FROM `discord_members` WHERE discord_id = '$discord_id';";
 		$result = $this->db->query($sql)->fetch_assoc();
-		if (isset($result['discord_username'])) {
+		if ($result->num_rows > 0) {
 			return true;
 		} else {
 			return false;
