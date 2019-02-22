@@ -3,30 +3,28 @@
 :root {
 	--header-height: 60px;
 	--footer-height: 60px;
+	--index-width: 300px;
+	--default-width: 768px;
 	--dashboard-width: 400px;
 	--dashboard-box-width: 380px;
 }
 
 html {
-	/** background: url('../img/background/bg_04.jpg') no-repeat scroll; **/
-	background: url('../img/background.jpg') no-repeat fixed center;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-ms-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-	background-position: center;
+	/* background: url('../img/background/bg_04.jpg') no-repeat scroll; */
+	/* background: url('../img/background.jpg') no-repeat fixed center; */
+	/* background: url('../img/new/bg03.jpg') no-repeat fixed center; */
 	height: 100%;
 	width: 100%;
+	border: 1px solid blue;
 }
 
 body {
-	margin: 0;
 	padding: 0;
 	width: 100%;
-    /** font-size: 14px;
-    line-height: 1.42857143;
-    color: #333; **/
+	min-height: 100%;
+	position: relative;
+	padding-bottom: 4rem;
+	border: 1px solid green;
 }
 
 *,
@@ -41,21 +39,15 @@ body {
 	box-sizing: border-box;
 }
 
-/**
-html {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-}
+/* *, *:before, *:after { */
+  /* -webkit-box-sizing: inherit; */
+          /* box-sizing: inherit; */
+/* } */
 
-*, *:before, *:after {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-}
+/* div { */
+	/* border: 1px solid red; */
+/* } */
 
-div {
-	border: 1px solid red;
-}
-**/
 
 select {
     -webkit-appearance: none;
@@ -80,11 +72,11 @@ select:focus {
 }
 
 input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  -ms-appearance: none;
-  -o-appearance: none;
-  appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-ms-appearance: none;
+	-o-appearance: none;
+	appearance: none;
 }
 
 input[type='color'] {
@@ -101,12 +93,6 @@ img, embed, object, video {
 }
 .text--bold {
 	font-weight: bold;
-}
-.text--color-yello {
-	color: rgb(255,246,73,1.0);
-}
-.text--color-yellow {
-	color: rgb(255,246,73,1.0);
 }
 
 .align--center {
@@ -163,7 +149,7 @@ img, embed, object, video {
 	/**background-color: #1e3c52;**/
 }
 
-.color-footer {
+.color--footer {
 	color: #ff00ff;
 	/**background-color: #1e3c52;**/
 }

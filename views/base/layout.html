@@ -6,38 +6,40 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="robots" content="index, nofollow"/>
 		<meta name="robots" content="noarchive"/>
-        <meta name="author" content="">
+        <!-- <meta name="author" content=""> -->
         <meta name="description" content="{{portal_config['meta_description']}}">
 		<meta name="Keywords" content="{{portal_config['meta_keywords']}}">
 		<link rel="shortcut icon" href="/assets/img/favicon/favicon.ico">
 
-		<link rel="stylesheet" type="text/css" href="/assets/css/normalize.css">
-		<link rel="stylesheet" type="text/css" href="/assets/css/base_new.css">
-		<link rel="stylesheet" type="text/css" href="/assets/css/layout_new.css">
-		<link rel="stylesheet" type="text/css" href="/assets/css/buttons_new.css">
-		<link rel="stylesheet" type="text/css" href="/assets/css/themes/default_new.css">
+		<link rel="stylesheet" href="/assets/themes/default/common.css">
+		<link rel="stylesheet" href="/assets/themes/default/buttons.css">
+		<link rel="stylesheet" href="/assets/css/normalize.css">
+		<link rel="stylesheet" href="/assets/css/base.css">
+		<link rel="stylesheet" href="/assets/css/layout.css">
+		<link rel="stylesheet" href="/assets/css/buttons.css">
 
-		<!-- <link rel="stylesheet" type="text/css" href="/assets/css/main.css"> -->
-		<!-- <link rel="stylesheet" type="text/css" href="/assets/css/buttons.css"> -->
-		<link rel="stylesheet" type="text/css" href="/assets/css/layout.css">
-		<link rel="stylesheet" type="text/css" href="/assets/css/menu.css">
-		<link rel="stylesheet" type="text/css" href="/assets/css/admin.css">
+		<link rel="stylesheet" href="/assets/css/layout_backward.css">
+		<link rel="stylesheet" href="/assets/css/admin.css">
+		<!-- <link rel="stylesheet" href="/assets/css/menu.css"> -->
 
-		<link href="https://fonts.googleapis.com/css?family=Exo+2&amp;subset=cyrillic" rel="stylesheet">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo+2&amp;subset=cyrillic">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<![endif]-->
 
         <title>{{portal_config['title']}}</title>
 
     </head>
 
     <body class="font--style">
-		<div id="global_wrapper" class="wrapper--adaptive wrapper--adaptive-width l--wrapper border--dev-color-2">
-			<div id="page_wrapper" role="main" class="">
-				{% block content %} {% endblock %}
-			</div>
-			<footer class="l--footer color--background-2">
-				{{ include('base/footer.html') }}
-			</footer>
+		<!-- <div id="wrapper" class="wrapper--adaptive wrapper--adaptive-width l--wrapper border--dev-color-2"> -->
+		<div id="wrapper" class="l--wrapper wrapper--adaptive border--dev-color-2">
+			{% block main %} {% endblock %}
 		</div>
-		<!-- <script src="/assets/js/stuff.js"></script> -->
+		<footer class="l--footer l--footer-format color--background-2">
+			"Citadel" auth system for EVE Online Alliances<br>
+			<a href="https://github.com/hiveliberty/eve-citadel">Link to github.</a>
+		</footer>
     </body>
 </html>

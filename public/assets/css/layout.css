@@ -1,205 +1,159 @@
-.content-width {
-	margin: auto;
-	/**position: relative;**/
+.l--wrapper {
 	max-width: 100%;
-	transition: .4s;
-	align-content: center;
+	transition: .3s;
 }
-@media screen and (min-width: 768px) {
-	.content-width {
-		margin: 10px auto;
-		/** max-width: 95%; **/
+@media screen and (min-width: 960px) {
+	.l--wrapper {
+		max-width: 960px;
 	}
 }
-@media screen and (min-width: 1280px) {
-	.content-width {
-		margin: 15px auto;
-		max-width: 95%;
-	}
-}
-@media screen and (min-width: 1280px) {
-	.content-width {
-		margin: 20px auto;
-		max-width: 90%;
-	}
-}
-@media screen and (min-width: 1408px) {
-	.content-width {
-		margin: 25px auto;
-		max-width: 85%;
-	}
-}
-@media screen and (min-width: 1536px) {
-	.content-width {
-		margin: 30px auto;
-		max-width: 80%;
-	}
-}
-@media screen and (min-width: 1920px) {
-	.content-width {
-		margin: 35px auto;
-		max-width: 75%;
-	}
-}
-@media screen and (min-width: 3840px) {
-	.content-width {
-		margin: 40px auto;
-		max-width: 70%;
-	}
-}
-
-.l-grid-dashboard {
-	display: grid;
-	grid-template-columns: 1fr;
-	grid-template-rows: auto auto var(--footer-height);
-	grid-row-gap: 4px;
-	grid-column-gap: 4px;
-	grid-template-areas:
-		'header'
-		'content'
-		'footer';
-	transition: .4s;
-}
-@media screen and (min-width: 476px) {
-	.l-grid-dashboard {
-		grid-template-columns: 1fr var(--dashboard-width) 1fr;
-		grid-template-rows: var(--header-height) auto var(--footer-height);
-		grid-template-areas:
-			'header header header'
-			'content content content'
-			'footer footer footer';
-	}
-}
-
-.l-grid-area-header {
-	grid-area: header;
-}
-.l-grid-area-footer {
-	grid-area: footer;
-}
-.l-grid-area-content {
-	grid-area: content;
-}
-
-.l-dashboard-box {
-	width: var(--dashboard-box-width);
-	margin-top: 2px;
-	margin-left: auto;
-	margin-right: auto;
-	/*padding-top: 8px;
-	padding-bottom: 8px;*/
-	border: 1px dotted transparent;
-	transition: .5s;
-}
-.l-dashboard-box:hover {
-	border: 1px dotted rgb(255,246,73,0.5);
-}
-
-.l-service-box {
-	padding-top: 8px;
-	padding-bottom: 8px;
-}
-.l-dashboard-box-name {
+.wrapper--adaptive {
 	margin: auto;
-	margin-top: 4px;
-	margin-bottom: 10px;
 }
-.l-dashboard-service-name {
-	margin: auto;
-	margin-top: 10px;
-	margin-bottom: 20px;
+@media screen and (min-width: 1281px) and (min-height: 901px) {
+	.wrapper--adaptive {
+		margin-top: 1vw;
+	}
 }
 
-.l-services-buttons-box {
-	display: block;
+
+.l--footer {
+	/* width: var(--index-width); */
+	max-width: 100%;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	margin: auto;
-	width: 320px;
-	height: 40px;
+	position: absolute;
 }
-.l-services-buttons-box:not(:first-child) {
-  margin-top: 6px;
+@media screen and (min-width: 960px) {
+	.l--footer {
+		max-width: 960px;
+	}
+}
+.l--footer-format {
+	padding-top: 15px;
+	padding-bottom: 15px;
+	font-size: 12px;
+	text-align: center;
 }
 
-.l-phpbb3-box {
-	margin: auto;
-	width: 320px;
-}
-.l-phpbb3-box:not(:last-child) {
-	margin-top: 10px;
-	margin-bottom: 10px;	
-}
-.l-phpbb3-login-box {
-	width: 100%;
-	height: 30px;
-	padding-top: 4px;
-}
 
-.l-index {
+.l--index {
 	margin: auto;
 	width: 360px;
 }
-.l-index-box-logo {
+.l--index-logo {
 	margin-bottom: 40px;
 	margin-left: auto;
 	margin-right: auto;
 	width: 256px;
 	height: 256px;
-	/*background: rgb(104,103,84,0.4);*/
-	transition: .5s;
+	transition: .3s;
 }
-@media screen and (min-width: 476px) {
-	.l-index-box-logo {
-		margin-bottom: 60px;
-	}
-}
-@media screen and (min-width: 768px) {
-	.l-index-box-logo {
-		margin-bottom: 100px;
-	}
-}
-.l-index-box-buttons {
+.l--index-menu {
 	margin: auto;
-	padding-top: 10px;
+	padding-top: 6px;
 	padding-bottom: 10px;
 	width: 300px;
 }
-
-.l-login-box {
-	margin: auto;
-	width: 100%;
+@media screen and (min-width: 476px) {
+	.l--index-menu {
+		margin-top: 60px;
+	}
 }
-.l-login-button {
+@media screen and (min-width: 768px) {
+	.l--index-menu {
+		margin-top: 100px;
+	}
+}
+
+
+.page-login--text {
+	margin: 0px 15px;
+	padding-top: 4px;
+}
+.page-login--button {
 	margin-top: 10px;
-	margin-left: auto;
-	margin-right: auto;
-	width: 300px;
+	margin-left: 15px;
+	margin-right: 15px;
 }
 
-.l-header {
+@media screen and (max-width: 960px) {
+	.services--menu {
+		margin: auto;
+		width: var(--dashboard-box-width);
+	}
+}
+.services--header {
 	margin: auto;
 	width: var(--dashboard-box-width);
 }
-.l-footer {
-	margin: auto;
-	padding-top: 15px;
-	padding-bottom: 15px;
-	font-size: 12px;
-	text-align: center;
-	width: var(--dashboard-box-width);
-	height: 100%;
+.services--header-imgbox {
+	width: var(--header-height);
+	height: var(--header-height);
+	border: 1px dotted rgb(255,246,73,0.1);
+	transition: .5s;
 }
-/*
-.l-box-avatar {
-	width: 60px;
-	height: 60px;
-	margin: 0;
-	padding: 0;
-	z-index: -1;
+.services--header-imgbox:hover {
+	/**background: rgb(40,60,24,0.9);**/
+	border: 1px dotted rgb(255,246,73,0.22);
 }
-.l-box-logininfo {
-	width: 100%;
-	height: auto;
-	margin: 0;
-	padding: 0px 0px 0px 0px;
+.services--header-character {
+	float: left;
+}
+.services--header-corporation {
+	float: right;
+}
+.services--header-name {
+	width: calc(var(--dashboard-box-width) - var(--header-height)*2);
+	height: var(--header-height);
+	padding-top: 0.85em;
+	padding-left: 4px;
+	font-size: calc(var(--header-height)/3);
 	text-align: center;
-}*/
+	border: 1px dotted rgb(255,246,73,0.1);
+	transition: .5s;
+}
+.services--header-name:hover {
+	border: 1px dotted rgb(255,246,73,0.22);
+}
+
+
+.grid--services {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto auto auto var(--footer-height);
+	grid-row-gap: 4px;
+	grid-column-gap: 4px;
+	grid-template-areas:
+		'header'
+		'menu'
+		'content'
+		'footer';
+	transition: .3s;
+}
+@media screen and (min-width: 961px) {
+	.grid--services {
+		grid-template-columns: 1fr var(--dashboard-width) 1fr;
+		grid-template-rows: var(--header-height) auto;
+		grid-template-areas:
+			'header header header'
+			'menu content side';
+	}
+}
+.grid-area--header {
+	grid-area: header;
+}
+.grid-area--footer {
+	grid-area: footer;
+}
+.grid-area--content {
+	grid-area: content;
+}
+.grid-area--menu {
+	grid-area: menu;
+}
+.grid-area--side {
+	grid-area: side;
+}

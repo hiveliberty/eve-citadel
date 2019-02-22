@@ -1,0 +1,26 @@
+/* Button styles */
+.button {
+	background: transparent;
+	color: rgb(235,227,186,1.0);
+	transition: .5s;
+}
+.button:hover {
+	background: rgb(197,197,150,0.4);
+	color: rgb(255,246,73,1.0);
+}
+
+.button--menu {
+	font-size: 1.9em;
+	padding: 0.12em 0px 0px 0px;
+}
+.button--menu:hover {
+	border-top: 1px dotted rgb(255,246,73,0.4);
+	border-bottom: 1px dotted rgb(255,246,73,0.4);
+}
+
+.button--service {
+	border: 1px dotted rgb(255,246,73,0.2);
+}
+.button--service:hover {
+	border: 1px dotted rgb(255,246,73,0.4);
+}

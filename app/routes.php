@@ -14,7 +14,7 @@ use RestCord\DiscordClient;
 //
 
 require_once(__DIR__ . '/../lib/db.class.php');
-require_once(__DIR__ . '/../lib/cURL.php');
+// require_once(__DIR__ . '/../lib/cURL.php');
 require_once(__DIR__ . '/../lib/other.php');
 require_once(__DIR__ . '/../lib/callback.class.php');
 require_once(__DIR__ . '/../lib/auth.class.php');
@@ -39,7 +39,7 @@ if ($config_app['services']['ts3_enabled']) {
 // Routes
 $app->get('/', function (Request $request, Response $response) use ($config_app) {
 
-	return $this->view->render($response, 'index.html', [
+	return $this->view->render($response, 'pages/index.html', [
 		'portal_config' => $config_app['portal'],
 	]);
 
@@ -58,7 +58,7 @@ $app->get('/login', function (Request $request, Response $response) use ($config
 	$db_client->callback_pending_add($state, "login");
 	unset($db_client);
 
-	return $this->view->render($response, 'login.html', [
+	return $this->view->render($response, 'pages/login.html', [
 		'portal_config' => $config_app['portal'],
 		'sso_url' => $sso_url
     ]);
@@ -77,7 +77,7 @@ $app->get('/login/contacts', function (Request $request, Response $response) use
 
 		unset($db_client);
 
-		return $this->view->render($response, 'login.html', [
+		return $this->view->render($response, 'pages/login.html', [
 			'portal_config' => $config_app['portal'],
 			'sso_url' => $sso_url
 		]);
@@ -184,11 +184,11 @@ $app->get('/dashboard', function (Request $request, Response $response) use ($co
 
 			unset($db_client);
 
-			return $this->view->render($response, 'dashboard/services.html', [
+			return $this->view->render($response, 'pages/services.html', [
 				'portal_config' => $config_app['portal'],
 				'character_id' => $_SESSION['character_id'],
 				'character_name' => $_SESSION['character_info']['name'],
-				//'corporation_name' => $_SESSION['corporation_info']['name'],
+				'corporation_id' => $_SESSION['corporation_info']['id'],
 				//'alliance_name' => $alliance_name,
 				'discord_authorized' => $discord_authorized,
 				'discord_url' => $discord_url,
@@ -231,7 +231,7 @@ $app->get('/admin/groups', function (Request $request, Response $response) use (
 			var_dump($_SESSION['admin']['temp']);
 		}
 
-		return $this->view->render($response, 'dashboard/groups.html', [
+		return $this->view->render($response, 'pages/groups.html', [
 			'portal_config' => $config_app['portal'],
 			'character_id' => $_SESSION['character_id'],
 			'character_name' => $_SESSION['character_info']['name'],
@@ -498,7 +498,7 @@ $app->get('/phpbb3/activate', function (Request $request, Response $response) us
 
 		unset($phpbb3_client, $db_client, $auth_manager);
 
-		return $this->view->render($response, 'dashboard/phpbb3.html', [
+		return $this->view->render($response, 'pages/phpbb3.html', [
 			'portal_config' => $config_app['portal'],
 			'character_id' => $_SESSION['character_id'],
 			'character_name' => $_SESSION['character_info']['name'],

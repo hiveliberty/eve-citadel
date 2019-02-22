@@ -21,6 +21,8 @@
 /config/db.json
 
 # exlude other stuff
+*_old.*
+old
 /cronjobs/old/
 /install/db_init_old.sql
 /public/assets/css/stuff/

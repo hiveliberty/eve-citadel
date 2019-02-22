@@ -1,0 +1,85 @@
+.l-grid-dashboard {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto auto var(--footer-height);
+	grid-row-gap: 4px;
+	grid-column-gap: 4px;
+	grid-template-areas:
+		'header'
+		'content'
+		'footer';
+	transition: .4s;
+}
+@media screen and (min-width: 476px) {
+	.l-grid-dashboard {
+		grid-template-columns: 1fr var(--dashboard-width) 1fr;
+		grid-template-rows: var(--header-height) auto var(--footer-height);
+		grid-template-areas:
+			'header header header'
+			'content content content'
+			'footer footer footer';
+	}
+}
+
+.l-grid-area-header {
+	grid-area: header;
+}
+.l-grid-area-footer {
+	grid-area: footer;
+}
+.l-grid-area-content {
+	grid-area: content;
+}
+
+.l-dashboard-box {
+	width: var(--dashboard-box-width);
+	margin-top: 2px;
+	margin-left: auto;
+	margin-right: auto;
+	/*padding-top: 8px;
+	padding-bottom: 8px;*/
+	border: 1px dotted transparent;
+	transition: .5s;
+}
+.l-dashboard-box:hover {
+	border: 1px dotted rgb(255,246,73,0.5);
+}
+
+.l-service-box {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+.l-dashboard-box-name {
+	margin: auto;
+	margin-top: 4px;
+	margin-bottom: 10px;
+}
+.l-dashboard-service-name {
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+.l-services-buttons-box {
+	display: block;
+	margin: auto;
+	width: 320px;
+	height: 40px;
+}
+.l-services-buttons-box:not(:first-child) {
+  margin-top: 6px;
+}
+
+.l-phpbb3-box {
+	margin: auto;
+	width: 320px;
+}
+.l-phpbb3-box:not(:last-child) {
+	margin-top: 10px;
+	margin-bottom: 10px;	
+}
+.l-phpbb3-login-box {
+	width: 100%;
+	height: 30px;
+	padding-top: 4px;
+}
