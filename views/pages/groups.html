@@ -1,239 +1,205 @@
-{% extends "dashboard/layout.html" %}
+{% extends "layouts/dashboard.html" %}
 
 {% block services_content %}
-					<div class="display--block">
+					<div class="dashboard--box border--style-dotted-srvbox display--block color--background-1">
 
-						<div id="user_check" class="l-dashboard-box display--block color-index-background">
-						
-							<div class="l-admin-box display--block color-index-background-2">
+						<section class="display--block color--background-2 border--style-dotted-bottom">
 
-								<div class="l-dashboard-box-name display--block text--center text--bold text--color-yellow">
-									User groups checking
-								</div>
+							<h4 class="display--block text--center text--color-style-1 border--style-dotted-bottom">
+								Check user groups
+							</h4>
 
-								<div class="l-admin-user-selector display--block">
+							<div class="mgmt--box text--center display--block">
 
-									<form class="display--inline-block" action="#" method="post">
-										<!-- <select class="admin-select" name="user_id" id="users"> -->
-											<!-- <option value="null">select user</option> -->
-											<!-- {% for user in users %} -->
-											<!-- <option value="{{user.id}}">{{user.name}}</option> -->
-											<!-- {% endfor %} -->
-										<!-- </select> -->
-
-										<input type="text" name="user_id" list="userlist" class="admin-select">
-										<datalist id="userlist">
-											{% for user in users %}
-											<option value="{{user.id}}">{{user.name}}</option>
-											{% endfor %}
-										</datalist>
-
-										<input type="hidden" name="submit" value="get">
-										<button class="button admin-button" type="submit">get</button>
-									</form>
-									<form class="display--inline-block" action="#" method="post">
-										<input type="hidden" name="submit" value="clear">
-										<button class="button admin-button" type="submit">clear</button>
-									</form>
-
-								</div>
-
-								{% if admin_array is defined and admin_array['user_groups'] is defined %}
-									<div class="l-admin-usergroups display--block border-dotted">
-
-										<div class="text--center text--bold text--color-yellow">
-											"{{admin_array['user_name']}}" groups
-										</div>
-
-										<table class="l-admin-table table-user l-admin-table--center">
-											<tr>
-												<th>id</th>
-												<th>group name</th>
-											</tr>
-											{% for group in admin_array['user_groups'] %}
-												<tr>
-													<td>{{ group.group_id }}</td>
-													<td>{{ group.name }}</td>
-												</tr>
-											{% endfor %}
-										</table>
-
-									</div>
-								{% endif %}
-
-							</div>
-
-						</div>
-
-						<div id="user_management" class="l-dashboard-box display--block color-index-background">
-
-							<div class="l-admin-box display--block color-index-background-2">
-
-								<div class="l-dashboard-box-name display--block text--center text--bold text--color-yellow">
-									User group management
-								</div>
-
-								<form action="#" method="post">
-
-									<div class="l-admin-user-selector display--block">
-										<!-- <select class="admin-select" name="user_id" id="users"> -->
-											<!-- <option value="null">select user</option> -->
-											<!-- {% for user in users %} -->
-											<!-- <option value="{{user.id}}">{{user.name}}</option> -->
-											<!-- {% endfor %} -->
-										<!-- </select> -->
-
-										<input type="text" name="user_id" list="userlist" class="admin-select">
-										<datalist id="userlist">
-											{% for user in users %}
-											<option value="{{user.id}}">{{user.name}}</option>
-											{% endfor %}
-										</datalist>
-
-										<button class="button admin-button" type="submit">submit</button>
-									</div>
-
-									<div class="l-admin-group-selector display--block border-dotted">
-
-										{% for group in groups %}
-											<div class="admin-group display--inline-block">
-												<input class="input-common checkbox" type="checkbox" name="pending_groups[]" value="{{group.id}}">{{group.name}}
-											</div>
+								<form class="display--inline-block" action="#" method="post">
+									<input type="text" name="user_id" list="userlist">
+									<datalist id="userlist">
+										{% for user in users %}
+										<option value="{{user.id}}">{{user.name}}</option>
 										{% endfor %}
+									</datalist>
 
-										<div class="l-admin-action-selector">
-											Choose action: 
-											<input class="input-common radio" type="radio" name="submit" value="add" checked>add
-											<input class="input-common radio" type="radio" name="submit" value="delete">delete<br>
-										</div>
-									</div>
-
+									<input type="hidden" name="submit" value="get">
+									<button class="button button--admin button--style" type="submit">get</button>
+								</form>
+								<form class="display--inline-block" action="#" method="post">
+									<input type="hidden" name="submit" value="clear">
+									<button class="button button--admin button--style" type="submit">clear</button>
 								</form>
 
 							</div>
 
-						</div>
+							{% if admin_array is defined and admin_array['user_groups'] is defined %}
+							<div class="mgmt--box display--block">
 
-						<div id="group_management" class="l-dashboard-box display--block color-index-background">
-
-							<div class="l-admin-box display--block color-index-background-2">
-
-								<div class="l-dashboard-box-name display--block text--center text--bold text--color-yellow">
-									Service group management
+								<div class="text--center text--bold text--color-style-1">
+									"{{admin_array['user_name']}}" groups:
 								</div>
 
-								<div class="display--block">
-
-									<div class="l-admin-default display--inline-block border-dotted">
-
-										<div class="l-admin-default display--block text--center text--bold">
-											create:
-										</div>
-
-										<form action="#" method="post">
-
-											<div class="display--block">
-												Name: <input class="input-text" type="text" name="group_name">
-											</div>
-
-											<div class="block-input-color display--block">
-												Color: <input class="input-color" type="color" name="group_color" value="#8A8A8A">
-											</div>
-
-											<div class="l-admin-service-selector display--block">
-												<input class="input-common checkbox" type="checkbox" name="all_services" value="1">All services<br>
-												<input class="input-common checkbox" type="checkbox" name="teamspeak" value="1">TeamSpeak3<br>
-												<input class="input-common checkbox" type="checkbox" name="discord" value="1">Discord<br>
-												<input class="input-common checkbox" type="checkbox" name="hoist" value="1">Discord hoist<br>
-												<input class="input-common checkbox" type="checkbox" name="phpbb3" value="1">Forum<br>
-											</div>
-
-											<div class="display--block text--center">
-												<input type="hidden" name="submit" value="group_add">
-												<button class="button admin-button" type="submit">try</button>
-											</div>
-
-										</form>
-
-									</div>
-
-									<div class="l-admin-default display--inline-block border-dotted vertical-align--top">
-
-										<div class="l-admin-default display--block text--center text--bold">
-											deactivate:
-										</div>
-
-										<form action="#" method="post">
-
-											<div class="text--center">
-
-												<div class="l-admin-default">
-
-													<select class="admin-select display--block" name="group_id" id="groups">
-														<option value="null">select group</option>
-														{% for group in groups %}
-														<option value="{{group.id}}">{{group.name}}</option>
-														{% endfor %}
-													</select>
-
-												</div>
-
-												<input type="hidden" name="submit" value="group_deactivate">
-												<button class="button admin-button" type="submit">try</button>
-
-											</div>
-
-										</form>
-
-									</div>
-
-								</div>
+								<table class="tbl--format tbl--groups tbl--set-fontsize-1">
+									{% for group in admin_array['user_groups'] %}
+									<tr>
+										<td>{{ group.name }}</td>
+									</tr>
+									{% endfor %}
+								</table>
 
 							</div>
+							{% endif %}
 
-						</div>
+						</section>
 
-						<div id="service_groups" class="l-dashboard-box display--block color-index-background border--green">
+					</div>
 
-							<div class="l-admin-box display--block color-index-background-2">
+					<div class="dashboard--box border--style-dotted-srvbox display--block color--background-1">
 
-								<div class="l-dashboard-box-name display--block text--center text--bold text--color-yellow">
-									Service groups
-								</div>
+						<section class="display--block color--background-2 border--style-dotted-bottom">
 
-								<div class="display--inline-block vertical-align--top">
-									<table class="l-admin-table table-user">
-										<tr>
-											<th>id</th>
-											<th>group name</th>
-											<th>t</th>
-											<th>d</th>
-											<th>f</th>
-										</tr>
-										{% for group in groups %}
-											<tr>
-												<td>{{ group.id }}</td>
-												<td>{{ group.name }}</td>
-												<td>{{ group.teamspeak_enabled }}</td>
-												<td>{{ group.discord_enabled }}</td>
-												<td>{{ group.phpbb3_enabled }}</td>
-											</tr>
+							<h4 class="display--block text--center text--color-style-1 border--style-dotted-bottom">
+								User group management
+							</h4>
+
+							<form action="#" method="post">
+
+								<div class="mgmt--box text--center display--block">
+
+									<input type="text" name="user_id" list="userlist">
+									<datalist id="userlist">
+										{% for user in users %}
+										<option value="{{user.id}}">{{user.name}}</option>
 										{% endfor %}
-									</table>
+									</datalist>
+
+									<button class="button button--admin button--style" type="submit">submit</button>
 								</div>
 
-								<div class="l-admin-text-box display--inline-block border--dotted">
-									d - discord<br>
-									f - forum<br>
-									t - teamspeak3<br>
-									<br>
-									0 - disabled<br>
-									1 - enabled<br>
+								<div class="mgmt--box text--center display--block">
+
+									{% for group in groups %}
+									<div class="mgmt--box-services border--style-dotted-bottom display--inline-block">
+										<input class="" type="checkbox" name="pending_groups[]" value="{{group.id}}">{{group.name}}
+									</div>
+									{% endfor %}
+
+									<div class="mgmt--box">
+										Choose action: 
+										<input type="radio" name="submit" value="add" checked>add
+										<input type="radio" name="submit" value="delete">delete<br>
+									</div>
+								</div>
+
+							</form>
+
+						</section>
+
+					</div>
+
+					<div class="dashboard--box border--style-dotted-srvbox display--block color--background-1">
+
+						<section class="display--block color--background-2 border--style-dotted-bottom">
+
+							<h4 class="display--block text--center text--color-style-1 border--style-dotted-bottom">
+								Service group management
+							</h4>
+
+							<div class="grid--group-mgmt">
+
+								<div class="grid-area--mgmt01 border--style-dotted-lr">
+
+									<h4 class="display--block text--center border--style-dotted-bottom">
+										create:
+									</h4>
+
+									<form action="#" method="post">
+
+										<div class="mgmt--box display--block">
+											Name: <input type="text" name="group_name">
+										</div>
+
+										<div class="mgmt--box display--block">
+											Color: <input type="color" name="group_color" value="#8A8A8A">
+										</div>
+
+										<div class="mgmt--box-services display--block">
+											<input type="checkbox" name="all_services" value="1">All services<br>
+											<input type="checkbox" name="teamspeak" value="1">TeamSpeak3<br>
+											<input type="checkbox" name="discord" value="1">Discord<br>
+											<input type="checkbox" name="hoist" value="1">Discord hoist<br>
+											<input type="checkbox" name="phpbb3" value="1">Forum<br>
+										</div>
+
+										<div class="display--block text--center">
+											<input type="hidden" name="submit" value="group_add">
+											<button class="button button--admin button--style" type="submit">try</button>
+										</div>
+
+									</form>
+
+								</div>
+
+								<div class="grid-area--mgmt02 border--style-dotted-lr">
+
+									<h4 class="display--block text--center border--style-dotted-bottom">
+										deactivate:
+									</h4>
+
+									<form action="#" method="post">
+
+										<div class="mgmt--box text--center">
+
+											<select class="text--center" name="group_id" id="groups">
+												<option value="null">select group</option>
+												{% for group in groups %}
+												<option value="{{group.id}}">{{group.name}}</option>
+												{% endfor %}
+											</select>
+
+											<input type="hidden" name="submit" value="group_deactivate">
+											<button class="button button--admin button--style margin--top6" type="submit">try</button>
+
+										</div>
+
+									</form>
+
 								</div>
 
 							</div>
 
-						</div>
+						</section>
+
+					</div>
+
+					<div class="dashboard--box border--style-dotted-srvbox display--block color--background-1">
+
+						<section class="display--block color--background-2 border--style-dotted-bottom">
+
+							<h4 class="display--block text--center text--color-style-1 border--style-dotted-bottom">
+								Existing groups:
+							</h4>
+
+							<div class="mgmt--box display--inline-block align-vertical--top">
+								<table class="tbl--format tbl--set-fontsize-1">
+									<tr>
+										<!-- <th>id</th> -->
+										<th>group name</th>
+										<th>teamspeak</th>
+										<th>discord</th>
+										<th>forum</th>
+									</tr>
+									{% for group in groups %}
+										<tr>
+											<!-- <td>{{ group.id }}</td> -->
+											<td>{{ group.name }}</td>
+											<!-- <td>{{ group.teamspeak_enabled }}</td> -->
+											<td>{% if group.teamspeak_enabled %}yes{% else %}no{%endif%}</td>
+											<td>{% if group.discord_enabled %}yes{% else %}no{%endif%}</td>
+											<td>{% if group.phpbb3_enabled %}yes{% else %}no{%endif%}</td>
+										</tr>
+									{% endfor %}
+								</table>
+							</div>
+
+						</section>
 
 					</div>
 {% endblock services_content %}

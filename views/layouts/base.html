@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,37 +10,32 @@
         <!-- <meta name="author" content=""> -->
         <meta name="description" content="{{portal_config['meta_description']}}">
 		<meta name="Keywords" content="{{portal_config['meta_keywords']}}">
+
+		<title>{{portal_config['title']}}</title>
 		<link rel="shortcut icon" href="/assets/img/favicon/favicon.ico">
 
-		<link rel="stylesheet" href="/assets/themes/default/common.css">
-		<link rel="stylesheet" href="/assets/themes/default/buttons.css">
 		<link rel="stylesheet" href="/assets/css/normalize.css">
-		<link rel="stylesheet" href="/assets/css/base.css">
+		<link rel="stylesheet" href="/assets/css/common.css">
 		<link rel="stylesheet" href="/assets/css/layout.css">
-		<link rel="stylesheet" href="/assets/css/buttons.css">
-
-		<link rel="stylesheet" href="/assets/css/layout_backward.css">
-		<link rel="stylesheet" href="/assets/css/admin.css">
-		<!-- <link rel="stylesheet" href="/assets/css/menu.css"> -->
-
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo+2&amp;subset=cyrillic">
-
+		<link rel="stylesheet" href="/assets/themes/default/theme.css">
 		<!--[if lt IE 9]>
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 		<![endif]-->
 
-        <title>{{portal_config['title']}}</title>
-
     </head>
 
-    <body class="font--style">
-		<!-- <div id="wrapper" class="wrapper--adaptive wrapper--adaptive-width l--wrapper border--dev-color-2"> -->
-		<div id="wrapper" class="l--wrapper wrapper--adaptive border--dev-color-2">
+    <body>
+
+		<div class="l--wrapper wrapper--adaptive">
 			{% block main %} {% endblock %}
 		</div>
-		<footer class="l--footer l--footer-format color--background-2">
+
+		<footer class="l--footer color--background-2">
 			"Citadel" auth system for EVE Online Alliances<br>
 			<a href="https://github.com/hiveliberty/eve-citadel">Link to github.</a>
 		</footer>
+
     </body>
+
 </html>

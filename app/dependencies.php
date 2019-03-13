@@ -12,9 +12,10 @@ $container['renderer'] = function ($c) {
 $container['view'] = function ($c) {
 	$settings = $c->get('settings')['view'];
     $view = new \Slim\Views\Twig($settings['views_path'], [
-        //'cache' => $settings['cache_path']
+        // 'cache' => $settings['cache_path']
 		'cache' => false
     ]);
+	// $view->getEnvironment()->addGlobal('session', $_SESSION);
 
     // Instantiate and add Slim specific extension
     $basePath = rtrim(str_ireplace('index.php', '', $c['request']->getUri()->getBasePath()), '/');

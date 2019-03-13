@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+
+{% block main %}
+			<div class="grid--services">
+				<header class="grid-area--header services--header color--background-1">
+
+					<div class="services--header-imgbox float--left border--style-dotted display--inline-block">
+						{% if character_id != null %}
+							<picture>
+								<img src="https://imageserver.eveonline.com/Character/{{character_id}}_256.jpg" alt="">
+							</picture>
+						{% endif %}
+					</div>
+
+					<div class="services--header-name border--style-dotted display--inline-block">
+						{{character_name}}
+					</div>
+
+					<div class="services--header-imgbox float--right border--style-dotted display--inline-block">
+						{% if corporation_id != null %}
+							<picture>
+								<img src="https://imageserver.eveonline.com/Corporation/{{corporation_id}}_256.png" alt="">
+							</picture>
+						{% endif %}
+					</div>
+
+				</header>
+
+				<div class="grid-area--menu dropdown">
+					<div class="button--menu-hidding color--background-1">
+						<div class="button button--menu">menu</div>
+					</div>
+					<nav class="dropdown-content services--menu border--style-dotted-lr color--background-1">
+						<a href="{{portal_config['portal_url']}}" role="button" class="button button--menu display--block">main</a>
+						{% if is_admin %}
+						<a href="{{portal_config['portal_url']}}/admin/groups" role="button" class="button button--menu display--block">management</a>
+						<!-- <a href="{{portal_config['portal_url']}}/admin/groups" role="button" class="button button--menu display--block">groups</a> -->
+						<!-- <a href="{{portal_config['portal_url']}}/admin/users" role="button" class="button button--menu display--block">users</a> -->
+						<!-- <a href="{{portal_config['portal_url']}}/admin/settings" role="button" class="button button--menu display--block">settings</a> -->
+						{% endif %}
+						<a href="{{portal_config['portal_url']}}/dashboard" role="button" class="button button--menu display--block">dashboard</a>
+						<a href="{{portal_config['forum_url']}}" role="button" class="button button--menu display--block">forum</a>
+						<a href="{{portal_config['killboard_url']}}" role="button" class="button button--menu display--block">killboard</a>
+						<a href="{{portal_config['portal_url']}}/dashboard/refresh" role="button" class="button button--menu display--block">refresh session</a>
+						<a href="{{portal_config['portal_url']}}/logout" role="button" class="button button--menu display--block">logout</a>
+					</nav>
+				</div>
+
+				<div class="grid-area--content">
+					{% block services_content %}{% endblock services_content %}
+				</div>
+
+			</div>
+{% endblock main %}

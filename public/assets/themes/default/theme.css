@@ -1,0 +1,190 @@
+/* Some basic variables */
+/* Don't change this if your don't know what you do */
+:root {
+	--index-width: 300px;
+	--header-height: 60px;
+	--footer-height: 60px;
+	--button-width: 320px;
+	--default-width: 768px;
+	--dashboard-width: 400px;
+}
+
+/* Background */
+html {
+	background: url('../../themes/default/bg.jpg');
+	background-color: #000;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-ms-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	background-position: right bottom;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+
+	color: rgb(215,215,155);
+	font-family: 'Exo 2', sans-serif;
+	/* font-size: 16px; */
+}
+@media screen and (max-width: 1279px) {
+	html {
+		background-position: center;
+	}
+}
+
+
+/* Some color styles */
+.text--color-style-1 {
+	color: rgba(255,246,73,1.0);
+}
+.text--color-style-2 {
+	color: red;
+}
+.color--background-1 {
+	background-color: rgba(104,103,84,0.4);
+}
+.color--background-2 {
+	background-color: rgba(104,103,84,0.24);
+}
+
+
+/* Button styles */
+.button {
+	background: none;
+	color: rgba(235,227,186,1.0);
+}
+.button:hover {
+	background: rgba(197,197,150,0.4);
+	color: rgba(255,246,73,1.0);
+}
+.button--style {
+	/* cursor: pointer; */
+	border: 1px dotted rgba(255,246,73,0.2);
+	transition: all 0.35s ease-out 0s;
+}
+.button--style:hover {
+	border: 1px dotted rgba(255,246,73,0.4);
+}
+.button--menu {
+	font-size: 1.9em;
+	padding: 0.12em 0px 0px 0px;
+	border: 1px dotted transparent;
+	transition: all 0.35s ease-out 0s;
+}
+.button--menu:hover {
+	border-top: 1px dotted rgba(255,246,73,0.4);
+	border-bottom: 1px dotted rgba(255,246,73,0.4);
+}
+
+
+/* Input styles */
+input[type='color'] {
+	height: 24px;
+	width: 52px;
+	cursor: pointer;
+	outline: none;
+	border: 1px solid rgba(255,246,73,0.3);
+	transition: all 0.35s ease-out 0s;
+}
+select, input[type='text'] {
+	width: calc(var(--dashboard-width) - 280px);
+	height: 30px;
+	background: rgba(55,62,60,1.0);
+	color: rgba(216,209,155,1.0);
+	font-size: inherit;
+	border: 1px dotted rgba(255,246,73,0.3);
+	cursor: pointer;
+	transition: all 0.35s ease-out 0s;
+}
+select:checked, input[type='text']:checked,
+select:hover, input[type='text']:hover {
+	box-shadow: 0 0 10px 100px rgba(255,246,73,0.1) inset;
+}
+input[type='radio'], input[type='checkbox'] {
+	height: 12px;
+	width: 12px;
+	background: #cbd1d8;
+	cursor: pointer;
+	outline: none;
+	border: none;
+	transition: all 0.35s ease-out 0s;
+}
+input[type='radio']:hover, input[type='checkbox']:hover {
+	background: #9faab7;
+}
+input[type='radio']:checked, input[type='checkbox']:checked {
+	background: rgba(255,246,73,1.0);
+}
+input[type='radio'] {
+	border-radius: 50%;
+}
+input[type='radio']::after {
+	border-radius: 50%;
+}
+
+
+/* Table style */
+table.tbl--format {
+	border-collapse: collapse;
+	background: rgba(5,5,5,0.3);
+}
+table.tbl--set-fontsize-1 {
+	font-size: 1rem;
+}
+table.tbl--set-fontsize-2 {
+	font-size: 0.75rem;
+}
+th, td {
+	border: 1px solid rgba(255,246,73,0.3);
+}
+
+
+/* Border style */
+.border--style-dotted {
+	border: 1px dotted rgba(255,246,73,0.1);
+	transition: .5s;
+}
+.border--style-dotted:hover {
+	border: 1px dotted rgba(255,246,73,0.22);
+}
+.border--style-dotted-bottom {
+	border-bottom: 1px dotted rgba(255,246,73,0.1);
+	transition: .5s;
+}
+.border--style-dotted-bottom:hover {
+	border-bottom: 1px dotted rgba(255,246,73,0.22);
+}
+.border--style-dotted-lr {
+	border-left: 1px dotted rgba(255,246,73,0.1);
+	border-right: 1px dotted rgba(255,246,73,0.1);
+	transition: .5s;
+}
+.border--style-dotted-lr:hover {
+	border-left: 1px dotted rgba(255,246,73,0.5);
+	border-right: 1px dotted rgba(255,246,73,0.5);
+}
+.border--style-dotted-srvbox {
+	border: 1px dotted transparent;
+	transition: .3s;
+}
+.border--style-dotted-srvbox:hover {
+	border: 1px dotted rgba(255,246,73,0.5);
+}
+
+
+/* Dev stuff */
+.border--red {
+	border: 1px solid red;
+}
+.border--blue {
+	border: 1px solid blue;
+}
+.border--green {
+	border: 1px solid green;
+}
+.border--orange {
+	border: 1px solid orange;
+}
+.border--yellow {
+	border: 1px solid yellow;
+}

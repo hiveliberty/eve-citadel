@@ -1,26 +1,26 @@
-{% extends "dashboard/layout.html" %}
+{% extends "layouts/dashboard.html" %}
 
 {% block services_content %}
 					<div class="display--block">
-						<div class="l-dashboard-box l-service-box color-index-background">
-							<div class="l-phpbb3-box display--block text--color-yello text--bold text--center">
+						<div class="dashboard--box border--style-dotted-srvbox color--background-1">
+							<h4 class="text--center text--color-style-2">
 								Save your login and password before leaving this page!
-							</div>
+							</h4>
 
-							<div class="l-phpbb3-box display--block">
-								<div class="l-phpbb3-login-box text--center text--bold">
+							<div class="phpbb3--box display--block">
+								<div class="phpbb3--info-box text--center text--bold">
 									phpBB3 Username:
 								</div>
-								<div class="l-phpbb3-login-box text--color-yello text--center border-dotted">
+								<div class="phpbb3--info-box text--color-style-1 text--center border--style-dotted">
 									{{phpbb3_username}}
 								</div>
 							</div>
 
-							<div class="l-phpbb3-box display--block">
-								<div class="l-phpbb3-login-box text--center text--bold">
+							<div class="phpbb3--box display--block">
+								<div class="phpbb3--info-box text--center text--bold">
 									phpBB3 Password:
 								</div>
-								<div class="l-phpbb3-login-box text--color-yello text--center border-dotted">
+								<div class="phpbb3--info-box text--color-style-1 text--center border--style-dotted">
 									{{phpbb3_password}}
 								</div>
 							</div>

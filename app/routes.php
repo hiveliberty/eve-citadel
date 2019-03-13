@@ -234,6 +234,7 @@ $app->get('/admin/groups', function (Request $request, Response $response) use (
 		return $this->view->render($response, 'pages/groups.html', [
 			'portal_config' => $config_app['portal'],
 			'character_id' => $_SESSION['character_id'],
+			'corporation_id' => $_SESSION['corporation_info']['id'],
 			'character_name' => $_SESSION['character_info']['name'],
 			'is_admin' => $_SESSION['is_admin'],
 			'admin_array' => $_SESSION['admin'],
@@ -501,6 +502,7 @@ $app->get('/phpbb3/activate', function (Request $request, Response $response) us
 		return $this->view->render($response, 'pages/phpbb3.html', [
 			'portal_config' => $config_app['portal'],
 			'character_id' => $_SESSION['character_id'],
+			'corporation_id' => $_SESSION['corporation_info']['id'],
 			'character_name' => $_SESSION['character_info']['name'],
 			'phpbb3_username' => $_SESSION['phpbb3_username'],
 			'phpbb3_password' => $_SESSION['phpbb3_password'],
@@ -510,6 +512,18 @@ $app->get('/phpbb3/activate', function (Request $request, Response $response) us
 	} else {
 		return $response->withRedirect('/dashboard/refresh');
 	}
+});
+
+$app->get('/phpbb3/test', function (Request $request, Response $response) use ($config_app) {
+		return $this->view->render($response, 'pages/phpbb3.html', [
+			'portal_config' => $config_app['portal'],
+			'character_id' => $_SESSION['character_id'],
+			'corporation_id' => $_SESSION['corporation_info']['id'],
+			'character_name' => $_SESSION['character_info']['name'],
+			'phpbb3_username' => "test_user",
+			'phpbb3_password' => "test_password",
+			'is_admin' => $_SESSION['is_admin'],
+		]);
 });
 
 $app->get('/phpbb3/deactivate', function (Request $request, Response $response) {

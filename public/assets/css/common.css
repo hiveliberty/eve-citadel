@@ -1,0 +1,157 @@
+/** https://colorscheme.ru/#1L51T6td3w0w0 **/
+html {
+	height: 100%;
+	width: 100%;
+}
+body {
+	padding: 0;
+	width: 100%;
+	min-height: 100%;
+	position: relative;
+	padding-bottom: 4rem;
+}
+*,
+*::before,
+*::after {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: auto;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.004) !important;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+	appearance: none;
+
+	-ms-user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+
+    /* -webkit-padding-end: 20px; */
+    /* -moz-padding-end: 20px; */
+    /* -webkit-padding-start: 2px; */
+    /* -moz-padding-start: 2px; */
+
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+select:focus {
+    outline: none; /* removing default browsers outline on focus */
+}
+input {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-ms-appearance: none;
+	-o-appearance: none;
+	appearance: none;
+}
+input[type='color'] {
+  vertical-align: middle;
+}
+input[type='checkbox'] {
+	margin-top: 6px;
+	margin-right: 6px;
+}
+input[type='radio'] {
+	margin-right: 2px;
+}
+img, embed, object, video {
+	max-width: 100%;
+	height: auto;
+}
+
+
+.button {
+	text-align: center;
+	outline: none;
+	text-decoration: none;
+	text-transform: none;
+	-ms-user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+.button--menu {
+	width: 100%;
+	height: 1.7em;
+}
+.button--menu:not(:first-child) {
+	margin: 4px auto 0px;
+}
+@media screen and (min-width: 961px) {
+	.button--menu-hidding {
+		display: none;
+	}
+}
+.button--service {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	padding-top: 10px;
+}
+.button--admin {
+	width: 80px;
+	height: 30px;
+	position: relative;
+}
+
+
+/* Some helpful styles */
+.text--center {
+	text-align: center;
+}
+.text--bold {
+	font-weight: bold;
+}
+
+.align--center {
+	margin-left: auto;
+	margin-right: auto;
+}
+.align-vertical--top {
+	vertical-align: top;
+}
+.float--left {
+	float: left;
+}
+.float--right {
+	float: right;
+}
+
+
+.margin--top6 {
+	margin-top: 6px;
+}
+.margin--r2 {
+	margin-right: 2px;
+}
+.margin--r6 {
+	margin-right: 6px;
+}
+.padding--lr4 {
+	padding-left: 4px;
+	padding-right: 4px;
+}
+.padding--tb2 {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+
+.display--grid {
+	display: grid;
+}
+.display--subgrid {
+	display: subgrid;
+}
+.display--block {
+	display: block;
+}
+.display--inline-block {
+	display: inline-block;
+}

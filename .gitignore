@@ -23,6 +23,7 @@
 # exlude other stuff
 *_old.*
 old
+CHANGELOG
 /cronjobs/old/
 /install/db_init_old.sql
 /public/assets/css/stuff/
