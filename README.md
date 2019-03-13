@@ -5,10 +5,10 @@
 
 If you use it with discord, than use it with [BroadswordBot citadel version](https://github.com/hiveliberty/Broadsword/tree/citadel)
 
-How it's look:<br>
-![Main Page](../assets/screenshots/index.png?raw=true)
-![Auth Page (Dashboard)](../assets/screenshots/dashboard.png?raw=true)
-![Group Mgmt Page](../assets/screenshots/mgmt.png?raw=true)
+How does it look:<br>
+<div style="width=30%">![Main Page](../assets/screenshots/index.png?raw=true)</div>
+<div style="width=30%">![Auth Page (Dashboard)](../assets/screenshots/dashboard.png?raw=true)</div>
+<div style="width=30%">![Group Mgmt Page](../assets/screenshots/mgmt.png?raw=true)</div>
 
 ### Contacts
 Discord Community: https://discord.gg/ZDf8yBW
