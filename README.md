@@ -1,14 +1,15 @@
 # EVE Citadel
-[REAMDE EN Version](README_EN.md)<br>
-[REAMDE RU Version](README_RU.md)<br>
-[TODO](TODO.md)<br>
+[REAMDE EN Version](../assets/README_EN.md)<br>
+[REAMDE RU Version](../assets/README_RU.md)<br>
+[TODO](../assets/TODO.md)<br>
+[CHANGELOG](../assets/CHANGELOG)
 
 If you use it with discord, than use it with [BroadswordBot citadel version](https://github.com/hiveliberty/Broadsword/tree/citadel)
 
-How it's look:<br>
-![Main Page](../assets/screenshots/index.png?raw=true)
-![Auth Page (Dashboard)](../assets/screenshots/dashboard.png?raw=true)
-![Group Mgmt Page](../assets/screenshots/mgmt.png?raw=true)
+How does it look:<br>
+<img src="https://raw.githubusercontent.com/hiveliberty/eve-citadel/assets/screenshots/index.png" style="width:302px; height:auto; padding:2px;" alt="Main Page"/>
+<img src="https://raw.githubusercontent.com/hiveliberty/eve-citadel/assets/screenshots/dashboard.png" style="width:302px; height:auto; padding:2px;" alt="Dashboard Page"/>
+<img src="https://raw.githubusercontent.com/hiveliberty/eve-citadel/assets/screenshots/mgmt.png" style="width:302px; height:auto; padding:2px;" alt="Group Mgmt Page"/>
 
 ### Contacts
-Discord Community: https://discord.gg/ZDf8yBW
+Discord: https://discord.gg/ZDf8yBW
