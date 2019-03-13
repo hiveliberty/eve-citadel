@@ -24,6 +24,8 @@
 *_old.*
 old
 CHANGELOG
+README_RU.md
+README_EN.md
 /cronjobs/old/
 /install/db_init_old.sql
 /public/assets/css/stuff/

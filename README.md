@@ -1,9 +1,15 @@
 # EVE Citadel
-[REAMDE EN Version](README_EN.md)<br>
-[REAMDE RU Version](README_RU.md)<br>
-[TODO](TODO.md)<br>
+[REAMDE EN Version](../assets/README_EN.md)<br>
+[REAMDE RU Version](../assets/README_RU.md)<br>
+[TODO](../assets/TODO.md)<br>
+[CHANGELOG](../assets/CHANGELOG)
 
 If you use it with discord, than use it with [BroadswordBot citadel version](https://github.com/hiveliberty/Broadsword/tree/citadel)
 
+How does it look:<br>
+<img src="https://raw.githubusercontent.com/hiveliberty/eve-citadel/assets/screenshots/index.png" width="250" height="auto" alt="Main Page"/>
+<img src="https://raw.githubusercontent.com/hiveliberty/eve-citadel/assets/screenshots/dashboard.png" width="250" height="auto" alt="Dashboard Page"/>
+<img src="https://raw.githubusercontent.com/hiveliberty/eve-citadel/assets/screenshots/mgmt.png" width="250" height="auto" alt="Group Mgmt Page"/>
+
 ### Contacts
-Discord Community: https://discord.gg/ZDf8yBW
+Discord: https://discord.gg/ZDf8yBW
