@@ -381,7 +381,7 @@ $app->get('/callback', function (Request $request, Response $response) use ($con
 			unset($mgr);
 			return $response->withRedirect('/dashboard');
 		case 'token_add_contacts':
-			// $mgr->token_add_contacts($request, $response);
+			$response = $mgr->token_add_contacts($request, $response);
 			unset($mgr);
 			return $response->withRedirect('/dashboard');
 		case 'discord_activate':

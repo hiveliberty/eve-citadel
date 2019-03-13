@@ -179,4 +179,31 @@ class CallbackManager {
 
 		return $response;
 	}
+
+	function token_add_contacts($request, $response) {
+		$code = $request->getParam("code");
+		$sso_data = $this->sso_code_proc($code);
+		$access_token = $sso_data->access_token;
+		$refresh_token = $sso_data->refresh_token;
+
+		$login_data = json_decode(sendData($this->verify_url, array(), array("Authorization: Bearer {$access_token}")));
+		$character_id = $login_data->CharacterID;
+
+		if (isset($character_id)) {
+			$scope = 'esi-alliances.read_contacts.v1';
+			$expire_date =  time()+19*60;
+			$expire_date = date("Y-m-d H:i:s", $expire_date);
+			$contacts_token = $this->db->custom_get('contacts_token');
+			if (!isset($contacts_token)) {
+				$token_data = $this->db->token_get($_SESSION['user_id'], $scope);
+				if ($token_data == null) {
+					$this->db->token_add($_SESSION['character_id'], $access_token, $refresh_token, $scope, $expire_date);
+					$this->db->custom_add('contacts_token', $_SESSION['character_id']);
+				} else {
+					$this->db->token_updatefull($_SESSION['character_id'], $access_token, $refresh_token, $scope, $expire_date);
+				}
+			}
+		}
+		return $response;
+	}
 }
