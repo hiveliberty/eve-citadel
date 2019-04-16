@@ -1,6 +1,10 @@
 <?php
 // Some custom lib
-//require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
+use Monolog\Logger;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\RotatingFileHandler;
 
 function uniqidReal($lenght = 13) {
     // From php.net
