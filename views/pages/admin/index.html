@@ -1,0 +1,28 @@
+{% extends "layouts/base.html" %}
+
+{% block main %}
+			<div class="grid--admin">
+				<header class="grid-area--header services--header color--background-1">
+				</header>
+
+				<div class="grid-area--menu dropdown">
+					<div class="button--menu-hidding color--background-1">
+						<div class="button button--menu">menu</div>
+					</div>
+					<nav class="dropdown-content services--menu border--style-dotted-lr color--background-1">
+						<a href="{{portal_config['portal_url']}}/dashboard" role="button" class="button button--menu display--block">dashboard</a>
+						{% if is_admin %}
+						<a href="{{portal_config['portal_url']}}/admin/groups" role="button" class="button button--menu display--block">groups</a>
+						<a href="{{portal_config['portal_url']}}/admin/users" role="button" class="button button--menu display--block">users</a>
+						<a href="{{portal_config['portal_url']}}/admin/settings" role="button" class="button button--menu display--block">settings</a>
+						{% endif %}
+						<a href="{{portal_config['portal_url']}}/logout" role="button" class="button button--menu display--block">logout</a>
+					</nav>
+				</div>
+
+				<div class="grid-area--content color--background-1">
+					{% block admin_content %}{% endblock admin_content %}
+				</div>
+
+			</div>
+{% endblock main %}

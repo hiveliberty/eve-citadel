@@ -14,7 +14,6 @@ use RestCord\DiscordClient;
 //
 
 require_once(__DIR__ . '/../lib/db.class.php');
-// require_once(__DIR__ . '/../lib/cURL.php');
 require_once(__DIR__ . '/../lib/other.php');
 require_once(__DIR__ . '/../lib/callback.class.php');
 require_once(__DIR__ . '/../lib/auth.class.php');
@@ -216,7 +215,37 @@ $app->get('/dashboard/refresh', function (Request $request, Response $response) 
     return $response->withRedirect('/dashboard');
 });
 
-$app->get('/admin/groups', function (Request $request, Response $response) use ($config_app) {
+$app->get('/tokens', function (Request $request, Response $response) use ($config_app) {
+	return $this->view->render($response, 'pages/tokens_new.html', [
+		'portal_config' => $config_app['portal'],
+		'character_id' => $_SESSION['character_id'],
+		'corporation_id' => $_SESSION['corporation_info']['id'],
+		'character_name' => $_SESSION['character_info']['name'],
+		'is_admin' => $_SESSION['is_admin']
+	]);
+});
+
+$app->get('/admin', function (Request $request, Response $response) use ($config_app) {
+	$db_client = new citadelDB();
+
+	if ($db_client->user_admin($_SESSION['user_id'])) {
+		$groups = $db_client->groups_getall_nothidden();
+		$users = $db_client->user_get_all_full();
+
+		unset($db_client);
+
+		return $this->view->render($response, 'pages/admin/index.html', [
+			'portal_config' => $config_app['portal'],
+			'is_admin' => $_SESSION['is_admin'],
+		]);
+
+	} else {
+		unset($db_client);
+		return $response->withRedirect('/dashboard');
+	}
+});
+
+$app->get('/mgmt-group', function (Request $request, Response $response) use ($config_app) {
 	$db_client = new citadelDB();
 
 	if ($db_client->user_admin($_SESSION['user_id'])) {
@@ -239,6 +268,40 @@ $app->get('/admin/groups', function (Request $request, Response $response) use (
 			'is_admin' => $_SESSION['is_admin'],
 			'admin_array' => $_SESSION['admin'],
 			'users' => $users,
+			'groups' => $groups
+		]);
+
+	} else {
+		unset($db_client);
+		return $response->withRedirect('/dashboard');
+	}
+});
+
+$app->get('/admin/groups', function (Request $request, Response $response) use ($config_app) {
+	$db_client = new citadelDB();
+
+	if ($db_client->user_admin($_SESSION['user_id'])) {
+		$groups = $db_client->groups_getall_nothidden();
+		unset($db_client);
+		if (!isset($_SESSION['admin'])) {
+			$_SESSION['admin'] = null;
+		}
+		// $_SESSION['admin']['temp'] = $groups;
+		if (isset($_SESSION['admin']['temp'])) {
+			foreach ($_SESSION['admin']['temp'] as $elem) {
+				// var_dump($_SESSION['admin']['temp']);
+				var_dump($elem);
+			}
+		}
+
+		// return $this->view->render($response, 'pages/groups.html', [
+		return $this->view->render($response, 'pages/admin/groups.html', [
+			'portal_config' => $config_app['portal'],
+			'character_id' => $_SESSION['character_id'],
+			'corporation_id' => $_SESSION['corporation_info']['id'],
+			'character_name' => $_SESSION['character_info']['name'],
+			'is_admin' => $_SESSION['is_admin'],
+			'admin_array' => $_SESSION['admin'],
 			'groups' => $groups
 		]);
 
@@ -364,6 +427,72 @@ $app->post('/admin/groups', function (Request $request, Response $response) use 
 	return $response->withRedirect('/admin/groups');
 });
 
+$app->get('/admin/users', function (Request $request, Response $response) use ($config_app) {
+	$db_client = new citadelDB();
+
+	if ($db_client->user_admin($_SESSION['user_id'])) {
+		$groups = $db_client->groups_getall_nothidden();
+		$users = $db_client->user_get_all_full();
+
+		unset($db_client);
+		if (!isset($_SESSION['admin'])) {
+			$_SESSION['admin'] = null;
+		}
+		if (isset($_SESSION['admin']['temp'])) {
+			var_dump($_SESSION['admin']['temp']);
+		}
+
+		// return $this->view->render($response, 'pages/groups.html', [
+		return $this->view->render($response, 'pages/admin/users.html', [
+			'portal_config' => $config_app['portal'],
+			'character_id' => $_SESSION['character_id'],
+			'corporation_id' => $_SESSION['corporation_info']['id'],
+			'character_name' => $_SESSION['character_info']['name'],
+			'is_admin' => $_SESSION['is_admin'],
+			'admin_array' => $_SESSION['admin'],
+			'users' => $users,
+			'groups' => $groups
+		]);
+
+	} else {
+		unset($db_client);
+		return $response->withRedirect('/dashboard');
+	}
+});
+
+$app->get('/admin/settings', function (Request $request, Response $response) use ($config_app) {
+	$db_client = new citadelDB();
+
+	if ($db_client->user_admin($_SESSION['user_id'])) {
+		$groups = $db_client->groups_getall_nothidden();
+		$users = $db_client->user_get_all_full();
+
+		unset($db_client);
+		if (!isset($_SESSION['admin'])) {
+			$_SESSION['admin'] = null;
+		}
+		if (isset($_SESSION['admin']['temp'])) {
+			var_dump($_SESSION['admin']['temp']);
+		}
+
+		// return $this->view->render($response, 'pages/groups.html', [
+		return $this->view->render($response, 'pages/admin/settings.html', [
+			'portal_config' => $config_app['portal'],
+			'character_id' => $_SESSION['character_id'],
+			'corporation_id' => $_SESSION['corporation_info']['id'],
+			'character_name' => $_SESSION['character_info']['name'],
+			'is_admin' => $_SESSION['is_admin'],
+			'admin_array' => $_SESSION['admin'],
+			'users' => $users,
+			'groups' => $groups
+		]);
+
+	} else {
+		unset($db_client);
+		return $response->withRedirect('/dashboard');
+	}
+});
+
 $app->get('/callback', function (Request $request, Response $response) use ($config_app, $config_discord) {
 
 	$state = $request->getParam("state");
@@ -416,7 +545,7 @@ $app->get('/teamspeak/activate', function (Request $request, Response $response)
 		} elseif ($auth_manager->is_blue($alliance_id, $corporation_id)) {
 			$auth_role = $config_app['auth']['role_blue'];
 		} else {
-			return $response->withRedirect('/fuckedup');
+			return $this->view->render($response, 'reject.html');
 		}
 
 		$auth_role_id = $ts_client->group_get_byname($auth_role);
@@ -480,7 +609,7 @@ $app->get('/phpbb3/activate', function (Request $request, Response $response) us
 			} elseif ($auth_manager->is_blue($alliance_id, $corporation_id)) {
 				$auth_role = $phpbb3_client->sanitize_groupname($config_app['auth']['role_blue']);
 			} else {
-				return $response->withRedirect('/fuckedup');
+				return $this->view->render($response, 'reject.html');
 			}
 
 			$group_id = $phpbb3_client->group_get_id($auth_role);
@@ -553,15 +682,12 @@ $app->get('/test', function (Request $request, Response $response) {
     // Sample log message
     //$this->logger->info("Slim-Skeleton '/' route");
 
-	//$response = $this->renderer->render($response, 'header.phtml');
-	//$response = $this->renderer->render($response, 'index.phtml');
-	//$response = $this->renderer->render($response, 'footer.phtml');
-
     // Render index view
-    return $this->renderer->render($response, 'test/index.phtml');
+    // return $this->renderer->render($response, 'test/index.phtml');
+	
+	// Render twig template
+	return $this->view->render($response, 'reject.html');
 
 	//$url = $this->router->pathFor('dashboard',[], $user);
 	//return $response->withRedirect($url);
-
-	//return $response;
 });

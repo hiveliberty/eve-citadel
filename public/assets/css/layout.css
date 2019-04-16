@@ -1,6 +1,7 @@
 .l--wrapper {
 	margin: auto;
-	max-width: var(--dashboard-width);
+	/* max-width: var(--dashboard-width); */
+	max-width: 100%;
 	transition: .3s;
 }
 @media screen and (min-width: 960px) {
@@ -49,6 +50,17 @@
 	grid-template-areas:
 		'mgmt01 mgmt02';
 	margin-top: 4px;
+	transition: .3s;
+}
+.grid--admin {
+	display: grid;
+	grid-row-gap: 4px;
+	grid-column-gap: 4px;
+	grid-template-columns: 240px 1fr 1fr;
+	grid-template-rows: var(--header-height) auto;
+	grid-template-areas:
+		'header01 header02 header03'
+		'menu content content';
 	transition: .3s;
 }
 .grid-area--header {
@@ -114,7 +126,7 @@
 .l--index-menu {
 	margin: auto;
 	padding-top: 6px;
-	padding-bottom: 10px;
+	padding-bottom: 6px;
 	width: 300px;
 	transition: .3s;
 }

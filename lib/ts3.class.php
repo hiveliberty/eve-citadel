@@ -1,7 +1,7 @@
 <?php
 // ESI lib
 
-require_once(__DIR__ . '/../lib/vendor/ts3admin.class.php');
+require_once(__DIR__ . '/../lib/ts3admin.class.php');
 
 class ts3client {
 	

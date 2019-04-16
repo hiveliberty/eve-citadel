@@ -28,7 +28,11 @@ require __DIR__ . '/../app/dependencies.php';
 require __DIR__ . '/../app/middleware.php';
 
 // Register routes
-require __DIR__ . '/../app/routes.php';
+if(!defined('INSTALL')){
+	require __DIR__ . '/../app/routes.php';
+} else {
+	require __DIR__ . '/../app/routes_new.php';
+}
 
 // Run app
 $app->run();

@@ -31,14 +31,13 @@
 						<div class="button button--menu">menu</div>
 					</div>
 					<nav class="dropdown-content services--menu border--style-dotted-lr color--background-1">
-						<a href="{{portal_config['portal_url']}}" role="button" class="button button--menu display--block">main</a>
+						<!-- <a href="{{portal_config['portal_url']}}" role="button" class="button button--menu display--block">main</a> -->
 						{% if is_admin %}
-						<a href="{{portal_config['portal_url']}}/admin/groups" role="button" class="button button--menu display--block">management</a>
-						<!-- <a href="{{portal_config['portal_url']}}/admin/groups" role="button" class="button button--menu display--block">groups</a> -->
-						<!-- <a href="{{portal_config['portal_url']}}/admin/users" role="button" class="button button--menu display--block">users</a> -->
-						<!-- <a href="{{portal_config['portal_url']}}/admin/settings" role="button" class="button button--menu display--block">settings</a> -->
+						<a href="{{portal_config['portal_url']}}/mgmt-group" role="button" class="button button--menu display--block">groups</a>
+						<a href="{{portal_config['portal_url']}}/admin" role="button" class="button button--menu display--block">admin</a>
 						{% endif %}
-						<a href="{{portal_config['portal_url']}}/dashboard" role="button" class="button button--menu display--block">dashboard</a>
+						<a href="{{portal_config['portal_url']}}/dashboard" role="button" class="button button--menu display--block">services</a>
+						<a href="{{portal_config['portal_url']}}/tokens" role="button" class="button button--menu display--block">tokens</a>
 						<a href="{{portal_config['forum_url']}}" role="button" class="button button--menu display--block">forum</a>
 						<a href="{{portal_config['killboard_url']}}" role="button" class="button button--menu display--block">killboard</a>
 						<a href="{{portal_config['portal_url']}}/dashboard/refresh" role="button" class="button button--menu display--block">refresh session</a>

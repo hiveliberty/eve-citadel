@@ -1,15 +1,11 @@
-# exlude _new stuff
-*_new.php
-*_new.html
-*_new.css
-*_new.sql
+# exlude vendor stuff
+ts3admin.class.php
+/vendor
 
-# exlude install stuff
-/public/install.php
-/app/routes_install.php
-/lib/config.class.php
-/views/pages/install.html
-/views/install/layout.html
+# exlude some dev stuff
+*_test.*
+*_new.*
+*_old.*
 
 # exlude config
 /config/app.php
@@ -17,38 +13,16 @@
 /config/db.php
 /config/discord.php
 /config/logger.php
-/config/config.sqlite3
+/config/db.sqlite3
 /config/db.json
 
 # exlude other stuff
-*_old.*
-old
 CHANGELOG
-README_RU.md
-README_EN.md
-/cronjobs/old/
-/install/db_init_old.sql
-/public/assets/css/stuff/
-/public/assets/js/
-/views/stuff/
-/views/dashboard/old/
-/views/old/
-/templates/test/
-/lib/esi_class.php
-/lib/groups.class.php
-/lib/old/
-/vendor/
-/logs/*
-/screenshots/*
-/tests
-!/logs/README.md
+TODO
+README_*.md
+old
+stuff
+/public/assets/js
 backup
 composer.lock
-test.php
-test2.php
-test*.php
 evecitadel
-composer.json.old
-routes.php.old
-phpunit.xml
-docker-compose.yml

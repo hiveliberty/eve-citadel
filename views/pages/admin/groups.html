@@ -1,0 +1,39 @@
+{% extends "pages/admin/index.html" %}
+
+{% block admin_content %}
+					<div class="dashboard--box border--style-dotted-srvbox display--block color--background-1">
+
+						<section class="display--block color--background-2 border--style-dotted-bottom">
+
+							<h4 class="display--block text--center text--color-style-1 border--style-dotted-bottom">
+								group management
+							</h4>
+
+							<div class="mgmt--box display--inline-block align-vertical--top">
+								<table class="tbl--format tbl--set-fontsize-1">
+									<tr>
+										<!-- <th>id</th> -->
+										<th>group name</th>
+										<th>teamspeak</th>
+										<th>discord</th>
+										<th>forum</th>
+										<th>color</th>
+									</tr>
+									{% for group in groups %}
+										<tr>
+											<!-- <td>{{ group.id }}</td> -->
+											<td>{{ group.name }}</td>
+											<!-- <td>{{ group.teamspeak_enabled }}</td> -->
+											<td>{% if group.teamspeak_enabled %}yes{% else %}no{%endif%}</td>
+											<td>{% if group.discord_enabled %}yes{% else %}no{%endif%}</td>
+											<td>{% if group.phpbb3_enabled %}yes{% else %}no{%endif%}</td>
+											<td style="background-color: #{{ group.color }}"></td>
+										</tr>
+									{% endfor %}
+								</table>
+							</div>
+
+						</section>
+
+					</div>
+{% endblock admin_content %}

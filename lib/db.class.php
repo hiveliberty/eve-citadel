@@ -934,7 +934,12 @@ class citadelDB {
 		$sql = "SELECT * FROM `citadel_groups` WHERE hidden = 0;";
 		$result = $this->db->query($sql)->fetch_all($resulttype=MYSQLI_ASSOC);
 		if (isset($result)) {
-			return $result;
+			$groups = array();
+			foreach ($result as $group) {
+				$group['color'] = dechex($group['color']);
+				$groups[] = $group;
+			}
+			return $groups;
 		} else {
 			return null;
 		}
