@@ -41,9 +41,21 @@ function nick_formate($ticker, $name) {
 	return $name;
 }
 
-//function get_logger($config) {
-//    $logger = new Monolog\Logger($config['name']);
-//    //$logger->pushProcessor(new Monolog\Processor\UidProcessor());
-//    $logger->pushHandler(new Monolog\Handler\StreamHandler($config['path'], $config['level']));
-//    return $logger;
-//}
+function get_logger($name = "citadel", $console = false) {
+	$path = __DIR__ . '/../logs/'.$name.'.log';
+
+	$output = "[%datetime%] %channel%.%level_name%: %message%\n";
+	$formatter = new LineFormatter($output);
+	$logger = new Logger($name);
+	$log_handler_file = new StreamHandler($path, Logger::INFO);
+	$log_handler_file->setFormatter($formatter);
+	$logger->pushHandler($log_handler_file);
+	if ($console) {
+		$log_handler_console = new StreamHandler('php://stdout', Logger::INFO);
+		$log_handler_console->setFormatter($formatter);
+		$logger->pushHandler($log_handler_console);
+	}
+	// $logger->info('------------[ '.date("Y-m-d_H-i-s", time()).' ]------------');
+
+	return $logger;
+}

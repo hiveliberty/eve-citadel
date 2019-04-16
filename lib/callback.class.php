@@ -1,7 +1,5 @@
 <?php
 
-// use Monolog\Logger;
-// use Monolog\Handler\StreamHandler;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Dflydev\FigCookies\Cookie;
@@ -24,12 +22,6 @@ class CallbackManager {
 	private $verify_url = "https://login.eveonline.com/oauth/verify";
 	
 	function __construct($db_client = null) {
-		// $output = "[%datetime%] %channel%.%level_name%: %message%\n";
-		// $formatter = new LineFormatter($output);
-		// $this->logger = new Logger('callback_mgr');
-		// $log_handler_file = new StreamHandler(__DIR__ . '/../logs/callbacks.log', Logger::WARNING);
-		// $log_handler_file->setFormatter($formatter);
-		// $this->logger->pushHandler($log_handler_file);
 
 		if ($db_client == null) {
 			$this->db = new citadelDB();
@@ -40,6 +32,7 @@ class CallbackManager {
 		$this->app_conf = require __DIR__ . '/../config/app.php';
 		$this->discord_conf = require __DIR__ . '/../config/discord.php';
 		$this->callback_url = $this->app_conf['portal']['portal_url']."/callback";
+		$this->logger = get_logger('callbacks');
 	}
 
     function __destruct() {
@@ -119,6 +112,7 @@ class CallbackManager {
 
 	function discord_activate($request, $response) {
 
+		$this->logger->info('------------[ discord_callback '.date('Y-m-d H-i-s', time()).' ]------------');
 		$code = $request->getParam("code");
 
 		$discordOAuthProvider = new \Discord\OAuth\Discord([
@@ -133,6 +127,9 @@ class CallbackManager {
 
 		$user = $discordOAuthProvider->getResourceOwner($token);
 		$discord_id = $user->id;
+		$this->logger->info('callback by '.$_SESSION['character_info']['name']);
+		$this->logger->info('discord username: '.$user->username);
+		$this->logger->info('discord id: '.$discord_id);
 
 		if (isset($_SESSION['character_info']) && isset($_SESSION['corporation_info'])) {
 			$auth_manager = new AuthManager($this->db);
@@ -166,12 +163,22 @@ class CallbackManager {
 				}
 			} else {
 				$discord_client->user_add($discord_id, $token, $discord_nick, $roles_to_add);
-				usleep(500000);
 			}
 
 			$this->db->discord_add($_SESSION['user_id'], $discord_id);
+			usleep(500000);
+
 			if ($this->db->discord_member_exist($discord_id)) {
-				$this->db->discord_member_authorized_set($discord_id);
+				$this->logger->info('Try to set authorized flag to '.$discord_nick);
+				try {
+					$this->db->discord_member_authorized_set($discord_id);
+					$this->logger->info('Successful set authorized flag to '.$discord_nick);
+				} catch (Exception $e) {
+					$this->logger->error($e->getMessage());
+				}
+			} else {
+				$this->logger->info('Result for sql checking: '.$this->db->discord_member_exist($discord_id));
+				$this->logger->info('Discor user with id='.$discord_id.' does not exist in database.');
 			}
 
 			unset($auth_manager,$discord_client);
