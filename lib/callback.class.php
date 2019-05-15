@@ -17,10 +17,10 @@ require_once(__DIR__ . '/../lib/discord.class.php');
 require_once(__DIR__ . '/../lib/phpbb3.class.php');
 
 class CallbackManager {
-	
+
 	private $token_url = "https://login.eveonline.com/oauth/token";
 	private $verify_url = "https://login.eveonline.com/oauth/verify";
-	
+
 	function __construct($db_client = null) {
 
 		if ($db_client == null) {
@@ -32,7 +32,7 @@ class CallbackManager {
 		$this->app_conf = require __DIR__ . '/../config/app.php';
 		$this->discord_conf = require __DIR__ . '/../config/discord.php';
 		$this->callback_url = $this->app_conf['portal']['portal_url']."/callback";
-		$this->logger = get_logger('callbacks');
+		$this->logger = get_logger("callbacks", "INFO");
 	}
 
     function __destruct() {
@@ -127,7 +127,7 @@ class CallbackManager {
 
 		$user = $discordOAuthProvider->getResourceOwner($token);
 		$discord_id = $user->id;
-		$this->logger->info('callback by '.$_SESSION['character_info']['name']);
+		$this->logger->info('callback by: '.$_SESSION['character_info']['name']);
 		$this->logger->info('discord username: '.$user->username);
 		$this->logger->info('discord id: '.$discord_id);
 
@@ -182,6 +182,8 @@ class CallbackManager {
 			}
 
 			unset($auth_manager,$discord_client);
+		} else {
+			$this->logger->warning('Does not exist corp-info or char-info in session array!');
 		}
 
 		return $response;

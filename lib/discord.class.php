@@ -6,16 +6,13 @@ error_reporting(E_ALL);
 
 require __DIR__ . '/../vendor/autoload.php';
 use RestCord\DiscordClient;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 
 require_once(__DIR__ . '/../lib/other.php');
 
 class DiscordCitadelClient {
 
 	function __construct() {
-		$this->logger = new Logger('discord');
-		$this->logger->pushHandler(new StreamHandler(__DIR__ . '/../logs/discord.log', Logger::WARNING));
+		$this->logger = get_logger("discord", "NOTICE", false);
 
 		$this->config = require __DIR__ . '/../config/discord.php';
 		$this->client = new DiscordClient([
@@ -26,10 +23,6 @@ class DiscordCitadelClient {
 			'guild.id' => (int)$this->config['guild_id']
 		]);
 	}
-
-    function __destruct() {
-		unset($this);
-    }
 
 	function role_names() {
 		$new_array = array();
@@ -171,6 +164,7 @@ class DiscordCitadelClient {
 			return $response;
 		} catch(Exception $e) {
 			$this->logger->error($e);
+			return;
 		}
 	}
 
@@ -183,6 +177,7 @@ class DiscordCitadelClient {
 			return $response;
 		} catch(Exception $e) {
 			$this->logger->error($e);
+			return;
 		}
 	}
 
@@ -195,12 +190,17 @@ class DiscordCitadelClient {
 	}
 
 	public function user_nick_set($discord_id, $discord_nick) {
-		$response = $this->client->guild->modifyGuildMember([
-			'guild.id' => (int)$this->config['guild_id'],
-			'user.id' => (int)$discord_id,
-			'nick' => $discord_nick
-		]);
-		return $response;
+		try {
+			$response = $this->client->guild->modifyGuildMember([
+				'guild.id' => (int)$this->config['guild_id'],
+				'user.id' => (int)$discord_id,
+				'nick' => $discord_nick
+			]);
+			return $response;
+		} catch(Exception $e) {
+			$this->logger->error($e);
+			return;
+		}
 	}
 
 	public function user_role_getall($discord_id) {

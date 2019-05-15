@@ -45,21 +45,39 @@ function nick_formate($ticker, $name) {
 	return $name;
 }
 
-function get_logger($name = "citadel", $console = false) {
+function get_logger($name = "citadel", $level = "WARNING", $console = false) {
 	$path = __DIR__ . '/../logs/'.$name.'.log';
 
 	$output = "[%datetime%] %channel%.%level_name%: %message%\n";
 	$formatter = new LineFormatter($output);
 	$logger = new Logger($name);
-	$log_handler_file = new StreamHandler($path, Logger::INFO);
+	switch ($level) {
+		case 'DEBUG':
+			$log_handler_file = new StreamHandler($path, Logger::DEBUG);
+			break;
+		case 'INFO':
+			$log_handler_file = new StreamHandler($path, Logger::INFO);
+			break;
+		case 'NOTICE':
+			$log_handler_file = new StreamHandler($path, Logger::NOTICE);
+			break;
+		case 'WARNING':
+			$log_handler_file = new StreamHandler($path, Logger::WARNING);
+			break;
+		case 'ERROR':
+			$log_handler_file = new StreamHandler($path, Logger::ERROR);
+			break;
+		default:
+			$log_handler_file = new StreamHandler($path, Logger::INFO);
+			break;
+	}
 	$log_handler_file->setFormatter($formatter);
 	$logger->pushHandler($log_handler_file);
 	if ($console) {
-		$log_handler_console = new StreamHandler('php://stdout', Logger::INFO);
+		$log_handler_console = new StreamHandler('php://stdout', Logger::DEBUG);
 		$log_handler_console->setFormatter($formatter);
 		$logger->pushHandler($log_handler_console);
 	}
-	// $logger->info('------------[ '.date("Y-m-d_H-i-s", time()).' ]------------');
 
 	return $logger;
 }

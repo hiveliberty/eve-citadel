@@ -13,6 +13,7 @@ require_once(__DIR__ . '/../lib/token.php');
 require_once(__DIR__ . '/../lib/eveinfo.class.php');
 require_once(__DIR__ . '/../lib/esi.class.php');
 
+$logger = get_logger("update_db", "INFO");
 $db_client = new citadelDB();
 $eveinfo_manager = new EveInfoManager($db_client);
 $member_id = $db_client->custom_get("member_id");
@@ -27,29 +28,34 @@ if ($member_id != null) {
 
 	$esi_client = new ESIClient("tranquility", $access_token);
 	if (!$esi_client->is_online()) {
-		die("[".date("Y-m-d H:i:s", time())."] EVE ESI not online\n");
+		$logger->info('EVE ESI not online. Stop the task.');
+		die();
 	}
 
-	//print_r("[".date("Y-m-d H:i:s", time())."] Checking owner alliance.\n");
+	// $logger->info('Checking owner alliance.');
 	//$eveinfo_manager->check_alliance($member_id);
-	print_r("[".date("Y-m-d H:i:s", time())."] Checking owner corporations.\n");
+
+	$logger->info('Checking owner corporations.');
 	$eveinfo_manager->check_alliance_corporations($member_id, $config['auth']);
 
 	if ($access_token != null) {
-		print_r("[".date("Y-m-d H:i:s", time())."] Checking blue standings.\n");
+		$logger->info('Checking blue standings.');
 		$contacts = $esi_client->alliance_get_contacts($member_id);
 		if ($contacts != null) {
-			print_r("[".date("Y-m-d H:i:s", time())."] Checking blue alliances.\n");
+
+			$logger->info('Checking blue alliances.');
 			$eveinfo_manager->check_blue_alliances($contacts, $config['auth']);
-			print_r("[".date("Y-m-d H:i:s", time())."] Checking blue corporations.\n");
+
+			$logger->info('Checking blue corporations.');
 			$eveinfo_manager->check_blue_corporations($contacts);
+
 		}
 	}
 
 	unset($db_client, $eveinfo_manager, $esi_client);
 } else {
-	unset($db_client);
-	die("[".date("Y-m-d H:i:s", time())."] You are not set member id!\nPlease, run 'php manager.php addmember {yourID}'\nWhere {yourID} is corporation_id or alliance_id.");
+	unset($db_client, $logger, $eveinfo_manager);
+	$logger->info("You are not set member id!\nPlease, run 'php manager.php addmember {yourID}', where {yourID} is corporation_id or alliance_id.");
+	die();
 }
-
 ?>
