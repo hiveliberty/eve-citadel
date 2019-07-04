@@ -21,6 +21,13 @@ $logger->pushHandler($log_handler_file);
 $logger->pushHandler($log_handler_console);
 $logger->info('Logger Initiated');
 
+require_once(__DIR__ . '/../lib/pid.class_new.php');
+$pidmanager = new PIDManager("eve-usercheck");
+if (!$pidmanager->set_status('start')) {
+	$logger->info("Users check is already running..");
+	die();
+}
+
 $config = require __DIR__ . '/../config/app.php';
 
 require_once(__DIR__ . '/../lib/db.class.php');
@@ -36,6 +43,7 @@ $auth_manager = new AuthManager($db_client);
 $esi_client = new ESIClient("tranquility", null, $logger);
 if (!$esi_client->is_online()) {
 	$logger->info("EVE ESI is not online");
+	$pidmanager->set_status('stop');
 	die();
 }
 if ($config['services']['ts3_enabled']) {
@@ -48,7 +56,7 @@ if ($config['services']['discord_enabled']) {
 	$discord_client = new DiscordCitadelClient();
 }
 
-$users = $db_client->users_get_active();
+$users = $db_client->users_get_all();
 
 $logger->info("Started users checking");
 
@@ -144,4 +152,7 @@ foreach(array_chunk($users, 5, true) as $users_chunk) {
 }
 $logger->info("User checking has been completed");
 unset($esi_client, $ts_client, $phpbb3_client);
+
+$pidmanager->set_status('stop');
+return;
 ?>

@@ -139,6 +139,9 @@ class SyncManager {
 
 		if (isset($discord_id) && $discord_id != null) {
 			$discord_user_roles = $this->discord->user_role_getall($discord_id);
+			if ($discord_user_roles == null) {
+				return;
+			}
 			$discord_role_names = $this->discord->make_key_name();
 
 			if ($user_groups == null) {

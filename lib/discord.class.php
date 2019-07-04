@@ -182,11 +182,16 @@ class DiscordCitadelClient {
 	}
 
 	public function user_del($discord_id) {
-		$response = $this->client->guild->removeGuildMember([
-			'guild.id' => (int)$this->config['guild_id'],
-			'user.id' => (int)$discord_id
-		]);
-		return $response;
+		try {
+			$response = $this->client->guild->removeGuildMember([
+				'guild.id' => (int)$this->config['guild_id'],
+				'user.id' => (int)$discord_id
+			]);
+			return $response;
+		} catch(Exception $e) {
+			$this->logger->error($e);
+			return;
+		}
 	}
 
 	public function user_nick_set($discord_id, $discord_nick) {
@@ -199,33 +204,48 @@ class DiscordCitadelClient {
 			return $response;
 		} catch(Exception $e) {
 			$this->logger->error($e);
-			return;
+			return null;
 		}
 	}
 
 	public function user_role_getall($discord_id) {
-		$guild_member = $this->client->guild->getGuildMember([
-			'guild.id' => (int)$this->config['guild_id'],
-			'user.id' => (int)$discord_id
-		]);
-		return $guild_member->roles;
+		try {
+			$guild_member = $this->client->guild->getGuildMember([
+				'guild.id' => (int)$this->config['guild_id'],
+				'user.id' => (int)$discord_id
+			]);
+			return $guild_member->roles;
+		} catch(Exception $e) {
+			$this->logger->error($e);
+			return null;
+		}
 	}
 
 	public function user_role_add($discord_id, $role_id) {
-		$response = $this->client->guild->addGuildMemberRole([
-			'guild.id' => (int)$this->config['guild_id'],
-			'user.id' => (int)$discord_id,
-			'role.id' => (int)$role_id
-		]);
-		return $response;
+		try {
+			$response = $this->client->guild->addGuildMemberRole([
+				'guild.id' => (int)$this->config['guild_id'],
+				'user.id' => (int)$discord_id,
+				'role.id' => (int)$role_id
+			]);
+			return $response;
+		} catch(Exception $e) {
+			$this->logger->error($e);
+			return null;
+		}
 	}
 
 	public function user_role_del($discord_id, $role_id) {
-		$response = $this->client->guild->removeGuildMemberRole([
-			'guild.id' => (int)$this->config['guild_id'],
-			'user.id' => (int)$discord_id,
-			'role.id' => (int)$role_id
-		]);
-		return $response;
+		try {
+			$response = $this->client->guild->removeGuildMemberRole([
+				'guild.id' => (int)$this->config['guild_id'],
+				'user.id' => (int)$discord_id,
+				'role.id' => (int)$role_id
+			]);
+			return $response;
+		} catch(Exception $e) {
+			$this->logger->error($e);
+			return null;
+		}
 	}
 }
